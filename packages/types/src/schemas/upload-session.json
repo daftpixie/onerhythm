@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/upload-session.json",
+  "title": "UploadSession",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "upload_session_id",
+    "upload_format",
+    "processing_status",
+    "consent_record_ids",
+    "phi_redaction_applied",
+    "raw_upload_retained",
+    "started_at",
+    "retryable",
+    "status_detail",
+    "user_message"
+  ],
+  "properties": {
+    "upload_session_id": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "upload_format": {
+      "type": "string",
+      "enum": ["jpeg", "png", "pdf"]
+    },
+    "processing_status": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "validating",
+        "received",
+        "sanitizing",
+        "redacting",
+        "transforming",
+        "tile_generating",
+        "cleaning_up",
+        "completed",
+        "failed",
+        "cleanup_failed"
+      ]
+    },
+    "consent_record_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "phi_redaction_applied": {
+      "type": "boolean"
+    },
+    "raw_upload_retained": {
+      "const": false
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resulting_tile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "failure_reason": {
+      "type": "string"
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "status_detail": {
+      "type": "string"
+    },
+    "user_message": {
+      "type": "string"
+    },
+    "recommended_action": {
+      "type": "string"
+    }
+  }
+}

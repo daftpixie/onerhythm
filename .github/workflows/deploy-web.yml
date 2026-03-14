@@ -1,0 +1,87 @@
+name: Deploy Web
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: GitHub environment to use
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      git_ref:
+        description: Git ref to deploy
+        required: false
+        type: string
+
+env:
+  CI: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  TURBO_TELEMETRY_DISABLED: "1"
+  NODE_VERSION: "22"
+
+jobs:
+  prepare-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ inputs.target_environment }}
+    env:
+      NEXT_PUBLIC_ONERHYTHM_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_ONERHYTHM_API_BASE_URL }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || github.ref }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION || env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Validate required secrets
+        run: |
+          test -n "${NEXT_PUBLIC_ONERHYTHM_API_BASE_URL}" || {
+            echo "Missing NEXT_PUBLIC_ONERHYTHM_API_BASE_URL secret for this environment."
+            exit 1
+          }
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web artifact
+        run: pnpm --filter @onerhythm/web run build
+
+      - name: Archive web artifact
+        run: |
+          mkdir -p release/web
+          cp -R apps/web/.next release/web/.next
+          cp -R apps/web/public release/web/public || true
+          cp apps/web/package.json release/web/package.json
+          cp apps/web/next.config.ts release/web/next.config.ts
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-${{ inputs.target_environment }}-${{ github.sha }}
+          path: release/web
+
+      - name: Publish workflow summary
+        run: |
+          {
+            echo "## Web deployment bundle"
+            echo ""
+            echo "- Environment: \`${{ inputs.target_environment }}\`"
+            echo "- Ref: \`${{ inputs.git_ref || github.ref }}\`"
+            echo "- Commit: \`${{ github.sha }}\`"
+            echo ""
+            echo "Next steps:"
+            echo "1. Download the uploaded artifact."
+            echo "2. Deploy it with your Next.js hosting provider."
+            echo "3. Run the smoke tests from \`docs/architecture/deployment.md\`."
+          } >> "$GITHUB_STEP_SUMMARY"

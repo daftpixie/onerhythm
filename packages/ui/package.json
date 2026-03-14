@@ -1,0 +1,26 @@
+{
+  "name": "@onerhythm/ui",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json --noEmit",
+    "check": "pnpm lint && pnpm typecheck",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "echo 'UI package dev task is not scaffolded yet.'",
+    "lint": "echo 'UI package lint is not scaffolded yet.'",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.12",
+    "typescript": "5.8.2"
+  }
+}

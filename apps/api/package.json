@@ -1,0 +1,21 @@
+{
+  "name": "@onerhythm/api",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'The FastAPI service does not have a separate build step.'",
+    "check": "pnpm lint && pnpm typecheck",
+    "clean": "rm -rf .turbo .pytest_cache __pycache__ .venv",
+    "dev": "./.venv/bin/uvicorn app.main:app --app-dir . --host 127.0.0.1 --port 8000 --reload",
+    "lint": "./.venv/bin/python -m compileall -q app",
+    "ingest:curated": "./.venv/bin/python -m app.scripts.ingest_curated_content",
+    "ingest:research-pulse": "./.venv/bin/python -m app.scripts.ingest_research_pulse",
+    "discover:research-pulse": "./.venv/bin/python -m app.scripts.discover_research_pulse_sources",
+    "migrate": "./.venv/bin/alembic upgrade head",
+    "migrate:status": "./.venv/bin/alembic current",
+    "setup": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -e .",
+    "summarize:research-pulse": "./.venv/bin/python -m app.scripts.summarize_research_pulse",
+    "test": "./.venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+    "typecheck": "./.venv/bin/python -m compileall -q app"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/diagnosis-selection.json",
+  "title": "DiagnosisSelection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["diagnosis_code", "diagnosis_source"],
+  "properties": {
+    "diagnosis_code": {
+      "type": "string",
+      "enum": ["arvc", "afib", "vt", "svt", "long_qt", "brugada", "wpw", "other"]
+    },
+    "diagnosis_source": {
+      "type": "string",
+      "enum": ["self_reported", "caregiver_reported", "clinician_confirmed_by_user"]
+    },
+    "free_text_condition": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

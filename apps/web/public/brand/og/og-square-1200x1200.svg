@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  
+  <defs>
+    <linearGradient id="heartbeatsq" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2D55"/>
+      <stop offset="50%" stop-color="#CC1A3D"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="signalLinesq" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="auroraFadesq" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0A0E1A" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glowsq">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlowsq">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="1200" fill="#0A0E1A"/>
+  <ellipse cx="600" cy="500" rx="450" ry="400" fill="url(#auroraFadesq)" opacity="0.5"/>
+  
+  
+    <g transform="translate(600, 530) scale(1.5)">
+      <!-- Heart outline with centered QRS complex at cleft -->
+      <path d="M0 160
+        C0 160 -185 60 -185 -30
+        C-185 -90 -148 -135 -95 -135
+        C-58 -135 -28 -108 -8 -75
+        L-3 -90 L5 -55 L15 -160 L25 -35 L33 -80
+        C50 -108 80 -135 117 -135
+        C165 -135 197 -90 197 -30
+        C197 60 0 160 0 160Z"
+        fill="none" stroke="url(#heartbeatsq)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowsq)"/>
+      
+      <!-- Inner ECG trace line -->
+      <path d="M-150 0 L-90 0 L-65 -10 L-48 15 L-28 -60 L-8 35 L8 -12 L25 0 L85 0 L160 0"
+        fill="none" stroke="url(#signalLinesq)" opacity="0.65" stroke-width="1.4666666666666668" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowsq)"/>
+      
+      <!-- Pulse point at QRS peak -->
+      <circle cx="15" cy="-160" r="2.3333333333333335" fill="#00D4FF" opacity="0.9"/>
+      
+      <!-- Subtle pulse at heart tip -->
+      <circle cx="0" cy="153" r="1.6666666666666667" fill="#FF2D55" opacity="0.6"/>
+    </g>
+  
+  <text x="600" y="180" font-family="'Exo 2', 'Segoe UI', Arial, sans-serif" font-size="72" font-weight="700" text-anchor="middle" fill="#F9FAFB">
+    <tspan fill="#F9FAFB">One</tspan><tspan fill="#FF2D55">Rhythm</tspan>
+  </text>
+  
+  <text x="600" y="230" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="20" text-anchor="middle" fill="#9CA3AF" font-style="italic" opacity="0.7">Every heartbeat has a story. Every story deserves to be heard.</text>
+  
+  <path d="M0 1140 L300 1140 L400 1132 L450 1152 L480 1100 L510 1170 L540 1135 L580 1140 L1200 1140"
+    fill="none" stroke="#FF2D55" stroke-width="2" opacity="0.15" stroke-linecap="round"/>
+  
+  <rect x="0" y="1195" width="1200" height="5" fill="url(#heartbeatsq)"/>
+  <text x="600" y="1175" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#9CA3AF" letter-spacing="2" opacity="0.4">VT INFINITE, INC.</text>
+</svg>

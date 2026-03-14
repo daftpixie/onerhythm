@@ -1,0 +1,107 @@
+name: Deploy API
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: GitHub environment to use
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      git_ref:
+        description: Git ref to deploy
+        required: false
+        type: string
+
+env:
+  CI: "true"
+  NODE_VERSION: "22"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  prepare-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: ${{ inputs.target_environment }}
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      AUTH_ALLOWED_ORIGINS: ${{ secrets.AUTH_ALLOWED_ORIGINS }}
+      AUTH_COOKIE_SECURE: ${{ secrets.AUTH_COOKIE_SECURE }}
+      AUTH_COOKIE_SAMESITE: ${{ secrets.AUTH_COOKIE_SAMESITE }}
+      EXPORT_ARTIFACT_DIR: ${{ secrets.EXPORT_ARTIFACT_DIR }}
+      ONERHYTHM_ENV: ${{ vars.ONERHYTHM_ENV }}
+      LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || github.ref }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION || env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION || env.PYTHON_VERSION }}
+
+      - name: Validate required environment configuration
+        run: |
+          test -n "${DATABASE_URL}" || { echo "Missing DATABASE_URL secret."; exit 1; }
+          test -n "${AUTH_ALLOWED_ORIGINS}" || { echo "Missing AUTH_ALLOWED_ORIGINS secret."; exit 1; }
+          test -n "${AUTH_COOKIE_SECURE}" || { echo "Missing AUTH_COOKIE_SECURE secret."; exit 1; }
+          test -n "${AUTH_COOKIE_SAMESITE}" || { echo "Missing AUTH_COOKIE_SAMESITE secret."; exit 1; }
+          test -n "${EXPORT_ARTIFACT_DIR}" || { echo "Missing EXPORT_ARTIFACT_DIR secret."; exit 1; }
+          test -n "${ONERHYTHM_ENV}" || { echo "Missing ONERHYTHM_ENV environment variable."; exit 1; }
+          test -n "${LOG_LEVEL}" || { echo "Missing LOG_LEVEL environment variable."; exit 1; }
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Set up API virtualenv
+        run: pnpm setup:api
+
+      - name: Verify API package
+        run: |
+          pnpm --filter @onerhythm/api run typecheck
+          pnpm --filter @onerhythm/api run test
+
+      - name: Archive API deployment bundle
+        run: |
+          mkdir -p release/api
+          cp -R apps/api/app release/api/app
+          cp -R apps/api/alembic release/api/alembic
+          cp apps/api/alembic.ini release/api/alembic.ini
+          cp apps/api/pyproject.toml release/api/pyproject.toml
+          cp apps/api/package.json release/api/package.json
+
+      - name: Upload API artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-${{ inputs.target_environment }}-${{ github.sha }}
+          path: release/api
+
+      - name: Publish workflow summary
+        run: |
+          {
+            echo "## API deployment bundle"
+            echo ""
+            echo "- Environment: \`${{ inputs.target_environment }}\`"
+            echo "- Ref: \`${{ inputs.git_ref || github.ref }}\`"
+            echo "- Commit: \`${{ github.sha }}\`"
+            echo ""
+            echo "Required manual steps:"
+            echo "1. Download the uploaded artifact."
+            echo "2. Apply Alembic migrations against the target database."
+            echo "3. Deploy the API revision with your Python hosting provider."
+            echo "4. Run the smoke tests from \`docs/architecture/deployment.md\`."
+          } >> "$GITHUB_STEP_SUMMARY"

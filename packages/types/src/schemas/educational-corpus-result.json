@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/educational-corpus-result.json",
+  "title": "EducationalCorpusResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["retrieval_corpus_version", "references"],
+  "properties": {
+    "retrieval_corpus_version": { "type": "string", "minLength": 1 },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_reference_id",
+          "source_name",
+          "source_url",
+          "title",
+          "reviewed_at",
+          "reviewer_ref",
+          "ingestion_run_id",
+          "source_checksum",
+          "source_classification",
+          "publisher_kind",
+          "topic_tags",
+          "usage_scope",
+          "content_section",
+          "evidence_kind"
+        ],
+        "properties": {
+          "source_reference_id": { "type": "string", "minLength": 1 },
+          "registry_source_id": { "type": "string", "minLength": 1 },
+          "source_document_id": { "type": "string", "minLength": 1 },
+          "source_name": { "type": "string", "minLength": 1 },
+          "source_url": { "type": "string", "format": "uri" },
+          "title": { "type": "string", "minLength": 1 },
+          "published_at": { "type": "string", "format": "date-time" },
+          "reviewed_at": { "type": "string", "format": "date-time" },
+          "reviewer_ref": { "type": "string", "minLength": 1 },
+          "ingestion_run_id": { "type": "string", "minLength": 1 },
+          "source_checksum": { "type": "string", "minLength": 1 },
+          "monthly_update_cycle": { "type": "string", "minLength": 1 },
+          "approval_status": { "type": "string", "minLength": 1 },
+          "source_classification": {
+            "type": "string",
+            "enum": [
+              "peer_reviewed_study",
+              "clinical_guideline",
+              "institutional_reference",
+              "founder_narrative",
+              "internal"
+            ]
+          },
+          "publisher_kind": {
+            "type": "string",
+            "enum": [
+              "journal",
+              "professional_society",
+              "health_system",
+              "institution",
+              "onerhythm_editorial",
+              "founder",
+              "internal"
+            ]
+          },
+          "citation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["citation_label"],
+            "properties": {
+              "citation_label": { "type": "string", "minLength": 1 },
+              "doi": { "type": "string", "minLength": 1 },
+              "pmid": { "type": "string", "minLength": 1 },
+              "guideline_body": { "type": "string", "minLength": 1 }
+            }
+          },
+          "topic_tags": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "usage_scope": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "content_section": {
+            "type": "string",
+            "enum": ["condition_education", "doctor_questions", "recent_advancements", "mental_health_resources"]
+          },
+          "evidence_kind": {
+            "type": "string",
+            "enum": ["clinical_education", "research_update", "support_resource"]
+          }
+        }
+      }
+    }
+  }
+}

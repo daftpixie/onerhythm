@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="800" height="240">
+  
+  <defs>
+    <linearGradient id="heartbeatf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2D55"/>
+      <stop offset="50%" stop-color="#CC1A3D"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="signalLinef" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="auroraFadef" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0A0E1A" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glowf">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlowf">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="800" height="240" fill="#0A0E1A"/>
+  <circle cx="110" cy="115" r="140" fill="url(#auroraFadef)" opacity="0.4"/>
+  
+    <g transform="translate(110, 125) scale(0.55)">
+      <!-- Heart outline with centered QRS complex at cleft -->
+      <path d="M0 160
+        C0 160 -185 60 -185 -30
+        C-185 -90 -148 -135 -95 -135
+        C-58 -135 -28 -108 -8 -75
+        L-3 -90 L5 -55 L15 -160 L25 -35 L33 -80
+        C50 -108 80 -135 117 -135
+        C165 -135 197 -90 197 -30
+        C197 60 0 160 0 160Z"
+        fill="none" stroke="url(#heartbeatf)" stroke-width="8.181818181818182" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowf)"/>
+      
+      <!-- Inner ECG trace line -->
+      <path d="M-150 0 L-90 0 L-65 -10 L-48 15 L-28 -60 L-8 35 L8 -12 L25 0 L85 0 L160 0"
+        fill="none" stroke="url(#signalLinef)" opacity="0.65" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowf)"/>
+      
+      <!-- Pulse point at QRS peak -->
+      <circle cx="15" cy="-160" r="6.363636363636363" fill="#00D4FF" opacity="0.9"/>
+      
+      <!-- Subtle pulse at heart tip -->
+      <circle cx="0" cy="153" r="4.545454545454545" fill="#FF2D55" opacity="0.6"/>
+    </g>
+  
+    <text x="230" y="133" font-family="'Exo 2', 'Segoe UI', Arial, sans-serif" font-size="52" font-weight="700" fill="#F9FAFB" letter-spacing="1">
+      <tspan fill="#F9FAFB">One</tspan><tspan fill="#FF2D55">Rhythm</tspan>
+    </text>
+  <text x="232" y="168" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="14" fill="#9CA3AF" letter-spacing="3">EVERY HEARTBEAT HAS A STORY</text>
+</svg>

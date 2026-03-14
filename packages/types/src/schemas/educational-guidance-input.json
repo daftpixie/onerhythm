@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/educational-guidance-input.json",
+  "title": "EducationalGuidanceInput",
+  "description": "Allowed profile-driven input surface for educational guidance. ECG-derived inputs are forbidden.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_id", "locale", "self_reported_profile_snapshot"],
+  "properties": {
+    "profile_id": { "type": "string", "minLength": 1 },
+    "locale": { "type": "string", "minLength": 2 },
+    "self_reported_profile_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "diagnosis_selection",
+        "physical_symptoms",
+        "emotional_context",
+        "treatment_history"
+      ],
+      "properties": {
+        "diagnosis_selection": {
+          "$ref": "./diagnosis-selection.json"
+        },
+        "physical_symptoms": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "emotional_context": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "treatment_history": {
+          "$ref": "./user-profile.json#/$defs/treatment_history"
+        },
+        "personal_narrative": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

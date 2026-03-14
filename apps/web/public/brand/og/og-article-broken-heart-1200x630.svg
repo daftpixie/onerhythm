@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  
+  <defs>
+    <linearGradient id="heartbeatbrokn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2D55"/>
+      <stop offset="50%" stop-color="#CC1A3D"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="signalLinebrokn" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="auroraFadebrokn" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0A0E1A" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glowbrokn">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlowbrokn">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0A0E1A"/>
+  
+  <!-- Atmospheric elements -->
+  <ellipse cx="840" cy="252" rx="400" ry="300" fill="url(#auroraFadebrokn)" opacity="0.5"/>
+  <ellipse cx="240" cy="504" rx="300" ry="200" fill="#7C3AED" opacity="0.03"/>
+  
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="550" x2="1200" y2="550" stroke="#252B48" stroke-width="0.5" opacity="0.4"/>
+  
+  <!-- Decorative ECG trace across bottom -->
+  <path d="M0 585 L200 585 L280 580 L320 595 L350 550 L380 610 L410 580 L440 585 L1200 585"
+    fill="none" stroke="#FF2D55" stroke-width="1.5" opacity="0.15" stroke-linecap="round"/>
+  
+  
+    <g transform="translate(920, 280) scale(0.78)">
+      <!-- Heart outline with centered QRS complex at cleft -->
+      <path d="M0 160
+        C0 160 -185 60 -185 -30
+        C-185 -90 -148 -135 -95 -135
+        C-58 -135 -28 -108 -8 -75
+        L-3 -90 L5 -55 L15 -160 L25 -35 L33 -80
+        C50 -108 80 -135 117 -135
+        C165 -135 197 -90 197 -30
+        C197 60 0 160 0 160Z"
+        fill="none" stroke="url(#heartbeatbrokn)" stroke-width="5.769230769230769" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowbrokn)"/>
+      
+      <!-- Inner ECG trace line -->
+      <path d="M-150 0 L-90 0 L-65 -10 L-48 15 L-28 -60 L-8 35 L8 -12 L25 0 L85 0 L160 0"
+        fill="none" stroke="url(#signalLinebrokn)" opacity="0.65" stroke-width="2.8205128205128207" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowbrokn)"/>
+      
+      <!-- Pulse point at QRS peak -->
+      <circle cx="15" cy="-160" r="4.487179487179487" fill="#00D4FF" opacity="0.9"/>
+      
+      <!-- Subtle pulse at heart tip -->
+      <circle cx="0" cy="153" r="3.205128205128205" fill="#FF2D55" opacity="0.6"/>
+    </g>
+  
+  <!-- Title -->
+  <text x="60" y="240" font-family="'Exo 2', 'Segoe UI', Arial, sans-serif" font-size="54" font-weight="700" fill="#F9FAFB">
+    <tspan fill="#F9FAFB">One</tspan><tspan fill="#FF2D55">Rhythm</tspan>
+  </text>
+  
+  
+  <text x="60" y="290" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="24" fill="#9CA3AF" opacity="0.9">The Consequences of a Broken Heart</text>
+  
+  
+  
+  <text x="60" y="530" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="18" fill="#9CA3AF" font-style="italic" opacity="0.7">A decade of arrhythmia. The invisible war. And why silence is not strength.  — Matthew Adams</text>
+  
+  
+  
+  
+  <!-- Bottom bar -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#heartbeatbrokn)"/>
+  
+  <!-- URL / brand slug -->
+  <text x="1140" y="530" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="14" fill="#9CA3AF" text-anchor="end" letter-spacing="2" opacity="0.5">onerhythm.org</text>
+  <text x="1140" y="610" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="end" letter-spacing="1.5" opacity="0.35">VT INFINITE, INC.</text>
+</svg>

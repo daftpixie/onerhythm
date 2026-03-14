@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  
+  <defs>
+    <filter id="gloww">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+    <g transform="translate(256, 265) scale(1.25)">
+      <!-- Heart outline with centered QRS complex at cleft -->
+      <path d="M0 160
+        C0 160 -185 60 -185 -30
+        C-185 -90 -148 -135 -95 -135
+        C-58 -135 -28 -108 -8 -75
+        L-3 -90 L5 -55 L15 -160 L25 -35 L33 -80
+        C50 -108 80 -135 117 -135
+        C165 -135 197 -90 197 -30
+        C197 60 0 160 0 160Z"
+        fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#gloww)"/>
+      
+      <!-- Inner ECG trace line -->
+      <path d="M-150 0 L-90 0 L-65 -10 L-48 15 L-28 -60 L-8 35 L8 -12 L25 0 L85 0 L160 0"
+        fill="none" stroke="#FFFFFF" opacity="0.5" stroke-width="1.7600000000000002" stroke-linecap="round" stroke-linejoin="round" filter="url(#gloww)"/>
+      
+      <!-- Pulse point at QRS peak -->
+      <circle cx="15" cy="-160" r="2.8" fill="#FFFFFF" opacity="0.7"/>
+      
+      <!-- Subtle pulse at heart tip -->
+      <circle cx="0" cy="153" r="2" fill="#FFFFFF" opacity="0.5"/>
+    </g>
+</svg>

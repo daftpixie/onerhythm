@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/mosaic-stats.json",
+  "title": "MosaicStats",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "total_tiles",
+    "public_tiles",
+    "render_tile_limit",
+    "has_more_public_tiles",
+    "visible_condition_categories"
+  ],
+  "properties": {
+    "total_tiles": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "public_tiles": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "render_tile_limit": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "has_more_public_tiles": {
+      "type": "boolean"
+    },
+    "visible_condition_categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["arvc", "afib", "vt", "svt", "long_qt", "brugada", "wpw", "other"]
+      },
+      "uniqueItems": true
+    },
+    "latest_contribution_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

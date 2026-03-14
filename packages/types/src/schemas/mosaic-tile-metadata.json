@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/mosaic-tile-metadata.json",
+  "title": "MosaicTileMetadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tile_id",
+    "condition_category",
+    "contributed_at",
+    "is_public",
+    "display_date",
+    "tile_version",
+    "render_version",
+    "visual_style"
+  ],
+  "properties": {
+    "tile_id": { "type": "string", "minLength": 1 },
+    "condition_category": {
+      "type": "string",
+      "enum": ["arvc", "afib", "vt", "svt", "long_qt", "brugada", "wpw", "other"]
+    },
+    "contributed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_public": {
+      "type": "boolean"
+    },
+    "display_date": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tile_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "render_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["color_family", "opacity", "texture_kind", "glow_level"],
+      "properties": {
+        "color_family": {
+          "type": "string",
+          "enum": ["pulse", "signal", "aurora"]
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "texture_kind": {
+          "type": "string",
+          "enum": ["smooth", "grain", "ripple"]
+        },
+        "glow_level": {
+          "type": "string",
+          "enum": ["none", "subtle", "bright"]
+        }
+      }
+    }
+  }
+}

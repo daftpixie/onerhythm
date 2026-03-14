@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/educational-content-response.json",
+  "title": "EducationalContentResponse",
+  "description": "Educational output must never include ECG-derived clinical inputs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "response_id",
+    "profile_id",
+    "locale",
+    "generated_at",
+    "response_version",
+    "content_basis",
+    "retrieval_corpus_version",
+    "content_stale",
+    "self_reported_profile_snapshot",
+    "condition_education",
+    "doctor_questions",
+    "recent_advancements",
+    "mental_health_resources",
+    "source_references",
+    "section_statuses",
+    "disclaimer",
+    "guardrails_applied",
+    "ecg_clinical_inputs_used"
+  ],
+  "properties": {
+    "response_id": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "locale": { "type": "string", "minLength": 2 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "response_version": { "type": "string", "minLength": 1 },
+    "content_basis": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["self_reported_profile", "curated_retrieval"]
+      },
+      "minItems": 1
+    },
+    "retrieval_corpus_version": { "type": "string", "minLength": 1 },
+    "content_reviewed_at": { "type": "string", "format": "date-time" },
+    "content_stale": { "type": "boolean" },
+    "self_reported_profile_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "diagnosis_selection",
+        "physical_symptoms",
+        "emotional_context",
+        "treatment_history"
+      ],
+      "properties": {
+        "diagnosis_selection": { "$ref": "./diagnosis-selection.json" },
+        "physical_symptoms": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "emotional_context": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "treatment_history": {
+          "$ref": "./user-profile.json#/$defs/treatment_history"
+        },
+        "personal_narrative": { "type": "string", "minLength": 1 }
+      }
+    },
+    "condition_education": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "summary", "everyday_language_notes"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "everyday_language_notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "doctor_questions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "recent_advancements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "summary", "source_name", "source_url"],
+        "properties": {
+          "source_reference_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "source_name": { "type": "string", "minLength": 1 },
+          "source_url": { "type": "string", "format": "uri" },
+          "published_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "mental_health_resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "description", "url", "resource_kind"],
+        "properties": {
+          "source_reference_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "format": "uri" },
+          "resource_kind": {
+            "type": "string",
+            "enum": ["peer_support", "crisis_support", "education", "care_navigation"]
+          }
+        }
+      }
+    },
+    "source_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_reference_id",
+          "source_name",
+          "source_url",
+          "title",
+          "reviewed_at",
+          "reviewer_ref",
+          "ingestion_run_id",
+          "source_checksum",
+          "source_classification",
+          "publisher_kind",
+          "topic_tags",
+          "usage_scope",
+          "content_section",
+          "evidence_kind"
+        ],
+        "properties": {
+          "source_reference_id": { "type": "string", "minLength": 1 },
+          "registry_source_id": { "type": "string", "minLength": 1 },
+          "source_document_id": { "type": "string", "minLength": 1 },
+          "source_name": { "type": "string", "minLength": 1 },
+          "source_url": { "type": "string", "format": "uri" },
+          "title": { "type": "string", "minLength": 1 },
+          "published_at": { "type": "string", "format": "date-time" },
+          "reviewed_at": { "type": "string", "format": "date-time" },
+          "reviewer_ref": { "type": "string", "minLength": 1 },
+          "ingestion_run_id": { "type": "string", "minLength": 1 },
+          "source_checksum": { "type": "string", "minLength": 1 },
+          "monthly_update_cycle": { "type": "string", "minLength": 1 },
+          "approval_status": { "type": "string", "minLength": 1 },
+          "source_classification": {
+            "type": "string",
+            "enum": [
+              "peer_reviewed_study",
+              "clinical_guideline",
+              "institutional_reference",
+              "founder_narrative",
+              "internal"
+            ]
+          },
+          "publisher_kind": {
+            "type": "string",
+            "enum": [
+              "journal",
+              "professional_society",
+              "health_system",
+              "institution",
+              "onerhythm_editorial",
+              "founder",
+              "internal"
+            ]
+          },
+          "citation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["citation_label"],
+            "properties": {
+              "citation_label": { "type": "string", "minLength": 1 },
+              "doi": { "type": "string", "minLength": 1 },
+              "pmid": { "type": "string", "minLength": 1 },
+              "guideline_body": { "type": "string", "minLength": 1 }
+            }
+          },
+          "topic_tags": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "usage_scope": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "content_section": {
+            "type": "string",
+            "enum": [
+              "condition_education",
+              "doctor_questions",
+              "recent_advancements",
+              "mental_health_resources"
+            ]
+          },
+          "evidence_kind": {
+            "type": "string",
+            "enum": ["clinical_education", "research_update", "support_resource"]
+          }
+        }
+      }
+    },
+    "section_statuses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section_key", "status", "message"],
+        "properties": {
+          "section_key": {
+            "type": "string",
+            "enum": [
+              "condition_education",
+              "doctor_questions",
+              "recent_advancements",
+              "mental_health_resources"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ready", "missing", "stale"]
+          },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "disclaimer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disclaimer_version",
+        "disclaimer_text",
+        "placement",
+        "dismissible",
+        "required_on_surfaces"
+      ],
+      "properties": {
+        "disclaimer_version": { "type": "string", "minLength": 1 },
+        "disclaimer_text": { "type": "string", "minLength": 1 },
+        "placement": { "const": "persistent_banner" },
+        "dismissible": { "const": false },
+        "required_on_surfaces": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["api_response", "web_page", "educational_panel"]
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "guardrails_applied": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "no_ecg_inputs",
+          "no_treatment_recommendations",
+          "no_diagnostic_language",
+          "disclaimer_required",
+          "curated_sources_only"
+        ]
+      },
+      "minItems": 1
+    },
+    "ecg_clinical_inputs_used": { "const": false }
+  }
+}

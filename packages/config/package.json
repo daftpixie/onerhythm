@@ -1,0 +1,15 @@
+{
+  "name": "@onerhythm/config",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Config package build is not scaffolded yet.'",
+    "check": "pnpm lint && pnpm typecheck",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "echo 'Config package dev task is not scaffolded yet.'",
+    "lint": "echo 'Config package lint is not scaffolded yet.'",
+    "typecheck": "echo 'Config package typecheck is not scaffolded yet.'"
+  }
+}

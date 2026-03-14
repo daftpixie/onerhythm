@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: onerhythm-api
+Version: 0.1.0
+Summary: Initial FastAPI service for OneRhythm.
+Requires-Python: >=3.10
+Requires-Dist: alembic==1.14.1
+Requires-Dist: fastapi==0.135.1
+Requires-Dist: numpy==2.4.3
+Requires-Dist: pillow==12.1.1
+Requires-Dist: pypdfium2==5.6.0
+Requires-Dist: python-multipart==0.0.22
+Requires-Dist: pypdf==6.8.0
+Requires-Dist: rapidocr-onnxruntime==1.4.4
+Requires-Dist: starlette==0.52.1
+Requires-Dist: sqlalchemy==2.0.39
+Requires-Dist: uvicorn==0.34.0

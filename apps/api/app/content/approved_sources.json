@@ -1,0 +1,974 @@
+[
+  {
+    "locale": "en-US",
+    "diagnosis_code": "afib",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding atrial fibrillation in everyday language",
+    "summary": "Atrial fibrillation can feel irregular, fast, or exhausting, and the day-to-day experience varies a lot from person to person. Guideline-based education can help someone describe patterns, questions, and follow-up decisions without turning those patterns into personal medical advice.",
+    "source_name": "ACC/AHA/ACCP/HRS",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/38043043/",
+    "source_published_at": "2023-11-30",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "AFib episodes can feel different in timing, intensity, and recovery from one person to another.",
+        "Questions about symptoms, stroke prevention, medication, and procedures are usually part of an ongoing conversation rather than a one-time decision."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_acc_af_2023",
+      "source_document_id": "guideline_acc_af_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Joglar JA, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. J Am Coll Cardiol. 2024.",
+        "doi": "10.1016/j.jacc.2023.08.017",
+        "pmid": "38043043",
+        "guideline_body": "ACC/AHA/ACCP/HRS"
+      },
+      "topic_tags": ["afib", "ablation", "medication"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "afib",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about AFib",
+    "summary": "These questions help someone describe lived experience and understand how clinicians think through rhythm monitoring, medication, and procedure conversations without assuming what care any one person needs.",
+    "source_name": "ACC/AHA/ACCP/HRS",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/38043043/",
+    "source_published_at": "2023-11-30",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "When episodes feel different from usual, what details help a clinician understand timing, triggers, and day-to-day impact?",
+        "What kinds of monitoring or follow-up are commonly used to understand symptom patterns over time?",
+        "How do clinicians usually decide when medication, ablation, or watchful follow-up should be part of a conversation?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_acc_af_2023",
+      "source_document_id": "guideline_acc_af_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Joglar JA, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. J Am Coll Cardiol. 2024.",
+        "doi": "10.1016/j.jacc.2023.08.017",
+        "pmid": "38043043",
+        "guideline_body": "ACC/AHA/ACCP/HRS"
+      },
+      "topic_tags": ["afib", "ablation", "medication"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "afib",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "A recent AFib study adds a quality-of-life lens to ablation discussions",
+    "summary": "A 2024 comparison of ablation and medical therapy adds a mental-health and quality-of-life lens to AFib research. It can help people frame questions about daily life and follow-up, but it does not predict how any one person will feel after a procedure or medication plan.",
+    "source_name": "Journal of Interventional Cardiac Electrophysiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/38980445/",
+    "source_published_at": "2024-07-15",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "comparative outcomes study",
+      "focus_note": "Quality of life and mental health outcomes after ablation versus medical therapy."
+    },
+    "provenance": {
+      "registry_source_id": "study_afib_qol_ablation_2024",
+      "source_document_id": "study_afib_qol_ablation_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Effect of catheter ablation versus medical therapy on mental health and quality of life in patients with atrial fibrillation: a systematic review and meta-analysis of randomized controlled trials. J Interv Card Electrophysiol. 2024.",
+        "doi": "10.1007/s10840-024-01861-4",
+        "pmid": "38980445"
+      },
+      "topic_tags": ["afib", "ablation", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "afib",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "Mental health and quality-of-life context for living with AFib",
+    "summary": "Peer-reviewed quality-of-life research shows that AFib symptoms can affect anxiety, daily routines, and sense of control. That evidence can support conversations about emotional burden, not just rhythm episodes.",
+    "source_name": "Indian Pacing and Electrophysiology Journal",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/25408565/",
+    "source_published_at": "2014-10-06",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Anxiety and quality-of-life burden in AFib."
+    },
+    "provenance": {
+      "registry_source_id": "study_afib_svt_qol_anxiety_2014",
+      "source_document_id": "study_afib_svt_qol_anxiety_2014",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Differences in quality of life, anxiety and depression in patients with paroxysmal atrial fibrillation and common forms of atrioventricular reentry supraventricular tachycardias. Indian Pacing Electrophysiol J. 2014.",
+        "doi": "10.1016/S0972-6292(16)30796-3",
+        "pmid": "25408565"
+      },
+      "topic_tags": ["afib", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "arvc",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding ARVC and ACM in everyday language",
+    "summary": "ARVC and arrhythmogenic cardiomyopathy describe a heart-muscle condition that can show up differently across families and over time. Guideline-based education can help someone talk about symptoms, exercise, family context, and follow-up without turning those details into personal medical advice.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/37622657/",
+    "source_published_at": "2023-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "Family history and genetics often matter in ARVC and ACM conversations.",
+        "People may need different kinds of follow-up depending on symptoms, imaging, rhythm history, and family context."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_cardiomyopathies_2023",
+      "source_document_id": "guideline_esc_cardiomyopathies_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Mckenna WJ, et al. 2023 ESC Guidelines for the management of cardiomyopathies. Eur Heart J. 2023.",
+        "doi": "10.1093/eurheartj/ehad194",
+        "pmid": "37622657",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["arvc", "genetics", "family_screening", "icd"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "arvc",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about ARVC or ACM",
+    "summary": "These questions help someone talk through family context, rhythm history, exercise, and follow-up planning without assuming what a clinician will decide.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/37622657/",
+    "source_published_at": "2023-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What parts of my personal and family history matter most when ARVC or ACM is being discussed?",
+        "How do clinicians decide when genetic testing or family screening becomes part of the conversation?",
+        "What questions should I bring about exercise, monitoring, or device planning if those topics come up?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_cardiomyopathies_2023",
+      "source_document_id": "guideline_esc_cardiomyopathies_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Mckenna WJ, et al. 2023 ESC Guidelines for the management of cardiomyopathies. Eur Heart J. 2023.",
+        "doi": "10.1093/eurheartj/ehad194",
+        "pmid": "37622657",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["arvc", "genetics", "family_screening", "icd"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "arvc",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "Newer ARVC research suggests family screening can be more individualized",
+    "summary": "A recent family-screening study suggests follow-up can be tailored to how relatives are related and how ARVC shows up in a family. It adds nuance to screening conversations without telling any one person what their family plan should be.",
+    "source_name": "Journal of the American College of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/37210036/",
+    "source_published_at": "2023-06-07",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "family screening study",
+      "focus_note": "How risk and follow-up patterns may differ across relatives in ARVC families."
+    },
+    "provenance": {
+      "registry_source_id": "study_arvc_family_screening_2023",
+      "source_document_id": "study_arvc_family_screening_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Individualized Family Screening for Arrhythmogenic RV Cardiomyopathy. J Am Coll Cardiol. 2023.",
+        "doi": "10.1016/j.jacc.2023.05.005",
+        "pmid": "37210036"
+      },
+      "topic_tags": ["arvc", "genetics", "family_screening"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "arvc",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "Quality-of-life research for ARVC families can support harder conversations",
+    "summary": "Peer-reviewed research on ARVC quality of life highlights emotional strain, family impact, and the need for support beyond tests and procedures. It can help people name the human side of living with an inherited rhythm condition.",
+    "source_name": "International Journal of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/28823501/",
+    "source_published_at": null,
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Quality of life for people and families living with ARVC."
+    },
+    "provenance": {
+      "registry_source_id": "study_arvc_quality_of_life_2017",
+      "source_document_id": "study_arvc_quality_of_life_2017",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Quality of life metrics in arrhythmogenic right ventricular cardiomyopathy patients: The impact of age, shock and sex. Int J Cardiol. 2017.",
+        "doi": "10.1016/j.ijcard.2017.08.026",
+        "pmid": "28823501"
+      },
+      "topic_tags": ["arvc", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "vt",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding ventricular tachycardia in everyday language",
+    "summary": "Ventricular tachycardia is a fast rhythm that can feel dramatic for some people and subtle for others, depending on context and underlying heart history. Guideline-based education can support conversations about symptoms, monitoring, devices, medication, and procedures without turning those conversations into personal advice.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "VT conversations often involve the broader heart history, not just the rhythm episode itself.",
+        "Questions about medication, ablation, and device therapy are often part of ongoing follow-up over time."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["vt", "ablation", "medication", "icd"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "vt",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about VT",
+    "summary": "These questions can help someone describe episode patterns and understand how clinicians think about monitoring, medication, device therapy, and procedures without assuming what should happen next.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What symptom patterns or episode details are most useful to record before a follow-up visit?",
+        "How do clinicians think through monitoring, medication, device therapy, or ablation when VT is part of the conversation?",
+        "What changes in symptoms or recovery should prompt an earlier call to a care team?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["vt", "ablation", "medication", "icd"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "vt",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "A newer VT review looks at first-line ablation in structural heart disease",
+    "summary": "A recent systematic review and meta-analysis looks at first-line catheter ablation in people with structural heart disease and preserved left-ventricular function. It gives a high-level view of what researchers are testing in VT care, without turning that evidence into a personal recommendation.",
+    "source_name": "Scientific Reports",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/39122752/",
+    "source_published_at": "2024-08-09",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "systematic review and meta-analysis",
+      "focus_note": "How first-line catheter ablation has been studied in structural-heart-disease VT."
+    },
+    "provenance": {
+      "registry_source_id": "study_vt_ablation_meta_2024",
+      "source_document_id": "study_vt_ablation_meta_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Catheter ablation as first-line treatment for ventricular tachycardia in patients with structural heart disease and preserved left ventricular ejection fraction: a systematic review and meta-analysis. Sci Rep. 2024.",
+        "doi": "10.1038/s41598-024-69467-4",
+        "pmid": "39122752"
+      },
+      "topic_tags": ["vt", "ablation", "icd"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "vt",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "Device-related mood burden is part of the VT story too",
+    "summary": "A meta-analysis focused on people with implantable cardioverter-defibrillators shows that mood symptoms can be part of the lived experience around device therapy. That evidence can help people bring anxiety, distress, and support needs into follow-up conversations.",
+    "source_name": "Europace",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/37311667/",
+    "source_published_at": "2023-06-27",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Mood symptoms and support needs around ICD therapy."
+    },
+    "provenance": {
+      "registry_source_id": "study_icd_mood_burden_2023",
+      "source_document_id": "study_icd_mood_burden_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Burden of mood symptoms and disorders in implantable cardioverter defibrillator patients: a systematic review and meta-analysis of 39 954 patients. Europace. 2023.",
+        "doi": "10.1093/europace/euad130",
+        "pmid": "37311667"
+      },
+      "topic_tags": ["vt", "icd", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "svt",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding supraventricular tachycardia in everyday language",
+    "summary": "SVT is a group of fast heart rhythms that can feel sudden, repetitive, and disruptive even when episodes are brief. Guideline-based education can help someone talk about triggers, monitoring, medication, and procedures without turning those topics into a one-size-fits-all plan.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/31504425/",
+    "source_published_at": "2019-08-31",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "SVT episodes are often easier to describe when someone tracks timing, onset, and recovery instead of only heart-rate numbers.",
+        "Medication and ablation conversations usually depend on episode burden, impact on daily life, and broader context."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_svt_2019",
+      "source_document_id": "guideline_esc_svt_2019",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Brugada J, et al. 2019 ESC Guidelines for the management of patients with supraventricular tachycardia. Eur Heart J. 2020.",
+        "doi": "10.1093/eurheartj/ehz467",
+        "pmid": "31504425",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["svt", "ablation", "medication"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "svt",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about SVT",
+    "summary": "These questions can help someone describe episode timing, symptom burden, and recovery so a care conversation is more useful without assuming what the next step will be.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/31504425/",
+    "source_published_at": "2019-08-31",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What details help a clinician distinguish day-to-day SVT symptoms from other causes of palpitations or fast heartbeats?",
+        "How do clinicians usually compare monitoring, medication, or ablation discussions for recurring SVT?",
+        "What should I track about episode timing, triggers, or recovery before my next visit?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_svt_2019",
+      "source_document_id": "guideline_esc_svt_2019",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Brugada J, et al. 2019 ESC Guidelines for the management of patients with supraventricular tachycardia. Eur Heart J. 2020.",
+        "doi": "10.1093/eurheartj/ehz467",
+        "pmid": "31504425",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["svt", "ablation", "medication"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "svt",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "A newer SVT paper looks at who goes on to induction and ablation",
+    "summary": "A recent SVT paper focuses on which clinical features were associated with induction and ablation in one cohort. It can help people understand what researchers are studying in procedural pathways, without turning that work into a decision rule for an individual.",
+    "source_name": "Heart Rhythm",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/39558448/",
+    "source_published_at": "2024-11-01",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "predictive cohort study",
+      "focus_note": "Which criteria were associated with induction and ablation in an SVT cohort."
+    },
+    "provenance": {
+      "registry_source_id": "study_svt_induction_ablation_2024",
+      "source_document_id": "study_svt_induction_ablation_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Five Criteria Predict Induction and Ablation in Patients With Supraventricular Tachycardia. Heart Rhythm. 2024.",
+        "doi": "10.1016/j.hrthm.2024.09.026",
+        "pmid": "39558448"
+      },
+      "topic_tags": ["svt", "ablation"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "svt",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "SVT quality-of-life research can help name the emotional load",
+    "summary": "Peer-reviewed quality-of-life research shows that common SVT forms can come with anxiety and daily-life burden, even when episodes are intermittent. That can make it easier to raise emotional impact as part of follow-up instead of treating it as separate from rhythm care.",
+    "source_name": "Indian Pacing and Electrophysiology Journal",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/25408565/",
+    "source_published_at": "2014-10-06",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Anxiety and quality-of-life burden in common SVT forms."
+    },
+    "provenance": {
+      "registry_source_id": "study_afib_svt_qol_anxiety_2014",
+      "source_document_id": "study_afib_svt_qol_anxiety_2014",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Differences in quality of life, anxiety and depression in patients with paroxysmal atrial fibrillation and common forms of atrioventricular reentry supraventricular tachycardias. Indian Pacing Electrophysiol J. 2014.",
+        "doi": "10.1016/S0972-6292(16)30796-3",
+        "pmid": "25408565"
+      },
+      "topic_tags": ["svt", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "long_qt",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding long QT syndrome in everyday language",
+    "summary": "Long QT syndrome is often part of a bigger conversation about symptoms, family context, medication review, and sometimes genetics. Guideline-based education can support those conversations without turning a family or medication history into a conclusion on its own.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "Medication review and family context are often part of long QT conversations.",
+        "Questions about activity, monitoring, and follow-up usually depend on the broader history rather than a single moment."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["long_qt", "genetics", "medication"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "long_qt",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about long QT",
+    "summary": "These questions can help someone organize medication, symptom, and family-history details so the visit is more useful without assuming what a clinician will decide.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What personal history, family history, or medication-list details are most helpful in a long QT conversation?",
+        "How do clinicians think through genetics, medication review, and activity guidance over time?",
+        "What kinds of follow-up questions are useful when symptoms or family concerns change?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["long_qt", "genetics", "medication"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "long_qt",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "Newer long QT work emphasizes reassessing risk after treatment starts",
+    "summary": "A recent long QT study looks at how arrhythmic risk can change after treatment begins and why reassessment matters over time. It offers context for follow-up questions, not a shortcut for what any one person should expect next.",
+    "source_name": "European Heart Journal",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/38751064/",
+    "source_published_at": "2024-08-03",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "state-of-the-art review",
+      "focus_note": "How long QT follow-up may become more individualized after treatment begins."
+    },
+    "provenance": {
+      "registry_source_id": "study_long_qt_personalized_management_2024",
+      "source_document_id": "study_long_qt_personalized_management_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Long QT syndrome: importance of reassessing arrhythmic risk after treatment initiation. Eur Heart J. 2024.",
+        "doi": "10.1093/eurheartj/ehae289",
+        "pmid": "38751064"
+      },
+      "topic_tags": ["long_qt", "genetics", "medication"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "long_qt",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "Long QT mental-health research can help raise anxiety and depression earlier",
+    "summary": "A nationwide long QT study found higher anxiety and depression burden in people with more severe disease manifestations. That evidence can help someone bring emotional strain into follow-up conversations instead of treating it as separate from rhythm care.",
+    "source_name": "Europace",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/34652436/",
+    "source_published_at": "2022-04-05",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Anxiety and depression burden in congenital long QT syndrome."
+    },
+    "provenance": {
+      "registry_source_id": "study_long_qt_qol_2021",
+      "source_document_id": "study_long_qt_qol_2021",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Severity of congenital long QT syndrome disease manifestation and risk of depression, anxiety, and mortality: a nationwide study. Europace. 2022.",
+        "doi": "10.1093/europace/euab252",
+        "pmid": "34652436"
+      },
+      "topic_tags": ["long_qt", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "brugada",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding Brugada syndrome in everyday language",
+    "summary": "Brugada syndrome is usually part of a broader conversation about symptoms, family history, medication review, fever, and sometimes genetics or devices. Guideline-based education can support those conversations without turning any single detail into a conclusion on its own.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "Fever, medication review, family history, and symptoms can all matter in Brugada conversations.",
+        "Questions about monitoring, genetics, and device therapy are often part of a longer care relationship."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["brugada", "genetics", "icd"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "brugada",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about Brugada syndrome",
+    "summary": "These questions can help someone organize symptom, fever, family-history, and medication details so the visit is more useful without assuming what the next decision will be.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36017572/",
+    "source_published_at": "2022-08-26",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What personal or family-history details matter most when Brugada syndrome is being discussed?",
+        "How do clinicians decide when monitoring, genetic context, or device discussions are relevant?",
+        "What questions should I ask about fever, medication review, or when to check in sooner?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "source_document_id": "guideline_esc_ventricular_arrhythmias_2022",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Zeppenfeld K, et al. 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J. 2022.",
+        "doi": "10.1093/eurheartj/ehac262",
+        "pmid": "36017572",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["brugada", "genetics", "icd"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "brugada",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "A newer Brugada meta-analysis looks at SCN5A variants in group-level outcomes",
+    "summary": "A recent meta-analysis explores how SCN5A variants relate to major arrhythmic events across Brugada cohorts. It is useful context for understanding where genetics research is heading, but it does not turn a gene result into a personal prediction.",
+    "source_name": "Heart Rhythm O2",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/38614189/",
+    "source_published_at": "2024-04-15",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "meta-analysis",
+      "focus_note": "How SCN5A variant status was associated with arrhythmic events across Brugada cohorts."
+    },
+    "provenance": {
+      "registry_source_id": "study_brugada_scn5a_meta_2024",
+      "source_document_id": "study_brugada_scn5a_meta_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Association of SCN5A Variants With Risk of Major Arrhythmic Events in Brugada Syndrome: A Meta-Analysis. Heart Rhythm O2. 2024.",
+        "doi": "10.1016/j.hroo.2024.04.006",
+        "pmid": "38614189"
+      },
+      "topic_tags": ["brugada", "genetics"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "brugada",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "Brugada mental-health research makes daily burden easier to talk about",
+    "summary": "A recent Brugada quality-of-life study shows that stress, anxiety, and uncertainty can be part of the lived experience alongside rhythm concerns. That can help people bring mental-health support into the conversation earlier.",
+    "source_name": "Frontiers in Cardiovascular Medicine",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/39022618/",
+    "source_published_at": "2024-07-03",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Mental health and quality of life in Brugada syndrome."
+    },
+    "provenance": {
+      "registry_source_id": "study_brugada_mental_health_2024",
+      "source_document_id": "study_brugada_mental_health_2024",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Diagnosis of Brugada syndrome affects quality of life and psychological status. Front Cardiovasc Med. 2024.",
+        "doi": "10.3389/fcvm.2024.1429814",
+        "pmid": "39022618"
+      },
+      "topic_tags": ["brugada", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "wpw",
+    "content_section": "condition_education",
+    "evidence_kind": "clinical_education",
+    "title": "Understanding WPW in everyday language",
+    "summary": "Wolff-Parkinson-White syndrome can bring sudden fast-rhythm episodes that feel disruptive, frightening, or draining. Guideline-based education can help someone talk about symptoms, monitoring, and procedure conversations without turning a single episode into a conclusion on its own.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/31504425/",
+    "source_published_at": "2019-08-31",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "everyday_language_notes": [
+        "WPW conversations often focus on episode pattern, day-to-day disruption, and what monitoring or procedures mean in practice.",
+        "Ablation may come up early in WPW education, but the conversation still depends on individual history and care context."
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_svt_2019",
+      "source_document_id": "guideline_esc_svt_2019",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Brugada J, et al. 2019 ESC Guidelines for the management of patients with supraventricular tachycardia. Eur Heart J. 2020.",
+        "doi": "10.1093/eurheartj/ehz467",
+        "pmid": "31504425",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["wpw", "ablation"],
+      "usage_scope": ["educational_guidance", "condition_education"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "wpw",
+    "content_section": "doctor_questions",
+    "evidence_kind": "clinical_education",
+    "title": "Neutral questions to bring to a visit about WPW",
+    "summary": "These questions can help someone describe episode burden and understand how clinicians think about monitoring and ablation without assuming what should happen next.",
+    "source_name": "European Society of Cardiology",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/31504425/",
+    "source_published_at": "2019-08-31",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "questions": [
+        "What episode details help a clinician understand how often symptoms are happening and how disruptive they feel?",
+        "How do clinicians usually compare observation, monitoring, and ablation discussions for WPW?",
+        "What should I track after an episode or procedure so the next visit is more useful?"
+      ]
+    },
+    "provenance": {
+      "registry_source_id": "guideline_esc_svt_2019",
+      "source_document_id": "guideline_esc_svt_2019",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "clinical_guideline",
+      "publisher_kind": "professional_society",
+      "citation": {
+        "citation_label": "Brugada J, et al. 2019 ESC Guidelines for the management of patients with supraventricular tachycardia. Eur Heart J. 2020.",
+        "doi": "10.1093/eurheartj/ehz467",
+        "pmid": "31504425",
+        "guideline_body": "ESC"
+      },
+      "topic_tags": ["wpw", "ablation"],
+      "usage_scope": ["educational_guidance", "doctor_questions"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "wpw",
+    "content_section": "recent_advancements",
+    "evidence_kind": "research_update",
+    "title": "A WPW meta-analysis gives a broad view of catheter-ablation success",
+    "summary": "A recent WPW meta-analysis pulls together public data on radiofrequency catheter-ablation success across studies. It can help people understand how the evidence base is summarized at a high level, without making a personal prediction about outcomes or recovery.",
+    "source_name": "Indian Heart Journal",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/36758831/",
+    "source_published_at": "2023-02-08",
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "study_type": "systematic review and meta-analysis",
+      "focus_note": "Aggregate radiofrequency catheter-ablation success rates in WPW studies."
+    },
+    "provenance": {
+      "registry_source_id": "study_wpw_ablation_meta_2023",
+      "source_document_id": "study_wpw_ablation_meta_2023",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "The success rate of radiofrequency catheter ablation in Wolff-Parkinson-White-Syndrome patients: A systematic review and meta-analysis. Indian Heart J. 2023.",
+        "doi": "10.1016/j.ihj.2023.02.001",
+        "pmid": "36758831"
+      },
+      "topic_tags": ["wpw", "ablation"],
+      "usage_scope": ["educational_guidance", "recent_advancements"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "locale": "en-US",
+    "diagnosis_code": "wpw",
+    "content_section": "mental_health_resources",
+    "evidence_kind": "support_resource",
+    "title": "WPW quality-of-life research can help frame recovery and daily-life questions",
+    "summary": "A peer-reviewed WPW quality-of-life study highlights how daily burden, cost, and recovery questions can shape the lived experience around symptoms and ablation. That can help someone raise support needs that might otherwise feel secondary.",
+    "source_name": "Kardiologiia",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/19656110/",
+    "source_published_at": null,
+    "reviewed_at": "2026-03-13T00:00:00+00:00",
+    "reviewer_ref": "evidence-review-board",
+    "content_payload": {
+      "resource_kind": "education",
+      "support_focus": "Quality of life before and after ablation in WPW."
+    },
+    "provenance": {
+      "registry_source_id": "study_wpw_quality_of_life_2009",
+      "source_document_id": "study_wpw_quality_of_life_2009",
+      "ingested_from": "apps/api/app/content/approved_sources.json",
+      "source_classification": "peer_reviewed_study",
+      "publisher_kind": "journal",
+      "citation": {
+        "citation_label": "Quality of life and cost for patients with Wolff-Parkinson-White syndrome before and after ablation. Kardiologiia. 2009.",
+        "pmid": "19656110"
+      },
+      "topic_tags": ["wpw", "mental_health_support", "quality_of_life"],
+      "usage_scope": ["educational_guidance", "mental_health_resources"],
+      "monthly_update_cycle": "2026-03",
+      "approval_status": "approved"
+    }
+  }
+]

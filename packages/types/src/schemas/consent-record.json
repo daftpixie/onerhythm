@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/consent-record.json",
+  "title": "ConsentRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "consent_record_id",
+    "profile_id",
+    "consent_type",
+    "status",
+    "policy_version",
+    "locale",
+    "source"
+  ],
+  "properties": {
+    "consent_record_id": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "consent_type": {
+      "type": "string",
+      "enum": ["mosaic_contribution", "educational_profile", "research_aggregation"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["granted", "revoked"]
+    },
+    "policy_version": { "type": "string", "minLength": 1 },
+    "locale": { "type": "string", "minLength": 2 },
+    "source": {
+      "type": "string",
+      "enum": ["web"]
+    },
+    "granted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

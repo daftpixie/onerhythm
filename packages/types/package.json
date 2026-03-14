@@ -1,0 +1,22 @@
+{
+  "name": "@onerhythm/types",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas/*": "./src/schemas/*.json"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json --noEmit",
+    "check": "pnpm lint && pnpm typecheck",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "echo 'Types package dev task is not scaffolded yet.'",
+    "lint": "echo 'Types package lint is not scaffolded yet.'",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.8.2"
+  }
+}

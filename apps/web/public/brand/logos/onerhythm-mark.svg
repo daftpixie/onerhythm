@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2D55"/>
+      <stop offset="50%" stop-color="#CC1A3D"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="signalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Heart shape formed by continuous ECG-inspired path -->
+  <!-- The left lobe flows into a QRS complex spike, then into the right lobe -->
+  <!-- Creating a heart where the rhythm IS the structure -->
+  
+  <!-- Outer glow layer -->
+  <path d="M256 440
+    C256 440 80 320 80 200
+    C80 140 120 90 175 90
+    C210 90 240 120 256 150
+    L262 130 L270 180 L280 80 L290 200 L298 160
+    C310 120 340 90 375 90
+    C430 90 460 140 460 200
+    C460 320 256 440 256 440Z"
+    fill="none" stroke="url(#pulseGrad)" stroke-width="3" opacity="0.3" filter="url(#softGlow)"/>
+  
+  <!-- Main heart path with integrated ECG waveform -->
+  <!-- Left side: smooth heart curve -->
+  <!-- Center: QRS complex spike cutting through the heart -->  
+  <!-- Right side: smooth heart curve completing the form -->
+  <path d="M256 440
+    C256 440 80 320 80 200
+    C80 140 120 90 175 90
+    C210 90 240 120 256 150
+    L262 130 L270 180 L280 80 L290 200 L298 160
+    C310 120 340 90 375 90
+    C430 90 460 140 460 200
+    C460 320 256 440 256 440Z"
+    fill="none" stroke="url(#pulseGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+  <!-- Inner rhythm line - a secondary ECG trace running horizontally through the heart -->
+  <path d="M120 220 L180 220 L200 220 L215 210 L225 240 L238 170 L252 260 L262 200 L275 220 L340 220 L420 220"
+    fill="none" stroke="url(#signalGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" filter="url(#glow)"/>
+  
+  <!-- Small pulse dot at the peak of the QRS complex -->
+  <circle cx="238" cy="170" r="4" fill="#00D4FF" opacity="0.9">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Small pulse dot at the bottom of the heart -->
+  <circle cx="256" cy="430" r="3" fill="#FF2D55" opacity="0.7">
+    <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

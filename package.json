@@ -1,0 +1,22 @@
+{
+  "name": "onerhythm",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@10.6.5",
+  "scripts": {
+    "build": "turbo run build",
+    "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check": "turbo run check",
+    "clean": "turbo run clean",
+    "dev:api": "pnpm --filter @onerhythm/api run dev",
+    "dev:web": "pnpm --filter @onerhythm/web run dev",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "setup:api": "pnpm --filter @onerhythm/api run setup",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}
