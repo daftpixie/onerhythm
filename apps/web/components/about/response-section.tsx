@@ -8,12 +8,12 @@ const credentials = [
   {
     label: "Credibility",
     border: "border-pulse",
-    body: "A decade of ARVC, an ICD, three shocks, seven EP lab visits, four ablations. I am not theorizing about this burden. I carried it.",
+    body: "A decade of ARVC, an ICD, three shocks, seven EP lab visits, five ablations. I am not theorizing about this burden. I carried it.",
   },
   {
     label: "Commonality",
     border: "border-signal",
-    body: "I shared my journey on Reddit. It has now been shared by hundreds of others. Not because my story is unique, but because it isn\u2019t. Every share was a hand raised in the dark.",
+    body: "I shared my journey on Reddit. It has now been shared by hundreds of others. Not because my story is unique, but because it isn\u2019t. Every share was a hand raised in the dark sying - me too",
   },
   {
     label: "Problem",

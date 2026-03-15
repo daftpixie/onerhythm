@@ -20,6 +20,7 @@ from app.api.errors import APIContractError
 from app.audit import append_audit_event
 from app.auth import (
     SESSION_COOKIE_NAME,
+    SESSION_COOKIE_DOMAIN,
     SESSION_COOKIE_SAMESITE,
     SESSION_COOKIE_SECURE,
     MAX_ACTIVE_SESSIONS,
@@ -38,12 +39,13 @@ from app.auth import (
 from app.db.models import User, UserSession
 from app.rate_limit import rate_limiter, request_client_id
 from app.runtime import get_settings
+from app.services.beta_access import resolve_beta_access_state
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
 
 
-def _session_response(user: User) -> SessionResponse:
+def _session_response(user: User, *, db: Session) -> SessionResponse:
     return SessionResponse(
         authenticated=True,
         user=SessionUserResponse(
@@ -52,6 +54,11 @@ def _session_response(user: User) -> SessionResponse:
             role=user.role,
             preferred_language=user.preferred_language,
             profile_id=user.profile.profile_id if user.profile else None,
+        ),
+        beta_access=resolve_beta_access_state(
+            db=db,
+            email=user.email,
+            settings=get_settings(),
         ),
     )
 
@@ -62,6 +69,7 @@ def _set_session_cookie(response: Response, token: str) -> None:
         value=token,
         httponly=True,
         secure=SESSION_COOKIE_SECURE,
+        domain=SESSION_COOKIE_DOMAIN,
         samesite=SESSION_COOKIE_SAMESITE,
         path="/",
         max_age=settings.auth_session_duration_days * 24 * 60 * 60,
@@ -178,6 +186,15 @@ def sign_up(
             status_code=status.HTTP_400_BAD_REQUEST,
             details={"password_policy": PASSWORD_POLICY_MESSAGE},
         ) from exc
+    if resolve_beta_access_state(db=db, email=email, settings=get_settings()) == "pending":
+        raise APIContractError(
+            code="beta_invite_required",
+            message=(
+                "Beta access is currently invite-only. Join the waitlist and we'll email you "
+                "when space opens."
+            ),
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
     existing_user = db.query(User).filter(User.email == email).one_or_none()
     if existing_user is not None:
         raise APIContractError(
@@ -212,7 +229,7 @@ def sign_up(
     db.commit()
     db.refresh(user)
     _set_session_cookie(response, session_token)
-    return _session_response(user)
+    return _session_response(user, db=db)
 
 
 @router.post(
@@ -262,7 +279,7 @@ def sign_in(
     db.commit()
     db.refresh(user)
     _set_session_cookie(response, session_token)
-    return _session_response(user)
+    return _session_response(user, db=db)
 
 
 @router.post(
@@ -292,11 +309,12 @@ def sign_out(
     db.commit()
     response.delete_cookie(
         SESSION_COOKIE_NAME,
+        domain=SESSION_COOKIE_DOMAIN,
         path="/",
         samesite=SESSION_COOKIE_SAMESITE,
         secure=SESSION_COOKIE_SECURE,
     )
-    return SessionResponse(authenticated=False, user=None)
+    return SessionResponse(authenticated=False, user=None, beta_access="not_required")
 
 
 @router.get(
@@ -308,10 +326,10 @@ def get_session(
     db: Session = Depends(get_db),
 ) -> SessionResponse:
     if auth_session is None:
-        return SessionResponse(authenticated=False, user=None)
+        return SessionResponse(authenticated=False, user=None, beta_access="not_required")
 
     user = db.query(User).filter(User.user_id == auth_session.user_id).one()
-    return _session_response(user)
+    return _session_response(user, db=db)
 
 
 @router.get(

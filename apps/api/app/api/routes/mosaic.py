@@ -85,6 +85,7 @@ def list_mosaic_tiles(
             tile_version=tile.tile_version,
             render_version=tile.render_version,
             visual_style=tile.visual_style,
+            rhythm_distance_cm=tile.rhythm_distance_cm,
         )
         for tile in tiles
     ]

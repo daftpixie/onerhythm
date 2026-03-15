@@ -197,6 +197,9 @@ export interface UploadSession {
   started_at: string;
   completed_at?: string;
   resulting_tile_id?: string;
+  rhythm_distance_cm?: number;
+  result_tile?: MosaicTileMetadata;
+  contribution_distance?: ContributionDistanceSummary;
   failure_reason?: string;
   retryable: boolean;
   status_detail: string;
@@ -216,6 +219,26 @@ export const tileGlowLevels = ["none", "subtle", "bright"] as const;
 
 export type TileGlowLevel = (typeof tileGlowLevels)[number];
 
+export interface TileWaveformPoint {
+  x: number;
+  y: number;
+}
+
+export interface TileWaveformBand {
+  points: TileWaveformPoint[];
+  emphasis: number;
+}
+
+export interface TileWaveformSignature {
+  source: string;
+  bands: TileWaveformBand[];
+}
+
+export interface TileAttribution {
+  contributor_name?: string;
+  contributor_location?: string;
+}
+
 export interface MosaicTileMetadata {
   tile_id: string;
   condition_category: DiagnosisCode;
@@ -229,7 +252,21 @@ export interface MosaicTileMetadata {
     opacity: number;
     texture_kind: TileTextureKind;
     glow_level: TileGlowLevel;
+    waveform_signature?: TileWaveformSignature;
+    attribution?: TileAttribution;
   };
+  rhythm_distance_cm?: number;
+}
+
+export interface ContributionDistanceSummary {
+  distance_cm: number;
+  policy_id: string;
+  label: string;
+  rationale: string;
+  provenance: string;
+  inferred_layout: string;
+  paper_speed_mm_per_sec?: number;
+  fallback_used: boolean;
 }
 
 export interface MosaicStats {
@@ -239,6 +276,23 @@ export interface MosaicStats {
   has_more_public_tiles: boolean;
   visible_condition_categories: DiagnosisCode[];
   latest_contribution_at?: string;
+}
+
+export interface MilestoneDefinition {
+  key: string;
+  label: string;
+  distance_km: number;
+  description: string;
+}
+
+export interface RhythmDistanceStats {
+  total_distance_km: number;
+  total_contributions: number;
+  earth_loops: number;
+  current_milestone: MilestoneDefinition | null;
+  next_milestone: MilestoneDefinition | null;
+  progress_toward_next: number;
+  last_contribution_at: string | null;
 }
 
 export interface EducationalGuidanceInput {

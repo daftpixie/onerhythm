@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import lru_cache
 import hashlib
+import math
 from pathlib import Path
 from typing import Protocol
 
@@ -36,6 +37,12 @@ OPACITY_CONTRAST_WEIGHT = 1.1
 OPACITY_GRADIENT_WEIGHT = 0.8
 OPACITY_MIN = 0.55
 OPACITY_MAX = 0.92
+WAVEFORM_SIGNATURE_VERSION = "redacted_waveform_profile_v1"
+WAVEFORM_SIGNATURE_BAND_COUNT = 3
+WAVEFORM_SIGNATURE_POINT_COUNT = 24
+WAVEFORM_SIGNATURE_SIDE_MARGIN_RATIO = 0.03
+WAVEFORM_SIGNATURE_TOP_MARGIN_RATIO = 0.12
+WAVEFORM_SIGNATURE_BOTTOM_MARGIN_RATIO = 0.08
 
 
 @dataclass(frozen=True)
@@ -96,7 +103,7 @@ class LowFidelityArtisticTransformService:
         }
         failure_stage = "load_input"
         try:
-            input_image = _load_source_image(source_path=source_path, upload_format=upload_format)
+            input_image = load_source_image(source_path=source_path, upload_format=upload_format)
             report["source_dimensions"] = [input_image.width, input_image.height]
 
             failure_stage = "transform"
@@ -123,7 +130,7 @@ class LowFidelityArtisticTransformService:
             raise ArtisticTransformError(summary=report) from exc
 
 
-def _load_source_image(*, source_path: Path, upload_format: str) -> Image.Image:
+def load_source_image(*, source_path: Path, upload_format: str) -> Image.Image:
     if upload_format in {"jpeg", "png"}:
         with Image.open(source_path) as image:
             return image.convert("RGB")
@@ -202,6 +209,9 @@ def _gradient_energy(values: np.ndarray, *, axis: int) -> float:
 def derive_tile_visual_style_from_artifact(
     *,
     transformed_path: Path,
+    source_path: Path | None = None,
+    source_upload_format: str | None = None,
+    attribution: dict | None = None,
 ) -> TileVisualDerivationResult:
     with Image.open(transformed_path) as image:
         artifact = np.asarray(image.convert("L"), dtype=np.float32) / 255.0
@@ -229,12 +239,45 @@ def derive_tile_visual_style_from_artifact(
         contrast=contrast,
         gradient_energy=gradient_energy,
     )
+    waveform_signature: dict | None = None
+    waveform_signature_summary = {
+        "status": "not_requested",
+        "source": WAVEFORM_SIGNATURE_VERSION,
+        "band_count": 0,
+        "points_per_band": 0,
+    }
+    if source_path is not None and source_upload_format is not None:
+        try:
+            waveform_signature = derive_waveform_signature_from_source(
+                source_path=source_path,
+                upload_format=source_upload_format,
+            )
+            waveform_signature_summary = {
+                "status": "completed",
+                "source": waveform_signature["source"],
+                "band_count": len(waveform_signature["bands"]),
+                "points_per_band": len(waveform_signature["bands"][0]["points"])
+                if waveform_signature["bands"]
+                else 0,
+            }
+        except Exception as exc:
+            waveform_signature_summary = {
+                "status": "failed",
+                "source": WAVEFORM_SIGNATURE_VERSION,
+                "failure_reason": exc.__class__.__name__,
+                "band_count": 0,
+                "points_per_band": 0,
+            }
     visual_style = {
         "color_family": color_family,
         "opacity": opacity,
         "texture_kind": texture_kind,
         "glow_level": glow_level,
     }
+    if waveform_signature is not None:
+        visual_style["waveform_signature"] = waveform_signature
+    if attribution:
+        visual_style["attribution"] = attribution
     summary = {
         "stage": "tile_visual_derivation",
         "status": "completed",
@@ -250,6 +293,12 @@ def derive_tile_visual_style_from_artifact(
             "glow_level": glow_rule,
             "opacity": opacity_rule,
         },
+        "waveform_signature": waveform_signature_summary,
+        "attribution": {
+            "status": "included" if attribution else "not_included",
+            "name_present": bool((attribution or {}).get("contributor_name")),
+            "location_present": bool((attribution or {}).get("contributor_location")),
+        },
         "clinical_interpretation_supported": False,
     }
     return TileVisualDerivationResult(
@@ -257,6 +306,116 @@ def derive_tile_visual_style_from_artifact(
         render_version=RENDER_VERSION,
         summary=summary,
     )
+
+
+def derive_waveform_signature_from_source(
+    *,
+    source_path: Path,
+    upload_format: str,
+) -> dict:
+    source_image = load_source_image(source_path=source_path, upload_format=upload_format)
+    grayscale = ImageOps.grayscale(source_image).filter(ImageFilter.GaussianBlur(radius=1.4))
+    width, height = grayscale.size
+
+    left = int(width * WAVEFORM_SIGNATURE_SIDE_MARGIN_RATIO)
+    right = max(int(width * (1 - WAVEFORM_SIGNATURE_SIDE_MARGIN_RATIO)), left + 2)
+    top = int(height * WAVEFORM_SIGNATURE_TOP_MARGIN_RATIO)
+    bottom = max(int(height * (1 - WAVEFORM_SIGNATURE_BOTTOM_MARGIN_RATIO)), top + 2)
+    cropped = grayscale.crop((left, top, right, bottom))
+    waveform = np.asarray(cropped, dtype=np.float32) / 255.0
+    darkness = 1.0 - waveform
+
+    bands: list[dict] = []
+    for band_index in range(WAVEFORM_SIGNATURE_BAND_COUNT):
+        band_top = int(round((band_index / WAVEFORM_SIGNATURE_BAND_COUNT) * darkness.shape[0]))
+        band_bottom = int(
+            round(((band_index + 1) / WAVEFORM_SIGNATURE_BAND_COUNT) * darkness.shape[0])
+        )
+        band = darkness[band_top:band_bottom, :]
+        if band.size == 0:
+            continue
+        points, emphasis = _extract_waveform_band_signature(
+            band,
+            band_index=band_index,
+        )
+        bands.append(
+            {
+                "points": points,
+                "emphasis": emphasis,
+            }
+        )
+
+    return {
+        "source": WAVEFORM_SIGNATURE_VERSION,
+        "bands": bands,
+    }
+
+
+def _extract_waveform_band_signature(
+    band: np.ndarray,
+    *,
+    band_index: int,
+) -> tuple[list[dict[str, float]], float]:
+    height, width = band.shape
+    if height <= 0 or width <= 0:
+        return [], 0.35
+
+    values: list[float] = []
+    energies: list[float] = []
+    for point_index in range(WAVEFORM_SIGNATURE_POINT_COUNT):
+        left = int(round((point_index / WAVEFORM_SIGNATURE_POINT_COUNT) * width))
+        right = int(round(((point_index + 1) / WAVEFORM_SIGNATURE_POINT_COUNT) * width))
+        if right <= left:
+            right = min(left + 1, width)
+        column_window = band[:, left:right]
+        column = column_window.mean(axis=1)
+        baseline = float(np.quantile(column, 0.66))
+        weights = np.clip(column - baseline, 0.0, None)
+        if float(weights.sum()) <= 1e-6:
+            values.append(0.5)
+            energies.append(0.0)
+            continue
+
+        row_positions = np.linspace(0.0, 1.0, num=height, endpoint=False) + (0.5 / height)
+        centroid = float(np.dot(row_positions, weights) / weights.sum())
+        values.append(centroid)
+        energies.append(float(weights.mean()))
+
+    smoothed = _smooth_series(values, radius=2)
+    stylized = _stylize_waveform_profile(smoothed, band_index=band_index)
+    amplitude = max(stylized) - min(stylized) if stylized else 0.0
+    emphasis = round(_clamp(0.38 + (amplitude * 2.1) + (sum(energies) / max(len(energies), 1)), 0.35, 0.94), 2)
+    point_denominator = max(len(stylized) - 1, 1)
+    points = [
+        {
+            "x": round(index / point_denominator, 4),
+            "y": round(value, 4),
+        }
+        for index, value in enumerate(stylized)
+    ]
+    return points, emphasis
+
+
+def _smooth_series(values: list[float], *, radius: int) -> list[float]:
+    if not values:
+        return []
+    smoothed: list[float] = []
+    for index in range(len(values)):
+        left = max(index - radius, 0)
+        right = min(index + radius + 1, len(values))
+        window = values[left:right]
+        smoothed.append(sum(window) / len(window))
+    return smoothed
+
+
+def _stylize_waveform_profile(values: list[float], *, band_index: int) -> list[float]:
+    if not values:
+        return []
+    stylized: list[float] = []
+    for index, value in enumerate(values):
+        accent = math.sin((index * 0.72) + (band_index * 0.9)) * 0.028
+        stylized.append(_clamp(0.5 + ((value - 0.5) * 0.78) + accent, 0.08, 0.92))
+    return stylized
 
 
 def _derive_color_family(*, gradient_energy: float, symmetry_delta: float) -> tuple[str, str]:

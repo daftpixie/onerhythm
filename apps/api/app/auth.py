@@ -16,6 +16,7 @@ SETTINGS = get_settings()
 SESSION_DURATION_DAYS = SETTINGS.auth_session_duration_days
 MAX_ACTIVE_SESSIONS = SETTINGS.auth_max_active_sessions
 SESSION_COOKIE_SECURE = SETTINGS.auth_cookie_secure
+SESSION_COOKIE_DOMAIN = SETTINGS.auth_cookie_domain or None
 SESSION_COOKIE_SAMESITE = SETTINGS.auth_cookie_samesite
 MAX_PASSWORD_LENGTH = 128
 PASSWORD_POLICY_MESSAGE = (

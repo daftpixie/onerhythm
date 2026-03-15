@@ -135,6 +135,7 @@ describe("EducationShell", () => {
   beforeEach(() => {
     authApiMocks.getSession.mockResolvedValue({
       authenticated: true,
+      beta_access: "granted",
       user: {
         email: "person@example.com",
         preferred_language: "en-US",
@@ -175,6 +176,7 @@ describe("EducationShell", () => {
   it("keeps the disclaimer visible when profile-backed access is unavailable", async () => {
     authApiMocks.getSession.mockResolvedValue({
       authenticated: true,
+      beta_access: "granted",
       user: {
         email: "person@example.com",
         preferred_language: "en-US",

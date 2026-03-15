@@ -26,6 +26,11 @@ from app.services.ocr_redaction import (
     OCRRedactionError,
     build_default_ocr_redaction_service,
 )
+from app.services.rhythm_counter import (
+    determine_contribution_distance,
+    rebuild_rhythm_distance_aggregate,
+    record_rhythm_distance,
+)
 from app.services.temp_storage import (
     TemporaryUploadWorkspace,
     cleanup_report_to_dict,
@@ -36,6 +41,9 @@ logger = logging.getLogger(__name__)
 
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", str(10 * 1024 * 1024)))
 MAX_PROCESSING_SECONDS = int(os.getenv("MAX_PROCESSING_SECONDS", "30"))
+MAX_PDF_PROCESSING_SECONDS = int(
+    os.getenv("MAX_PDF_PROCESSING_SECONDS", str(max(MAX_PROCESSING_SECONDS, 90)))
+)
 MAX_PIPELINE_ATTEMPTS = int(os.getenv("MAX_PIPELINE_ATTEMPTS", "2"))
 MAX_WORKSPACE_AGE_SECONDS = int(os.getenv("MAX_WORKSPACE_AGE_SECONDS", "3600"))
 READ_CHUNK_BYTES = int(os.getenv("UPLOAD_READ_CHUNK_BYTES", str(1024 * 1024)))
@@ -313,6 +321,13 @@ def _deadline_guard(deadline: float, *, code: str = "processing_timeout") -> Non
         )
 
 
+def _processing_deadline(started_at: float, *, upload_format: str | None = None) -> float:
+    budget_seconds = MAX_PROCESSING_SECONDS
+    if upload_format == "pdf":
+        budget_seconds = max(MAX_PROCESSING_SECONDS, MAX_PDF_PROCESSING_SECONDS)
+    return started_at + budget_seconds
+
+
 def _job_attempt_count(db: Session, *, upload_session_id: str, job_kind: str) -> int:
     return (
         db.query(ProcessingJob)
@@ -504,6 +519,7 @@ def _create_mosaic_tile(
     upload_session: UploadSession,
     visual_style: dict,
     render_version: str,
+    rhythm_distance_cm: float | None = None,
 ) -> str:
     profile = (
         db.query(Profile).filter(Profile.profile_id == upload_session.profile_id).one_or_none()
@@ -522,11 +538,54 @@ def _create_mosaic_tile(
             tile_version=MOSAIC_TILE_VERSION,
             render_version=render_version,
             visual_style=visual_style,
+            rhythm_distance_cm=rhythm_distance_cm,
             contributed_at=utcnow(),
             ledger_adapter_ref=None,
         )
     )
+    # SessionLocal runs with autoflush disabled, so flush before any downstream
+    # code queries the newly inserted tile in the same transaction.
+    db.flush()
     return tile_id
+
+
+def _serialize_mosaic_tile(tile: MosaicTile | None) -> dict | None:
+    if tile is None:
+        return None
+    return {
+        "tile_id": tile.tile_id,
+        "condition_category": tile.condition_category,
+        "contributed_at": tile.contributed_at,
+        "is_public": tile.is_public,
+        "display_date": tile.display_date,
+        "tile_version": tile.tile_version,
+        "render_version": tile.render_version,
+        "visual_style": tile.visual_style,
+        "rhythm_distance_cm": tile.rhythm_distance_cm,
+    }
+
+
+def _safe_tile_visual_style_payload(visual_style: dict) -> dict:
+    safe_visual_style = {
+        key: value
+        for key, value in visual_style.items()
+        if key not in {"waveform_signature", "attribution"}
+    }
+    waveform_signature = visual_style.get("waveform_signature")
+    if isinstance(waveform_signature, dict):
+        bands = waveform_signature.get("bands") or []
+        safe_visual_style["waveform_signature"] = {
+            "source": waveform_signature.get("source"),
+            "band_count": len(bands),
+            "points_per_band": len(bands[0].get("points") or []) if bands else 0,
+        }
+    attribution = visual_style.get("attribution")
+    if isinstance(attribution, dict):
+        safe_visual_style["attribution"] = {
+            "name_present": bool(attribution.get("contributor_name")),
+            "location_present": bool(attribution.get("contributor_location")),
+        }
+    return safe_visual_style
 
 
 def _mark_failed(upload_session: UploadSession, reason: str) -> None:
@@ -553,11 +612,13 @@ def process_upload_session_file(
     processing_pipeline_version: str,
     session: UploadSession,
     uploaded_file: UploadFile,
+    tile_attribution: dict | None = None,
 ) -> None:
     stale_cleanup_report = TemporaryUploadWorkspace.cleanup_stale_workspaces_report(
         max_age_seconds=MAX_WORKSPACE_AGE_SECONDS
     )
-    deadline = time.monotonic() + MAX_PROCESSING_SECONDS
+    started_at_monotonic = time.monotonic()
+    deadline = _processing_deadline(started_at_monotonic)
     workspace = TemporaryUploadWorkspace(session.upload_session_id)
     redaction_service = build_default_ocr_redaction_service()
     artistic_transform_service = build_default_artistic_transform_service()
@@ -633,6 +694,10 @@ def process_upload_session_file(
                 deadline=deadline,
             )
             session.upload_format = _determine_upload_format(uploaded_file, header=header)
+            deadline = _processing_deadline(
+                started_at_monotonic,
+                upload_format=session.upload_format,
+            )
             _validate_source_file(raw_path, upload_format=session.upload_format)
         except APIContractError as exc:
             validation_failure_payload = {
@@ -1118,14 +1183,36 @@ def process_upload_session_file(
         try:
             tile_visual_derivation = derive_tile_visual_style_from_artifact(
                 transformed_path=transform_result.transformed_path,
+                source_path=redaction_result.redacted_path,
+                source_upload_format=session.upload_format,
+                attribution=tile_attribution,
             )
+            contribution_distance = determine_contribution_distance(
+                redaction_summary=session.redaction_summary,
+            )
+            distance_cm = contribution_distance.distance_cm
             session.resulting_tile_id = _create_mosaic_tile(
                 db,
                 upload_session=session,
                 visual_style=tile_visual_derivation.visual_style,
                 render_version=tile_visual_derivation.render_version,
+                rhythm_distance_cm=distance_cm,
+            )
+            record_rhythm_distance(
+                db, tile_id=session.resulting_tile_id, distance_cm=distance_cm
             )
         except Exception as exc:
+            if session.resulting_tile_id is not None:
+                partial_tile = (
+                    db.query(MosaicTile)
+                    .filter(MosaicTile.tile_id == session.resulting_tile_id)
+                    .one_or_none()
+                )
+                if partial_tile is not None:
+                    db.delete(partial_tile)
+                    db.flush()
+                    rebuild_rhythm_distance_aggregate(db)
+                session.resulting_tile_id = None
             session.anonymization_summary = {
                 **(session.anonymization_summary or {}),
                 "tile_visual_derivation": {
@@ -1169,11 +1256,19 @@ def process_upload_session_file(
         session.anonymization_summary = {
             **(session.anonymization_summary or {}),
             "tile_visual_derivation": tile_visual_derivation.summary,
+            "contribution_distance": contribution_distance.to_summary(),
         }
         tile_payload = {
             "render_version": tile_visual_derivation.render_version,
-            "visual_style": tile_visual_derivation.visual_style,
+            "visual_style": _safe_tile_visual_style_payload(
+                tile_visual_derivation.visual_style
+            ),
             "resulting_tile_id": session.resulting_tile_id,
+            "contribution_distance": contribution_distance.to_summary(),
+            "attribution": {
+                "name_present": bool((tile_attribution or {}).get("contributor_name")),
+                "location_present": bool((tile_attribution or {}).get("contributor_location")),
+            },
             "summary": tile_visual_derivation.summary,
         }
         _update_job(
@@ -1410,9 +1505,48 @@ def build_upload_session_response(session: UploadSession) -> dict:
         "started_at": session.started_at,
         "completed_at": session.completed_at,
         "resulting_tile_id": session.resulting_tile_id,
+        "rhythm_distance_cm": (
+            session.mosaic_tile.rhythm_distance_cm
+            if getattr(session, "mosaic_tile", None)
+            else None
+        ),
+        "result_tile": _serialize_mosaic_tile(getattr(session, "mosaic_tile", None)),
+        "contribution_distance": (
+            (getattr(session, "anonymization_summary", None) or {}).get("contribution_distance")
+            if getattr(session, "anonymization_summary", None)
+            else None
+        ),
         "failure_reason": session.failure_reason,
         "retryable": retryable,
         "status_detail": status_detail,
         "user_message": user_message,
         "recommended_action": recommended_action,
     }
+
+
+def reconcile_upload_session_contribution_distance(
+    db: Session,
+    *,
+    session: UploadSession,
+) -> bool:
+    if session.processing_status != "completed":
+        return False
+    if session.redaction_summary is None:
+        return False
+    if getattr(session, "mosaic_tile", None) is None:
+        return False
+
+    recalculated = determine_contribution_distance(redaction_summary=session.redaction_summary)
+    current_summary = ((session.anonymization_summary or {}).get("contribution_distance") or {})
+    current_distance = session.mosaic_tile.rhythm_distance_cm
+
+    if current_summary == recalculated.to_summary() and current_distance == recalculated.distance_cm:
+        return False
+
+    session.anonymization_summary = {
+        **(session.anonymization_summary or {}),
+        "contribution_distance": recalculated.to_summary(),
+    }
+    session.mosaic_tile.rhythm_distance_cm = recalculated.distance_cm
+    db.flush()
+    return True

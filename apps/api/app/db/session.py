@@ -10,6 +10,7 @@ database_url = get_database_url()
 engine = create_engine(
     database_url,
     future=True,
+    pool_pre_ping=not database_url.startswith("sqlite"),
     connect_args={"check_same_thread": False} if database_url.startswith("sqlite") else {},
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)

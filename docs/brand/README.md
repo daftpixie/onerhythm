@@ -127,6 +127,7 @@ Interfaces should feel bioluminescent, precise, and alive while remaining readab
 
 Related docs:
 
+- [UI context audit](ui-context-audit.md)
 - [Product requirements](../prd/README.md)
 - [Campaign and content strategy](content-strategy/README.md)
 - [Product docs](../product/README.md)

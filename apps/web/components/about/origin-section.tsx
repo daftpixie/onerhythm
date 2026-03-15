@@ -45,7 +45,7 @@ export function OriginSection() {
           <div className="space-y-6 text-base leading-[1.7] text-text-primary">
             <p>
               I see problems. I fix them. That&rsquo;s not a tagline - it&rsquo;s
-              a diagnosis. A brain rewired by adverse childhood experiences into a
+              a diagnosis. A brain rewired by adverse experiences into a
               pattern-recognition engine that never fully powers down. When you grow
               up in an environment where safety isn&rsquo;t a given, your nervous
               system learns to scan. Constantly. For threats, for exits, for the
@@ -68,11 +68,10 @@ export function OriginSection() {
           whileInView={{ opacity: 1, y: 0 }}
         >
           <p className="text-base leading-[1.7] text-text-primary">
-            Arrhythmogenic right ventricular cardiomyopathy does not care how
-            smart you are. It does not care how disciplined you are. It sits in
-            your chest like a tenant who pays no rent and breaks everything it
-            touches, and there is nothing you can do to evict it on your own
-            terms.
+            Arrhythmia does not care how smart you are. It does not care how
+            disciplined you are. It sits in your chest like a tenant who pays
+            no rent and breaks everything it touches, and there is nothing you
+            can do to evict it on your own terms.
           </p>
 
           {/* Timeline */}

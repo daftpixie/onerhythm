@@ -71,7 +71,7 @@ export function PromiseSection() {
           viewport={{ once: true, margin: "-40px" }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          <p className="text-sm leading-7 text-text-secondary">
+          <p className="mx-auto max-w-md text-center text-sm leading-7 text-text-secondary">
             Pain is not a competition. The person with one PVC an hour who is
             terrified deserves the same compassion as the person with three
             million a year who has gone numb. OneRhythm will never rank
@@ -87,7 +87,7 @@ export function PromiseSection() {
               Founder, OneRhythm
             </p>
             <p className="text-xs text-text-tertiary">
-              Bear Fighting Jedi, VT Infinite, Inc.
+              Bear Fighting Jedi.
             </p>
             <p className="text-xs italic text-text-tertiary">
               Builder. Loud When Needed.

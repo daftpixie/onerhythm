@@ -46,8 +46,7 @@ export function EvidencePulsePreviewContent({
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-text-secondary">
             Newly published peer-reviewed studies, translated into language
-            anyone can carry with them. Every summary keeps its source trail,
-            study type, and uncertainty visible.
+            anyone can carry with them.
           </p>
         </motion.div>
 

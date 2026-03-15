@@ -13,8 +13,10 @@ from app.services.artistic_transform import (
     OUTPUT_ARTIFACT_DIMENSION,
     QUANTIZATION_LEVELS,
     TILE_DERIVATION_VERSION,
+    WAVEFORM_SIGNATURE_VERSION,
     build_default_artistic_transform_service,
     derive_tile_visual_style_from_artifact,
+    load_source_image,
 )
 
 
@@ -59,7 +61,26 @@ def _unique_grayscale_levels(path: Path) -> int:
         return len(set(grayscale.get_flattened_data()))
 
 
+def _grayscale_variance(path: Path) -> float:
+    with Image.open(path) as image:
+        grayscale = image.convert("L")
+        values = list(grayscale.get_flattened_data())
+        mean = sum(values) / len(values)
+        return sum((value - mean) ** 2 for value in values) / len(values)
+
+
 class ArtisticTransformTests(unittest.TestCase):
+    def test_pdf_rasterization_returns_a_non_empty_source_image(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_path = Path(temp_dir) / "source.pdf"
+            _write_ecg_like_artifact(source_path)
+
+            rasterized = load_source_image(source_path=source_path, upload_format="pdf")
+
+            self.assertGreater(rasterized.width, 0)
+            self.assertGreater(rasterized.height, 0)
+            self.assertGreater(len(set(rasterized.convert("L").get_flattened_data())), 8)
+
     def test_transform_creates_destructive_low_fidelity_png_artifact(self) -> None:
         service = build_default_artistic_transform_service()
 
@@ -78,6 +99,7 @@ class ArtisticTransformTests(unittest.TestCase):
             self.assertEqual(result.summary["coarse_grid_dimensions"], [COARSE_GRID_DIMENSION, COARSE_GRID_DIMENSION])
             self.assertLessEqual(_unique_grayscale_levels(result.transformed_path), QUANTIZATION_LEVELS)
             self.assertNotEqual(source_path.read_bytes(), result.transformed_path.read_bytes())
+            self.assertGreater(_grayscale_variance(result.transformed_path), 10.0)
 
     def test_transform_supports_single_page_pdf_input(self) -> None:
         service = build_default_artistic_transform_service()
@@ -93,6 +115,7 @@ class ArtisticTransformTests(unittest.TestCase):
             self.assertEqual(result.summary["input_format"], "pdf")
             self.assertEqual(result.summary["output_format"], "png")
             self.assertTrue(result.summary["derived_artifact_retained_only_in_temp_workspace"])
+            self.assertGreater(_grayscale_variance(result.transformed_path), 10.0)
 
     def test_tile_visual_derivation_is_metadata_only_and_non_placeholder(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -144,6 +167,44 @@ class ArtisticTransformTests(unittest.TestCase):
             self.assertEqual(first_result.summary["mapping_rule_ids"], second_result.summary["mapping_rule_ids"])
             self.assertEqual(first_result.summary["tile_derivation_version"], TILE_DERIVATION_VERSION)
             self.assertEqual(MOSAIC_TILE_VERSION, 1)
+
+    def test_tile_visual_derivation_can_include_waveform_signature_and_attribution(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_path = Path(temp_dir) / "redacted-source.png"
+            artifact_path = Path(temp_dir) / "artifact.png"
+            _write_ecg_like_artifact(source_path)
+            Image.new("L", (OUTPUT_ARTIFACT_DIMENSION, OUTPUT_ARTIFACT_DIMENSION), color=92).save(
+                artifact_path,
+                format="PNG",
+            )
+
+            result = derive_tile_visual_style_from_artifact(
+                transformed_path=artifact_path,
+                source_path=source_path,
+                source_upload_format="png",
+                attribution={
+                    "contributor_name": "Matthew",
+                    "contributor_location": "Vermont",
+                },
+            )
+
+            signature = result.visual_style["waveform_signature"]
+            self.assertEqual(signature["source"], WAVEFORM_SIGNATURE_VERSION)
+            self.assertEqual(len(signature["bands"]), 3)
+            self.assertEqual(len(signature["bands"][0]["points"]), 24)
+            self.assertGreater(
+                max(point["y"] for point in signature["bands"][0]["points"])
+                - min(point["y"] for point in signature["bands"][0]["points"]),
+                0.04,
+            )
+            self.assertEqual(
+                result.visual_style["attribution"]["contributor_name"],
+                "Matthew",
+            )
+            self.assertEqual(
+                result.summary["waveform_signature"]["status"],
+                "completed",
+            )
 
 
 if __name__ == "__main__":

@@ -122,7 +122,7 @@ export function ResearchPulseSection({ liveCards }: { liveCards?: LiveCard[] } =
           <p className="text-base leading-7 text-text-secondary">
             Research Pulse continuously monitors trusted academic sources for
             newly published electrophysiology and arrhythmia studies. Each paper
-            is summarized in clear, non-expert language — what it found, why it
+            is summarized in clear, non-expert language - what it found, why it
             matters, what it doesn&rsquo;t prove, and what questions it might
             help you bring to your next appointment.
           </p>

@@ -120,7 +120,7 @@ export function MissionCTA() {
           >
             Crisis Text Line
           </a>{" "}
-          (text HOME to 741741). You are not alone.
+          (text HOME to 741741).
         </motion.p>
 
         <div className="mt-8">

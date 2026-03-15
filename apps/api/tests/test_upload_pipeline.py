@@ -17,7 +17,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.api.errors import APIContractError
 from app.db.base import Base
-from app.db.models import AuditEvent, MosaicTile, ProcessingJob, UploadSession, User
+from app.db.models import AuditEvent, MosaicTile, ProcessingJob, RhythmDistanceAggregate, UploadSession, User
 from app.services.artistic_transform import (
     ArtisticTransformError,
     ArtisticTransformResult,
@@ -25,9 +25,11 @@ from app.services.artistic_transform import (
     TileVisualDerivationResult,
 )
 from app.services.ocr_redaction import OCRRedactionError, OCRRedactionResult
+from app.services.rhythm_counter import ContributionDistanceResult
 from app.services.temp_storage import TemporaryUploadWorkspace, WorkspaceCleanupReport
 from app.services.upload_pipeline import (
     _determine_upload_format,
+    _processing_deadline,
     _write_upload_to_workspace,
     build_upload_session_response,
     process_upload_session_file,
@@ -79,6 +81,13 @@ class UploadPipelineUnitTests(unittest.TestCase):
         self.assertEqual(context.exception.code, "file_too_large")
         workspace.cleanup()
 
+    def test_processing_deadline_extends_for_pdf_uploads(self) -> None:
+        with patch("app.services.upload_pipeline.MAX_PROCESSING_SECONDS", 30), patch(
+            "app.services.upload_pipeline.MAX_PDF_PROCESSING_SECONDS", 90
+        ):
+            self.assertEqual(_processing_deadline(100.0, upload_format="png"), 130.0)
+            self.assertEqual(_processing_deadline(100.0, upload_format="pdf"), 190.0)
+
     def test_build_upload_session_response_surfaces_recoverable_failure(self) -> None:
         class Session:
             upload_session_id = "session-1"
@@ -97,6 +106,54 @@ class UploadPipelineUnitTests(unittest.TestCase):
         self.assertTrue(response["retryable"])
         self.assertEqual(response["status_detail"], "File exceeds upload limit.")
         self.assertIn("smaller", response["recommended_action"])
+
+    def test_build_upload_session_response_includes_safe_tile_and_distance_metadata(self) -> None:
+        class Tile:
+            tile_id = "tile-1"
+            condition_category = "other"
+            contributed_at = "2026-03-12T00:00:00Z"
+            is_public = True
+            display_date = "2026-03-12"
+            tile_version = 1
+            render_version = "artistic-abstract-v1"
+            visual_style = {
+                "color_family": "signal",
+                "opacity": 0.8,
+                "texture_kind": "grain",
+                "glow_level": "bright",
+            }
+            rhythm_distance_cm = 25.0
+
+        class Session:
+            upload_session_id = "session-2"
+            profile_id = "profile-1"
+            upload_format = "pdf"
+            processing_status = "completed"
+            consent_record_ids = ["consent-1"]
+            phi_redaction_applied = True
+            started_at = "2026-03-12T00:00:00Z"
+            completed_at = "2026-03-12T00:01:00Z"
+            resulting_tile_id = "tile-1"
+            failure_reason = None
+            mosaic_tile = Tile()
+            anonymization_summary = {
+                "contribution_distance": {
+                    "distance_cm": 25.0,
+                    "policy_id": "standard_12_lead_long_strip",
+                    "label": "Standard 10-second rhythm strip",
+                    "rationale": "Counted as a canonical long rhythm strip.",
+                    "provenance": "Applied the standard long-strip contribution policy.",
+                    "inferred_layout": "standard_12_lead_with_long_strip",
+                    "paper_speed_mm_per_sec": 25,
+                    "fallback_used": False,
+                }
+            }
+
+        response = build_upload_session_response(Session())
+
+        self.assertEqual(response["result_tile"]["tile_id"], "tile-1")
+        self.assertEqual(response["contribution_distance"]["distance_cm"], 25.0)
+        self.assertEqual(response["contribution_distance"]["policy_id"], "standard_12_lead_long_strip")
 
 
 class TemporaryWorkspaceTests(unittest.TestCase):
@@ -120,6 +177,19 @@ def _png_upload_file() -> UploadFile:
         filename="trace.png",
         file=image_buffer,
         headers={"content-type": "image/png"},
+    )
+
+
+def _contribution_distance_result(distance_cm: float = 25.0) -> ContributionDistanceResult:
+    return ContributionDistanceResult(
+        distance_cm=distance_cm,
+        policy_id="standard_12_lead_long_strip",
+        label="Standard 10-second rhythm strip",
+        rationale="Counted as a canonical long rhythm strip.",
+        provenance="Applied the standard long-strip contribution policy.",
+        inferred_layout="standard_12_lead_with_long_strip",
+        paper_speed_mm_per_sec=25,
+        fallback_used=False,
     )
 
 
@@ -279,7 +349,13 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
         transform_service = RecordingSuccessfulArtisticTransformService()
         tile_derivation_inputs: list[Path] = []
 
-        def derive_tile_visual_style_from_artifact(*, transformed_path: Path) -> TileVisualDerivationResult:
+        def derive_tile_visual_style_from_artifact(
+            *,
+            transformed_path: Path,
+            source_path: Path | None = None,
+            source_upload_format: str | None = None,
+            attribution: dict | None = None,
+        ) -> TileVisualDerivationResult:
             tile_derivation_inputs.append(transformed_path)
             return TileVisualDerivationResult(
                 visual_style={
@@ -312,6 +388,9 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
                 ), patch(
                     "app.services.upload_pipeline.derive_tile_visual_style_from_artifact",
                     side_effect=derive_tile_visual_style_from_artifact,
+                ), patch(
+                    "app.services.upload_pipeline.determine_contribution_distance",
+                    return_value=_contribution_distance_result(),
                 ):
                     process_upload_session_file(
                         db,
@@ -356,6 +435,7 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
                 .one()
             )
             tile = db.query(MosaicTile).filter(MosaicTile.tile_id == session.resulting_tile_id).one()
+            aggregate = db.query(RhythmDistanceAggregate).one()
             audit_event_types = self._audit_event_types_for_session(db, session.upload_session_id)
 
             self.assertEqual(session.processing_status, "completed")
@@ -385,6 +465,10 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
                 "completed",
             )
             self.assertEqual(
+                session.anonymization_summary["contribution_distance"]["distance_cm"],
+                25.0,
+            )
+            self.assertEqual(
                 pipeline_attempt.job_payload["stage_reports"]["intake_validation"]["status"],
                 "completed",
             )
@@ -407,9 +491,13 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
             self.assertEqual(transform_job.job_payload["provider"], "stub-artistic-transform")
             self.assertEqual(tile_job.status, "completed")
             self.assertEqual(tile_job.job_payload["visual_style"]["glow_level"], "bright")
+            self.assertEqual(tile_job.job_payload["contribution_distance"]["distance_cm"], 25.0)
             self.assertEqual(tile.render_version, "artistic-abstract-v1")
             self.assertEqual(tile.tile_version, MOSAIC_TILE_VERSION)
             self.assertEqual(tile.visual_style["texture_kind"], "grain")
+            self.assertEqual(tile.rhythm_distance_cm, 25.0)
+            self.assertAlmostEqual(aggregate.total_distance_cm, 25.0)
+            self.assertEqual(aggregate.total_contributions, 1)
             self.assertIn("upload_session.stage_completed", audit_event_types)
             self.assertIn("upload_session.non_retention_verified", audit_event_types)
             cleanup_audit = (
@@ -543,6 +631,64 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
         finally:
             db.close()
 
+    def test_process_upload_session_file_removes_partial_tile_if_distance_recording_fails(self) -> None:
+        db, session = self._create_session_fixture()
+        transform_service = RecordingSuccessfulArtisticTransformService()
+
+        try:
+            with tempfile.TemporaryDirectory() as temp_root:
+                with patch(
+                    "app.services.temp_storage.UPLOAD_TMP_ROOT",
+                    Path(temp_root),
+                ), patch(
+                    "app.services.upload_pipeline.build_default_ocr_redaction_service",
+                    return_value=StubSuccessfulOCRService(),
+                ), patch(
+                    "app.services.upload_pipeline.build_default_artistic_transform_service",
+                    return_value=transform_service,
+                ), patch(
+                    "app.services.upload_pipeline.derive_tile_visual_style_from_artifact",
+                    return_value=TileVisualDerivationResult(
+                        visual_style={
+                            "color_family": "signal",
+                            "opacity": 0.74,
+                            "texture_kind": "grain",
+                            "glow_level": "bright",
+                        },
+                        render_version="artistic-abstract-v1",
+                        summary={
+                            "stage": "tile_visual_derivation",
+                            "status": "completed",
+                            "input_stage": "artistic_transform",
+                            "render_version": "artistic-abstract-v1",
+                            "clinical_interpretation_supported": False,
+                        },
+                    ),
+                ), patch(
+                    "app.services.upload_pipeline.determine_contribution_distance",
+                    return_value=_contribution_distance_result(),
+                ), patch(
+                    "app.services.upload_pipeline.record_rhythm_distance",
+                    side_effect=RuntimeError("simulated_distance_failure"),
+                ):
+                    with self.assertRaises(APIContractError) as context:
+                        process_upload_session_file(
+                            db,
+                            actor_id=session.user_id,
+                            processing_pipeline_version="pipeline-v2",
+                            session=session,
+                            uploaded_file=_png_upload_file(),
+                        )
+
+            self.assertEqual(context.exception.code, "tile_artifact_generation_failed")
+            self.assertEqual(session.processing_status, "failed")
+            self.assertIsNone(session.resulting_tile_id)
+            self.assertEqual(db.query(MosaicTile).count(), 0)
+            aggregate = db.query(RhythmDistanceAggregate).one_or_none()
+            self.assertTrue(aggregate is None or aggregate.total_contributions == 0)
+        finally:
+            db.close()
+
     def test_process_upload_session_file_cleans_up_on_timeout(self) -> None:
         db, session = self._create_session_fixture()
         try:
@@ -611,6 +757,11 @@ class UploadPipelineIntegrationTests(unittest.TestCase):
                         "clinical_interpretation_supported": False,
                     },
                 ),
+            ), patch(
+                "app.services.upload_pipeline.determine_contribution_distance",
+                return_value=_contribution_distance_result(),
+            ), patch(
+                "app.services.upload_pipeline.record_rhythm_distance",
             ), patch(
                 "app.services.temp_storage.TemporaryUploadWorkspace.cleanup",
                 return_value=WorkspaceCleanupReport(

@@ -3,7 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -11,6 +12,9 @@ from app.db.base import Base
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
+
+
+case_insensitive_text = String(320).with_variant(postgresql.CITEXT(), "postgresql")
 
 
 class User(Base):
@@ -171,6 +175,31 @@ class UserSession(Base):
     user: Mapped[User] = relationship(back_populates="sessions")
 
 
+class BetaWaitlistSignup(Base):
+    __tablename__ = "beta_waitlist_signups"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    email: Mapped[str] = mapped_column(case_insensitive_text, unique=True, nullable=False)
+    source: Mapped[str] = mapped_column(String(64), nullable=False, default="landing-page")
+    status: Mapped[str] = mapped_column(String(24), nullable=False, default="pending")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+
+
+class BetaAllowlist(Base):
+    __tablename__ = "beta_allowlist"
+
+    email: Mapped[str] = mapped_column(case_insensitive_text, primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+    note: Mapped[str | None] = mapped_column(Text)
+
+
 class ProcessingJob(Base):
     __tablename__ = "processing_jobs"
 
@@ -206,10 +235,31 @@ class MosaicTile(Base):
     tile_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     render_version: Mapped[str] = mapped_column(String(32), nullable=False)
     visual_style: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    rhythm_distance_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
     contributed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     ledger_adapter_ref: Mapped[str | None] = mapped_column(String(128))
 
     upload_session: Mapped[UploadSession] = relationship(back_populates="mosaic_tile")
+
+
+class RhythmDistanceAggregate(Base):
+    __tablename__ = "rhythm_distance_aggregate"
+
+    aggregate_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    total_distance_cm: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    total_contributions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_contribution_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class MilestoneEvent(Base):
+    __tablename__ = "milestone_events"
+
+    milestone_event_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    milestone_key: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
+    reached_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    distance_at_crossing_km: Mapped[float] = mapped_column(Float, nullable=False)
+    contribution_count: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 class AuditEvent(Base):

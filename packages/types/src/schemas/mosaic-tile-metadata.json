@@ -60,6 +60,68 @@
         "glow_level": {
           "type": "string",
           "enum": ["none", "subtle", "bright"]
+        },
+        "waveform_signature": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "bands"],
+          "properties": {
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["points", "emphasis"],
+                "properties": {
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["x", "y"],
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      }
+                    }
+                  },
+                  "emphasis": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "attribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contributor_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            "contributor_location": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
         }
       }
     }

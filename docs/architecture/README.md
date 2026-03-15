@@ -37,6 +37,7 @@ Related docs:
 - [Approved source policy](../evidence/approved-source-policy.md)
 - [Research Pulse review policy](../evidence/research-pulse-review-policy.md)
 - [Community stories](community-stories.md)
+- [Community UI audit](community-ui-audit.md)
 - [Curated content ingestion](curated-content-ingestion.md)
 - [Research Pulse](research-pulse.md)
 - [Authentication](authentication.md)

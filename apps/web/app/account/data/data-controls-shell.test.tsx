@@ -10,6 +10,7 @@ vi.mock("../../../components/session-actions", () => ({
 
 const authApiMocks = vi.hoisted(() => ({
   createDeleteRequest: vi.fn(),
+  deleteUploadSession: vi.fn(),
   createExportRequest: vi.fn(),
   getExportDownloadUrl: vi.fn(),
   getOwnedProfile: vi.fn(),
@@ -18,6 +19,7 @@ const authApiMocks = vi.hoisted(() => ({
   listConsents: vi.fn(),
   listDeleteRequests: vi.fn(),
   listExportRequests: vi.fn(),
+  listUploadSessions: vi.fn(),
   revokeAuthSession: vi.fn(),
   revokeConsent: vi.fn(),
   revokeOtherAuthSessions: vi.fn(),
@@ -29,6 +31,7 @@ describe("DataControlsShell", () => {
   beforeEach(() => {
     authApiMocks.getSession.mockResolvedValue({
       authenticated: true,
+      beta_access: "granted",
       user: {
         email: "person@example.com",
         preferred_language: "en-US",
@@ -78,6 +81,68 @@ describe("DataControlsShell", () => {
         status: "completed",
       },
     ]);
+    authApiMocks.listUploadSessions.mockResolvedValue([
+      {
+        upload_session_id: "upload-completed",
+        profile_id: "profile-1",
+        processing_status: "completed",
+        upload_format: "pdf",
+        consent_record_ids: ["consent-1"],
+        phi_redaction_applied: true,
+        raw_upload_retained: false,
+        started_at: "2026-03-15T12:00:00Z",
+        completed_at: "2026-03-15T12:00:03Z",
+        resulting_tile_id: "tile-123",
+        rhythm_distance_cm: 25,
+        retryable: false,
+        status_detail: "Processing completed successfully.",
+        user_message:
+          "Your contribution finished processing and the original file has been destroyed.",
+        result_tile: {
+          tile_id: "tile-123",
+          condition_category: "afib",
+          contributed_at: "2026-03-15T12:00:03Z",
+          is_public: true,
+          display_date: "2026-03-15",
+          tile_version: 1,
+          render_version: "artistic-abstract-v1",
+          visual_style: {
+            color_family: "signal",
+            opacity: 0.82,
+            texture_kind: "grain",
+            glow_level: "bright",
+          },
+          rhythm_distance_cm: 25,
+        },
+        contribution_distance: {
+          distance_cm: 25,
+          policy_id: "standard_12_lead_long_strip",
+          label: "Standard 10-second rhythm strip",
+          rationale: "Counted as a canonical long rhythm strip.",
+          provenance:
+            "Inferred a standard 12-lead layout with a long rhythm strip. Applied the canonical 10 seconds at 25 mm/sec -> 25 cm policy.",
+          inferred_layout: "standard_12_lead_with_long_strip",
+          paper_speed_mm_per_sec: 25,
+          fallback_used: false,
+        },
+      },
+      {
+        upload_session_id: "upload-failed",
+        profile_id: "profile-1",
+        processing_status: "failed",
+        upload_format: "pdf",
+        consent_record_ids: ["consent-1"],
+        phi_redaction_applied: false,
+        raw_upload_retained: false,
+        started_at: "2026-03-14T09:00:00Z",
+        completed_at: "2026-03-14T09:00:02Z",
+        retryable: true,
+        status_detail: "Upload failed.",
+        user_message: "The ECG could not be processed safely. Upload a clearer scan or try again.",
+        failure_reason: "artistic_transform_failed",
+        recommended_action: "Retry the upload with a new file.",
+      },
+    ]);
     authApiMocks.listAuthSessions.mockResolvedValue({
       sessions: [
         {
@@ -124,6 +189,7 @@ describe("DataControlsShell", () => {
       requested_at: "2026-03-14T13:09:00Z",
       status: "completed",
     });
+    authApiMocks.deleteUploadSession.mockResolvedValue(undefined);
     authApiMocks.getExportDownloadUrl.mockReturnValue("/exports/export-existing");
   });
 
@@ -180,6 +246,7 @@ describe("DataControlsShell", () => {
   it("shows an account-bound error when no profile exists yet", async () => {
     authApiMocks.getSession.mockResolvedValue({
       authenticated: true,
+      beta_access: "granted",
       user: {
         email: "person@example.com",
         preferred_language: "en-US",
@@ -198,5 +265,39 @@ describe("DataControlsShell", () => {
     );
     expect(screen.getByRole("button", { name: "Export my data" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Request deletion" })).toBeDisabled();
+  });
+
+  it("renders upload history and lets the user remove a stored upload record", async () => {
+    const user = userEvent.setup();
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+    render(<DataControlsShell />);
+
+    await screen.findByText("ECG uploads");
+
+    expect(screen.getByText(/Standard 10-second rhythm strip/)).toBeInTheDocument();
+    expect(screen.getByText(/25 cm shared distance/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open result" })).toHaveAttribute(
+      "href",
+      "/contribute/reveal?session=upload-completed",
+    );
+    expect(screen.getByRole("link", { name: "Retry with new upload" })).toHaveAttribute(
+      "href",
+      "/contribute/upload",
+    );
+
+    await user.click(screen.getAllByRole("button", { name: "Delete record" })[0]);
+
+    await waitFor(() =>
+      expect(authApiMocks.deleteUploadSession).toHaveBeenCalledWith("upload-completed"),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Upload record removed. Its retained session metadata and derived tile record are no longer stored.",
+      ),
+    );
+
+    confirmSpy.mockRestore();
+    expect(screen.queryByRole("link", { name: "Open result" })).not.toBeInTheDocument();
   });
 });

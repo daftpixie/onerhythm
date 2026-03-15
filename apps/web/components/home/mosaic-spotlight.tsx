@@ -39,20 +39,29 @@ export function MosaicSpotlight() {
           </h2>
           <p className="max-w-lg text-base leading-8 text-text-secondary">
             When you contribute your ECG to OneRhythm, your rhythm becomes part
-            of something larger — a collective artwork built from individual
+            of something larger - a collective artwork built from individual
             heartbeats. The mosaic grows as the community grows. It is visible
-            proof that isolation is a lie.
+            proof that the isolation need not exist..
           </p>
           <p className="max-w-lg text-sm leading-7 text-text-tertiary">
             Your ECG is de-identified and anonymized before it ever touches the
-            mosaic. Privacy isn&rsquo;t a feature — it&rsquo;s the foundation.
+            mosaic. Privacy isn&rsquo;t a feature - it&rsquo;s the foundation.
+            Every artistic trace adds to our collective rhythm distance.
           </p>
-          <Link
-            className="action-link action-link-primary inline-flex px-6 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-            href="/onboarding"
-          >
-            Add Your Heartbeat
-          </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              className="action-link action-link-primary inline-flex px-6 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              href="/contribute"
+            >
+              Add Your Heartbeat
+            </Link>
+            <Link
+              className="action-link action-link-quiet inline-flex px-6 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              href="/mosaic"
+            >
+              Explore the Mosaic
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

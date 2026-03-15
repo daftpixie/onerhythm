@@ -87,7 +87,7 @@ export function TrendlineSection() {
                 title="Anxiety Prevalence in Arrhythmia Patients"
                 data={anxietyData}
                 color="#FF2D55"
-                caption="Sources: Multiple peer-reviewed studies 2005-2025. Not a single continuous cohort — compiled prevalence rates from published research to illustrate directional trend."
+                caption="Sources: Multiple peer-reviewed studies 2005-2025. Not a single continuous cohort - compiled prevalence rates from published research to illustrate directional trend."
               />
             ) : (
               <div aria-hidden="true" className="h-[18.5rem] rounded-xl border border-token bg-cosmos" />

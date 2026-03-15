@@ -1,6 +1,6 @@
 export default function AppLoading() {
   return (
-    <main aria-busy="true" aria-label="Loading page content" className="mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-6 py-8 sm:px-10 sm:py-10 lg:px-12">
+    <main aria-busy="true" aria-label="Loading page content" className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-8 sm:px-10 sm:py-10 lg:px-12">
       <section aria-hidden="true" className="page-header rounded-[2rem] sm:py-10 lg:px-10">
         <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div className="space-y-4">

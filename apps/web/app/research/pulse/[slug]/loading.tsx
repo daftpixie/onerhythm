@@ -2,7 +2,7 @@ import { Card, MedicalDisclaimer } from "@onerhythm/ui";
 
 export default function ResearchPulseDetailLoading() {
   return (
-    <main aria-busy="true" aria-label="Loading research summary" className="page-shell mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
+    <main aria-busy="true" aria-label="Loading research summary" className="page-shell mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
       <header className="page-header">
         <p className="page-eyebrow">Research Pulse</p>
         <div className="mt-4 h-20 w-4/5 rounded-[2rem] bg-[color:color-mix(in_srgb,var(--color-cosmos)_92%,transparent)]" />

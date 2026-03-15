@@ -18,7 +18,7 @@ export default function LearnPage() {
   const supportPages = listContentByKind("support_resource");
 
   return (
-    <main className="page-shell mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
+    <main className="page-shell mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
       <section className="page-header">
         <p className="page-eyebrow">Educational hub</p>
         <h1 className="page-title mt-4">

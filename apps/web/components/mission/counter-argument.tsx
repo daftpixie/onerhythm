@@ -40,7 +40,7 @@ export function CounterArgument() {
           </p>
 
           <p className="text-base leading-[1.7] text-text-secondary">
-            OneRhythm exists to help close that gap — not by replacing clinical
+            OneRhythm exists to help close that gap - not by replacing clinical
             care, but by giving patients the tools to see the research,
             understand it, connect with each other, and walk into their next
             appointment ready to have a fuller conversation with their care

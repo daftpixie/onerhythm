@@ -90,7 +90,7 @@ export function CrisisDashboard() {
         >
           <p className="max-w-3xl text-base italic leading-7 text-text-secondary">
             &ldquo;The psychological consequences of arrhythmia are not
-            quality-of-life footnotes. They are killing people.&rdquo;
+            quality-of-life footnotes. People are really struggling.&rdquo;
           </p>
         </motion.blockquote>
       </div>

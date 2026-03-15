@@ -56,6 +56,21 @@ vi.mock("next/link", () => ({
   },
 }));
 
+vi.mock("next/image", () => ({
+  default: ({
+    alt,
+    priority: _priority,
+    src,
+    ...props
+  }: React.ImgHTMLAttributes<HTMLImageElement> & {
+    priority?: boolean;
+    src?: unknown;
+  }) => {
+    const resolvedSrc = typeof src === "string" ? src : "";
+    return <img alt={alt} src={resolvedSrc} {...props} />;
+  },
+}));
+
 vi.mock("next/navigation", () => ({
   notFound: () => navigationMocks.notFound(),
   redirect: (url: string) => navigationMocks.redirect(url),

@@ -30,6 +30,9 @@ Preferred usage:
 - `onerhythm-full-white.svg`
   - default wordmark for dark product surfaces
   - public header, footer, and hero brand moments
+- `onerhythm-full-gradient-800.png`
+  - gradient wordmark for branded dark surfaces when a stronger signature moment is desired
+  - currently used in the public header and footer
 - `onerhythm-full-dark.svg`
   - use only on light backgrounds
 - `onerhythm-mark-white.svg`

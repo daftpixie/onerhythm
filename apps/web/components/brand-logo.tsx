@@ -6,6 +6,7 @@ type BrandLogoProps = {
   priority?: boolean;
   size?: "header" | "hero" | "footer";
   variant?: "lockup" | "wordmark" | "mark";
+  wordmarkTone?: "white" | "gradient";
   className?: string;
 };
 
@@ -29,9 +30,14 @@ export function BrandLogo({
   priority = false,
   size = "header",
   variant = "lockup",
+  wordmarkTone = "white",
   className = "",
 }: BrandLogoProps) {
   const dimensions = sizeMap[size];
+  const wordmarkSrc =
+    wordmarkTone === "gradient"
+      ? "/brand/logos/onerhythm-full-gradient-800.png"
+      : "/brand/logos/onerhythm-full-white.svg";
 
   return (
     <Link
@@ -69,7 +75,7 @@ export function BrandLogo({
           }
           height={dimensions.wordmark.height}
           priority={priority}
-          src="/brand/logos/onerhythm-full-white.svg"
+          src={wordmarkSrc}
           width={dimensions.wordmark.width}
         />
       )}

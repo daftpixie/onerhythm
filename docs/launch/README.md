@@ -5,6 +5,7 @@ This directory holds the pre-launch review gates for public-facing OneRhythm con
 Use these checklists before publishing or materially revising:
 
 - [Content QA checklist](content-qa-checklist.md)
+- [Railway + Supabase first deployment](railway-supabase-first-deployment.md)
 - [Source verification checklist](source-verification-checklist.md)
 - [Story consent checklist](story-consent-checklist.md)
 - [Public copy review checklist](public-copy-review-checklist.md)

@@ -66,6 +66,8 @@ ResearchPulseThemeKey = Literal[
     "mental_health",
     "innovation",
 ]
+BetaAccessState = Literal["not_required", "granted", "pending"]
+WaitlistJoinStatus = Literal["joined", "already_joined"]
 
 
 class StrictModel(BaseModel):
@@ -248,8 +250,29 @@ class UploadSessionStartRequest(StrictModel):
     consent_record_ids: list[str] = Field(default_factory=list)
 
 
+class TileAttributionModel(StrictModel):
+    contributor_name: str | None = Field(default=None, max_length=32)
+    contributor_location: str | None = Field(default=None, max_length=64)
+
+
+class TileWaveformPointModel(StrictModel):
+    x: float = Field(ge=0, le=1)
+    y: float = Field(ge=0, le=1)
+
+
+class TileWaveformBandModel(StrictModel):
+    points: list[TileWaveformPointModel] = Field(default_factory=list)
+    emphasis: float = Field(ge=0, le=1)
+
+
+class TileWaveformSignatureModel(StrictModel):
+    source: str = Field(min_length=1)
+    bands: list[TileWaveformBandModel] = Field(default_factory=list)
+
+
 class UploadSessionProcessRequest(StrictModel):
     processing_pipeline_version: str
+    tile_attribution: TileAttributionModel | None = None
 
 
 class AnalyticsEventCreateRequest(StrictModel):
@@ -294,6 +317,17 @@ class SignInRequest(StrictModel):
     password: str = Field(min_length=12)
 
 
+class BetaWaitlistSignupRequest(StrictModel):
+    email: str = Field(min_length=3, max_length=320)
+    source: str = Field(default="landing-page", min_length=1, max_length=64)
+    website: str | None = Field(default=None, max_length=255)
+
+
+class BetaWaitlistSignupResponse(StrictModel):
+    status: WaitlistJoinStatus
+    message: str
+
+
 class SessionUserResponse(StrictModel):
     user_id: str
     email: str
@@ -305,6 +339,7 @@ class SessionUserResponse(StrictModel):
 class SessionResponse(StrictModel):
     authenticated: bool
     user: SessionUserResponse | None = None
+    beta_access: BetaAccessState = "not_required"
 
 
 class AuthSessionRecordResponse(StrictModel):
@@ -340,6 +375,9 @@ class UploadSessionResponse(StrictModel):
     started_at: datetime
     completed_at: datetime | None = None
     resulting_tile_id: str | None = None
+    rhythm_distance_cm: float | None = None
+    result_tile: MosaicTileResponse | None = None
+    contribution_distance: ContributionDistanceSummaryModel | None = None
     failure_reason: str | None = None
     retryable: bool
     status_detail: str
@@ -352,6 +390,8 @@ class MosaicTileVisualStyleModel(StrictModel):
     opacity: float = Field(ge=0, le=1)
     texture_kind: Literal["smooth", "grain", "ripple"]
     glow_level: Literal["none", "subtle", "bright"]
+    waveform_signature: TileWaveformSignatureModel | None = None
+    attribution: TileAttributionModel | None = None
 
 
 class MosaicTileResponse(StrictModel):
@@ -363,6 +403,18 @@ class MosaicTileResponse(StrictModel):
     tile_version: int = Field(ge=1)
     render_version: str = Field(min_length=1)
     visual_style: MosaicTileVisualStyleModel
+    rhythm_distance_cm: float | None = None
+
+
+class ContributionDistanceSummaryModel(StrictModel):
+    distance_cm: float = Field(ge=0)
+    policy_id: str = Field(min_length=1)
+    label: str = Field(min_length=1)
+    rationale: str = Field(min_length=1)
+    provenance: str = Field(min_length=1)
+    inferred_layout: str = Field(min_length=1)
+    paper_speed_mm_per_sec: int | None = Field(default=None, ge=1)
+    fallback_used: bool
 
 
 class MosaicStatsResponse(StrictModel):
@@ -372,6 +424,33 @@ class MosaicStatsResponse(StrictModel):
     has_more_public_tiles: bool = False
     visible_condition_categories: list[DiagnosisCode] = Field(default_factory=list)
     latest_contribution_at: datetime | None = None
+
+
+class MilestoneDefinitionModel(StrictModel):
+    key: str
+    label: str
+    distance_km: float
+    description: str
+
+
+class RhythmDistanceStatsResponse(StrictModel):
+    total_distance_km: float = Field(ge=0)
+    total_contributions: int = Field(ge=0)
+    earth_loops: float = Field(ge=0)
+    current_milestone: MilestoneDefinitionModel | None = None
+    next_milestone: MilestoneDefinitionModel | None = None
+    progress_toward_next: float = Field(ge=0, le=1)
+    last_contribution_at: datetime | None = None
+
+
+class AchievedMilestoneResponse(StrictModel):
+    milestone_key: str
+    label: str
+    distance_km: float
+    description: str
+    reached_at: str
+    distance_at_crossing_km: float
+    contribution_count: int = Field(ge=0)
 
 
 class EducationalResearchHighlightModel(StrictModel):

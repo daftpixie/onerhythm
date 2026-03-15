@@ -15,13 +15,17 @@ def build_settings(*, env_name: str = "production") -> AppSettings:
         auth_session_duration_days=14,
         auth_max_active_sessions=5,
         auth_cookie_secure=(env_name == "production"),
+        auth_cookie_domain=None,
         auth_cookie_samesite="lax",
+        beta_mode="open",
         request_id_header="X-Request-ID",
         error_reporting_backend="log",
         public_rate_limit_requests=120,
         public_rate_limit_window_seconds=60,
         auth_rate_limit_requests=10,
         auth_rate_limit_window_seconds=60,
+        waitlist_rate_limit_requests=5,
+        waitlist_rate_limit_window_seconds=3600,
         upload_rate_limit_requests=12,
         upload_rate_limit_window_seconds=300,
         education_rate_limit_requests=30,
@@ -68,4 +72,3 @@ class ResponseSecurityTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

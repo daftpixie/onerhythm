@@ -61,8 +61,7 @@ export function StatsSection() {
           />
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-7 text-text-secondary">
-          Peer-reviewed research. Population-level data. A crisis hiding in
-          plain sight.
+          Peer-reviewed research. Population-level data. An invisible crisis.
         </p>
       </motion.div>
 
@@ -89,7 +88,7 @@ export function StatsSection() {
       >
         <p className="max-w-3xl text-base italic leading-7 text-text-secondary">
           &ldquo;The psychological consequences of arrhythmia are not
-          quality-of-life footnotes. They are killing people.&rdquo;
+          quality-of-life footnotes. People are really struggling.&rdquo;
         </p>
       </motion.blockquote>
     </section>

@@ -13,6 +13,7 @@ import {
   Select,
 } from "@onerhythm/ui";
 import { SessionActions } from "../../components/session-actions";
+import { PublicSiteFooter } from "../../components/public-site-footer";
 import { createConsent, createProfile } from "../../lib/auth-api";
 import type {
   ConsentType,
@@ -323,65 +324,66 @@ export function OnboardingShell() {
   }
 
   return (
-    <main className="page-shell mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
-      <header className="page-header">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-4">
-            <p className="page-eyebrow">Onboarding</p>
-            <h1 className="page-title max-w-3xl">
-              Begin with clarity, consent, and only the information we need.
-            </h1>
-            <p className="page-intro max-w-2xl">
-              The first pass keeps the tone warm and the collection modest.
-              Every step should feel measured, explicit, and respectful.
-            </p>
+    <>
+      <main className="page-shell mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10 sm:px-10 lg:px-12">
+        <header className="page-header">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-4">
+              <p className="page-eyebrow">Onboarding</p>
+              <h1 className="page-title max-w-3xl">
+                Begin with clarity, consent, and only the information we need.
+              </h1>
+              <p className="page-intro max-w-2xl">
+                The first pass keeps the tone warm and the collection modest.
+                Every step should feel measured, explicit, and respectful.
+              </p>
+            </div>
+            <SessionActions />
           </div>
-          <SessionActions />
-        </div>
-      </header>
+        </header>
 
-      <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
-        <Card className="surface-panel-accent">
-          <p className="font-mono text-xs uppercase tracking-[0.22em] text-text-tertiary">
-            Progress
-          </p>
-          <ol className="mt-5 space-y-3">
-            {steps.map((step, index) => {
-              const isCurrent = index === stepIndex;
-              const isComplete = index < stepIndex || submitted;
+        <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
+          <Card className="surface-panel-accent">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-text-tertiary">
+              Progress
+            </p>
+            <ol className="mt-5 space-y-3">
+              {steps.map((step, index) => {
+                const isCurrent = index === stepIndex;
+                const isComplete = index < stepIndex || submitted;
 
-              return (
-                <li
-                  key={step.id}
-                  className={[
-                    "rounded-lg border p-4",
-                    isCurrent
-                      ? "border-signal surface-3 shadow-signal"
-                      : "border-token surface-2",
-                  ].join(" ")}
-                >
-                  <p className="font-mono text-xs uppercase tracking-[0.18em] text-text-tertiary">
-                    Step {index + 1}
-                  </p>
-                  <p className="mt-2 text-base font-medium text-text-primary">
-                    {step.label}
-                  </p>
-                  <p className="mt-1 text-sm text-text-secondary">
-                    {isComplete
-                      ? "Ready to review or revisit."
-                      : isCurrent
-                        ? "Current step."
-                        : "Available next."}
-                  </p>
-                </li>
-              );
-            })}
-          </ol>
+                return (
+                  <li
+                    key={step.id}
+                    className={[
+                      "rounded-lg border p-4",
+                      isCurrent
+                        ? "border-signal surface-3 shadow-signal"
+                        : "border-token surface-2",
+                    ].join(" ")}
+                  >
+                    <p className="font-mono text-xs uppercase tracking-[0.18em] text-text-tertiary">
+                      Step {index + 1}
+                    </p>
+                    <p className="mt-2 text-base font-medium text-text-primary">
+                      {step.label}
+                    </p>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      {isComplete
+                        ? "Ready to review or revisit."
+                        : isCurrent
+                          ? "Current step."
+                          : "Available next."}
+                    </p>
+                  </li>
+                );
+              })}
+            </ol>
 
-          <MedicalDisclaimer className="mt-6" />
-        </Card>
+            <MedicalDisclaimer className="mt-6" />
+          </Card>
 
-        <Card className="min-h-[32rem] surface-panel-accent">
+          <Card className="min-h-[32rem] surface-panel-accent">
           {!submitted && currentStep.id === "welcome" ? (
             <section className="space-y-6">
               <p className="font-mono text-xs uppercase tracking-[0.22em] text-text-tertiary">
@@ -433,8 +435,6 @@ export function OnboardingShell() {
                   should be based on.
                 </p>
               </div>
-
-              <MedicalDisclaimer />
 
               <div className="space-y-6">
                 <div className="grid gap-5 md:grid-cols-2">
@@ -661,8 +661,6 @@ export function OnboardingShell() {
                 </p>
               </div>
 
-              <MedicalDisclaimer />
-
               <fieldset className="space-y-3">
                 <legend className="text-sm font-medium text-text-primary">
                   May we include your future ECG contribution in the public mosaic?
@@ -840,8 +838,6 @@ export function OnboardingShell() {
                   </div>
                 </dl>
               </Card>
-
-              <MedicalDisclaimer />
             </section>
           ) : null}
 
@@ -892,8 +888,10 @@ export function OnboardingShell() {
               </div>
             )}
           </div>
-        </Card>
-      </div>
-    </main>
+          </Card>
+        </div>
+      </main>
+      <PublicSiteFooter className="mt-10" />
+    </>
   );
 }

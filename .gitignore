@@ -16,3 +16,4 @@ apps/api/dev.db-journal
 apps/api/data_exports/
 __pycache__/
 *.pyc
+*:Zone.Identifier

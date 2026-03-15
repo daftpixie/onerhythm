@@ -14,6 +14,7 @@
     "migrate": "./.venv/bin/alembic upgrade head",
     "migrate:status": "./.venv/bin/alembic current",
     "setup": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -e .",
+    "start": "./.venv/bin/python -m uvicorn app.main:app --app-dir . --host 0.0.0.0 --port ${PORT:-8000}",
     "summarize:research-pulse": "./.venv/bin/python -m app.scripts.summarize_research_pulse",
     "test": "./.venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
     "typecheck": "./.venv/bin/python -m compileall -q app"

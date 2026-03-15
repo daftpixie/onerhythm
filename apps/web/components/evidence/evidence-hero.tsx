@@ -31,8 +31,7 @@ export function EvidenceHero() {
             OneRhythm is built on a public argument: the psychological toll of
             arrhythmia is measurable, widespread, and still waiting to be fully
             integrated into routine clinical care. This page surfaces the
-            numbers, the provenance model, and the reviewed translations that
-            carry that case into plain language.
+            numbers, parses the data, and translates the evidence into plain language.
           </p>
         </motion.div>
       </div>

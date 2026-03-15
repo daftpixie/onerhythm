@@ -2,6 +2,10 @@
 
 This document defines the current deployment path for the public MVP.
 
+For the first real Railway + Supabase stack, use the more specific launch note:
+
+- [Railway + Supabase first deployment](../launch/railway-supabase-first-deployment.md)
+
 ## Principles
 
 - Keep deployment steps explicit and reviewable.
@@ -71,6 +75,7 @@ Environment variables for `staging` and `production`:
 - `ERROR_REPORTING_BACKEND`
 - `MAX_UPLOAD_BYTES`
 - `MAX_PROCESSING_SECONDS`
+- `MAX_PDF_PROCESSING_SECONDS`
 - `MAX_PIPELINE_ATTEMPTS`
 - `MAX_WORKSPACE_AGE_SECONDS`
 - `PUBLIC_RATE_LIMIT_REQUESTS`

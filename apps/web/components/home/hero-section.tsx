@@ -8,9 +8,10 @@ import { HeartMosaicSVG } from "./heart-mosaic-svg";
 
 type HeroSectionProps = {
   tileCount: number;
+  rhythmDistanceKm?: number;
 };
 
-export function HeroSection({ tileCount }: HeroSectionProps) {
+export function HeroSection({ tileCount, rhythmDistanceKm }: HeroSectionProps) {
   return (
     <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6">
       {/* Deep void radial background */}
@@ -44,9 +45,16 @@ export function HeroSection({ tileCount }: HeroSectionProps) {
           heartbeats. One rhythm.
         </p>
         <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-text-secondary">
-          A community-powered mosaic where every heartbeat — no matter how
-          irregular — belongs.
+          A community-powered mosaic where every heartbeat - no matter how
+          irregular - belongs.
         </p>
+        {rhythmDistanceKm != null && rhythmDistanceKm > 0 && (
+          <p className="mt-3 font-mono text-sm text-signal">
+            Our shared rhythm has traveled{" "}
+            {rhythmDistanceKm.toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
+            km
+          </p>
+        )}
       </motion.div>
 
       {/* CTAs */}

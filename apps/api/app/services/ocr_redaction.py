@@ -16,6 +16,60 @@ import pypdfium2 as pdfium
 OCR_CONFIDENCE_THRESHOLD = 0.55
 OCR_REDACTION_PADDING_PX = 8
 PDF_RENDER_SCALE = 2.0
+LAYOUT_HEADER_CUTOFF_RATIO = 0.11
+LAYOUT_FOOTER_CUTOFF_RATIO = 0.9
+LAYOUT_LABEL_MAX_WIDTH_RATIO = 0.12
+LAYOUT_LABEL_MAX_HEIGHT_RATIO = 0.075
+LAYOUT_MIN_GEOMETRY_REGIONS = 8
+LAYOUT_MIN_X_CLUSTERS = 3
+LAYOUT_MIN_Y_CLUSTERS = 4
+LONG_STRIP_MIN_LOWER_REGIONS = 2
+
+ECG_LEAD_LABELS = {
+    "i",
+    "ii",
+    "iii",
+    "avr",
+    "avl",
+    "avf",
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "v6",
+}
+MIN_STANDARD_TWELVE_LEAD_LABELS = 10
+NORMALIZED_LEAD_LABELS = {
+    "i": "i",
+    "leadi": "i",
+    "ii": "ii",
+    "leadii": "ii",
+    "iii": "iii",
+    "leadiii": "iii",
+    "avr": "avr",
+    "leadavr": "avr",
+    "avl": "avl",
+    "leadavl": "avl",
+    "avf": "avf",
+    "leadavf": "avf",
+    "v1": "v1",
+    "leadv1": "v1",
+    "v2": "v2",
+    "leadv2": "v2",
+    "v3": "v3",
+    "leadv3": "v3",
+    "v4": "v4",
+    "leadv4": "v4",
+    "v5": "v5",
+    "leadv5": "v5",
+    "v6": "v6",
+    "leadv6": "v6",
+}
+PAPER_SPEED_PATTERNS = {
+    25: re.compile(r"\b25\s*mm\s*/?\s*s(?:ec)?\b", re.IGNORECASE),
+    50: re.compile(r"\b50\s*mm\s*/?\s*s(?:ec)?\b", re.IGNORECASE),
+}
 
 IDENTIFIER_KEYWORDS = (
     "account",
@@ -160,6 +214,10 @@ class LocalOCRRedactionService:
                 0,
             )
             report["confidence_summary"] = _confidence_summary(accepted_detections)
+            report["document_layout"] = _summarize_ecg_document_layout(
+                accepted_detections,
+                image_size=image.size,
+            )
 
             redacted_image = image.copy()
             redaction_report = _redact_detected_regions(redacted_image, accepted_detections)
@@ -321,6 +379,188 @@ def _classify_signals(text: str) -> list[str]:
     if LONG_NUMERIC_PATTERN.search(normalized):
         signals.append("numeric_identifier_like_text")
     return signals
+
+
+def _summarize_ecg_document_layout(
+    detections: list[OCRTextDetection],
+    *,
+    image_size: tuple[int, int],
+) -> dict:
+    lead_counts: dict[str, int] = {}
+    paper_speed_mm_per_sec: int | None = None
+
+    for detection in detections:
+        normalized_text = _normalize_detection_text(detection.text)
+        if paper_speed_mm_per_sec is None:
+            for candidate_speed, pattern in PAPER_SPEED_PATTERNS.items():
+                if pattern.search(normalized_text):
+                    paper_speed_mm_per_sec = candidate_speed
+                    break
+
+        lead_label = _match_ecg_lead_label(normalized_text)
+        if lead_label is not None:
+            lead_counts[lead_label] = lead_counts.get(lead_label, 0) + 1
+
+    unique_lead_label_count = len(lead_counts)
+    repeated_lead_label_count = sum(1 for count in lead_counts.values() if count > 1)
+    geometry_hint = _summarize_layout_geometry_hint(
+        detections,
+        image_size=image_size,
+        lead_label_count=unique_lead_label_count,
+        paper_speed_mm_per_sec=paper_speed_mm_per_sec,
+    )
+    standard_twelve_lead_detected = (
+        unique_lead_label_count >= MIN_STANDARD_TWELVE_LEAD_LABELS
+        or geometry_hint["supports_standard_twelve_lead"]
+    )
+    long_rhythm_strip_detected = (
+        lead_counts.get("ii", 0) >= 2
+        or geometry_hint["supports_long_rhythm_strip"]
+    )
+
+    if unique_lead_label_count >= MIN_STANDARD_TWELVE_LEAD_LABELS:
+        layout_detection_basis = "ocr_labels"
+    elif geometry_hint["supports_standard_twelve_lead"]:
+        layout_detection_basis = (
+            "hybrid_geometry_plus_ocr"
+            if unique_lead_label_count > 0
+            else "geometry_hint"
+        )
+    elif unique_lead_label_count == 1:
+        layout_detection_basis = "single_label_hint"
+    else:
+        layout_detection_basis = "insufficient_signal"
+
+    if standard_twelve_lead_detected and long_rhythm_strip_detected:
+        layout_kind = "standard_12_lead_with_long_strip"
+        layout_confidence = (
+            "high" if layout_detection_basis == "ocr_labels" else "medium"
+        )
+    elif unique_lead_label_count == 1:
+        layout_kind = "single_lead_segment"
+        layout_confidence = "medium" if paper_speed_mm_per_sec else "low"
+    elif standard_twelve_lead_detected:
+        layout_kind = "standard_12_lead"
+        layout_confidence = (
+            "medium" if layout_detection_basis == "ocr_labels" else "low"
+        )
+    else:
+        layout_kind = "unknown"
+        layout_confidence = "low"
+
+    return {
+        "layout_kind": layout_kind,
+        "layout_confidence": layout_confidence,
+        "paper_speed_mm_per_sec": paper_speed_mm_per_sec,
+        "detected_lead_label_count": unique_lead_label_count,
+        "repeated_lead_label_count": repeated_lead_label_count,
+        "standard_twelve_lead_detected": standard_twelve_lead_detected,
+        "long_rhythm_strip_detected": long_rhythm_strip_detected,
+        "layout_detection_basis": layout_detection_basis,
+        "geometry_hint": geometry_hint,
+    }
+
+
+def _summarize_layout_geometry_hint(
+    detections: list[OCRTextDetection],
+    *,
+    image_size: tuple[int, int],
+    lead_label_count: int,
+    paper_speed_mm_per_sec: int | None,
+) -> dict:
+    image_width, image_height = image_size
+    if image_width <= 0 or image_height <= 0:
+        return {
+            "candidate_region_count": 0,
+            "x_cluster_count": 0,
+            "y_cluster_count": 0,
+            "lower_band_region_count": 0,
+            "supports_standard_twelve_lead": False,
+            "supports_long_rhythm_strip": False,
+        }
+
+    header_cutoff = image_height * LAYOUT_HEADER_CUTOFF_RATIO
+    footer_cutoff = image_height * LAYOUT_FOOTER_CUTOFF_RATIO
+    max_label_width = image_width * LAYOUT_LABEL_MAX_WIDTH_RATIO
+    max_label_height = image_height * LAYOUT_LABEL_MAX_HEIGHT_RATIO
+    lower_band_cutoff = image_height * 0.34
+
+    candidate_x_centers: list[float] = []
+    candidate_y_centers: list[float] = []
+    lower_band_region_count = 0
+
+    for detection in detections:
+        left, top, right, bottom = _polygon_box(detection.bounding_polygon)
+        width = right - left
+        height = bottom - top
+        center_x = (left + right) / 2
+        center_y = (top + bottom) / 2
+
+        if top < header_cutoff or bottom > footer_cutoff:
+            continue
+        if width > max_label_width or height > max_label_height:
+            continue
+
+        candidate_x_centers.append(center_x)
+        candidate_y_centers.append(center_y)
+        if center_y >= lower_band_cutoff:
+            lower_band_region_count += 1
+
+    x_clusters = _cluster_positions(
+        candidate_x_centers,
+        threshold=max(image_width * 0.05, 20.0),
+    )
+    y_clusters = _cluster_positions(
+        candidate_y_centers,
+        threshold=max(image_height * 0.012, 10.0),
+    )
+    supports_standard_twelve_lead = (
+        paper_speed_mm_per_sec in {25, 50}
+        and lead_label_count >= 1
+        and len(candidate_x_centers) >= LAYOUT_MIN_GEOMETRY_REGIONS
+        and len(x_clusters) >= LAYOUT_MIN_X_CLUSTERS
+        and len(y_clusters) >= LAYOUT_MIN_Y_CLUSTERS
+    )
+    supports_long_rhythm_strip = (
+        supports_standard_twelve_lead
+        and lower_band_region_count >= LONG_STRIP_MIN_LOWER_REGIONS
+    )
+
+    return {
+        "candidate_region_count": len(candidate_x_centers),
+        "x_cluster_count": len(x_clusters),
+        "y_cluster_count": len(y_clusters),
+        "lower_band_region_count": lower_band_region_count,
+        "supports_standard_twelve_lead": supports_standard_twelve_lead,
+        "supports_long_rhythm_strip": supports_long_rhythm_strip,
+    }
+
+
+def _polygon_box(
+    bounding_polygon: tuple[tuple[int, int], ...],
+) -> tuple[int, int, int, int]:
+    xs = [point[0] for point in bounding_polygon]
+    ys = [point[1] for point in bounding_polygon]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def _cluster_positions(values: list[float], *, threshold: float) -> list[list[float]]:
+    clusters: list[list[float]] = []
+    for value in sorted(values):
+        if not clusters or abs(value - clusters[-1][-1]) > threshold:
+            clusters.append([value])
+            continue
+        clusters[-1].append(value)
+    return clusters
+
+
+def _normalize_detection_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip().lower())
+
+
+def _match_ecg_lead_label(normalized_text: str) -> str | None:
+    collapsed = re.sub(r"[^a-z0-9]", "", normalized_text)
+    return NORMALIZED_LEAD_LABELS.get(collapsed)
 
 
 @lru_cache(maxsize=1)

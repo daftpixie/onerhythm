@@ -20,10 +20,16 @@ Validation is strict:
 
 - `MAX_UPLOAD_BYTES`
 - `MAX_PROCESSING_SECONDS`
+- `MAX_PDF_PROCESSING_SECONDS`
 - `MAX_PIPELINE_ATTEMPTS`
 - `MAX_WORKSPACE_AGE_SECONDS`
 
 These are environment-configurable and listed in [.env.example](../../.env.example).
+
+`MAX_PROCESSING_SECONDS` is the default budget for raster uploads and generic
+pipeline work. `MAX_PDF_PROCESSING_SECONDS` extends the budget for single-page
+PDF uploads, which can spend materially longer in CPU OCR/redaction on local
+demo hardware.
 
 ## Processing stages
 
@@ -63,9 +69,10 @@ completed, and where cleanup or failure occurred.
 4. Strip source metadata.
 5. Run the explicit OCR/redaction hook.
 6. Run a destructive artistic transform on the redacted artifact.
-7. Derive visual tile metadata from the transformed artifact only.
-8. Destroy the temporary workspace.
-9. Persist only upload-session metadata, processing-job metadata, audit events, and derived tile metadata.
+7. Derive visual tile metadata from the transformed artifact, plus a low-fidelity waveform signature from the redacted artifact.
+8. Map the upload to the documented contribution-distance policy using safe OCR/layout summary metadata.
+9. Destroy the temporary workspace.
+10. Persist only upload-session metadata, processing-job metadata, audit events, and derived tile metadata.
 
 ## Privacy boundary
 
@@ -98,16 +105,26 @@ Post-redaction anonymization now occurs in the `artistic_transform` stage:
 - the transformed artifact is designed for artistic metadata derivation only and does not support clinical waveform interpretation
 - the transformed artifact is written only inside the temporary workspace and is destroyed during cleanup
 - `anonymization_summary.artistic_transform` records the transform method, output dimensions, checksum, and destructive-step list
-- `anonymization_summary.raw_to_derived_handoff` records that tile derivation reads the transformed artifact, not the raw or merely redacted upload
+- `anonymization_summary.raw_to_derived_handoff` records that tile derivation reads the transformed artifact and an ephemeral redacted artifact, never the raw upload
 
-Tile visual derivation now occurs from the transformed artifact only:
+Tile visual derivation now occurs from the transformed artifact plus a low-fidelity redacted-source signature:
 
 - the stored `visual_style` is mapped from abstract artifact statistics such as luminance, contrast, gradient energy, and symmetry
+- when available, the stored `visual_style.waveform_signature` contains only a coarse, stylized point profile derived from the redacted artifact; it is intended for branded rendering, not waveform interpretation
+- optional `visual_style.attribution` values are user-supplied session labels only; they are never inferred from the ECG and are included only when the contributor opts in
 - the mapping is deterministic and versioned, with explicit rule IDs for color,
   texture, glow, and opacity selection
 - `mosaic_tiles.render_version` identifies the transform-based renderer version used to derive the tile metadata
 - `mosaic_tiles.tile_version` identifies the public metadata contract version for the tile record
 - the public mosaic continues to expose metadata only; no transformed image artifact is published
+
+Contribution distance policy is explicit and non-diagnostic:
+
+- standard 3x4 twelve-lead page with a long rhythm strip counts as `25 cm`
+- standard single-lead segment counts as `6.25 cm`
+- uncertain timing/layout falls back to a documented `1 Rhythm Unit` value of `6.25 cm`
+- the policy is derived from safe OCR/layout summary metadata, including OCR label recall and conservative page-geometry hints, not from artistic-tile pixels and not from clinical waveform interpretation
+- upload-session responses may include the safe policy summary so the reveal UI can explain why a number was chosen
 
 ## Failure behavior
 
@@ -131,6 +148,13 @@ Recoverable failures return structured guidance in the upload-session response:
 - `recommended_action`
 
 The same upload session may be retried only while under the configured pipeline attempt limit.
+
+## Dashboard management
+
+- authenticated users can list only their own upload sessions in the account dashboard
+- dashboard retry actions always create a new upload session and require a fresh file selection
+- the original raw ECG is never replayed from storage because it is destroyed after processing
+- deleting an upload session removes the retained session metadata, processing-job metadata, and any derived tile metadata linked to that contribution
 
 ## Cleanup guarantees
 

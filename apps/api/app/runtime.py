@@ -46,13 +46,17 @@ class AppSettings:
     auth_session_duration_days: int
     auth_max_active_sessions: int
     auth_cookie_secure: bool
+    auth_cookie_domain: str | None
     auth_cookie_samesite: str
+    beta_mode: str
     request_id_header: str
     error_reporting_backend: str
     public_rate_limit_requests: int
     public_rate_limit_window_seconds: int
     auth_rate_limit_requests: int
     auth_rate_limit_window_seconds: int
+    waitlist_rate_limit_requests: int
+    waitlist_rate_limit_window_seconds: int
     upload_rate_limit_requests: int
     upload_rate_limit_window_seconds: int
     education_rate_limit_requests: int
@@ -67,6 +71,10 @@ class AppSettings:
             raise SettingsValidationError("DATABASE_URL must not be empty.")
         if self.auth_cookie_samesite not in {"lax", "strict", "none"}:
             raise SettingsValidationError("AUTH_COOKIE_SAMESITE must be lax, strict, or none.")
+        if self.auth_cookie_domain and (
+            "://" in self.auth_cookie_domain or "/" in self.auth_cookie_domain
+        ):
+            raise SettingsValidationError("AUTH_COOKIE_DOMAIN must be a bare domain value.")
         if self.env_name == "production" and not self.auth_cookie_secure:
             raise SettingsValidationError(
                 "AUTH_COOKIE_SECURE must be true in production."
@@ -77,6 +85,8 @@ class AppSettings:
             )
         if self.log_level.upper() not in {"DEBUG", "INFO", "WARNING", "ERROR"}:
             raise SettingsValidationError("LOG_LEVEL must be DEBUG, INFO, WARNING, or ERROR.")
+        if self.beta_mode not in {"open", "invite_only"}:
+            raise SettingsValidationError("BETA_MODE must be open or invite_only.")
         if self.error_reporting_backend not in {"log"}:
             raise SettingsValidationError(
                 "ERROR_REPORTING_BACKEND currently supports only 'log'."
@@ -104,7 +114,9 @@ def get_settings() -> AppSettings:
             minimum=1,
         ),
         auth_cookie_secure=_parse_bool("AUTH_COOKIE_SECURE", False),
+        auth_cookie_domain=(os.getenv("AUTH_COOKIE_DOMAIN") or "").strip() or None,
         auth_cookie_samesite=os.getenv("AUTH_COOKIE_SAMESITE", "lax").strip().lower(),
+        beta_mode=os.getenv("BETA_MODE", "open").strip().lower(),
         request_id_header=os.getenv("REQUEST_ID_HEADER", "X-Request-ID").strip() or "X-Request-ID",
         error_reporting_backend=os.getenv("ERROR_REPORTING_BACKEND", "log").strip().lower(),
         public_rate_limit_requests=_parse_int("PUBLIC_RATE_LIMIT_REQUESTS", 120, minimum=1),
@@ -117,6 +129,16 @@ def get_settings() -> AppSettings:
         auth_rate_limit_window_seconds=_parse_int(
             "AUTH_RATE_LIMIT_WINDOW_SECONDS",
             60,
+            minimum=1,
+        ),
+        waitlist_rate_limit_requests=_parse_int(
+            "WAITLIST_RATE_LIMIT_REQUESTS",
+            5,
+            minimum=1,
+        ),
+        waitlist_rate_limit_window_seconds=_parse_int(
+            "WAITLIST_RATE_LIMIT_WINDOW_SECONDS",
+            3600,
             minimum=1,
         ),
         upload_rate_limit_requests=_parse_int("UPLOAD_RATE_LIMIT_REQUESTS", 12, minimum=1),

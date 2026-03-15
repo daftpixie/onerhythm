@@ -4,12 +4,16 @@ import type {
   DeleteRequest,
   ExportRequest,
   PublicCommunityStory,
+  UploadFormat,
+  UploadSession as ContributionUploadSession,
   UserProfile,
 } from "@onerhythm/types";
 
 import type { ProfileResponse } from "./profile-contracts";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_ONERHYTHM_API_BASE_URL ?? "http://127.0.0.1:8000";
+
+export type BetaAccessState = "not_required" | "granted" | "pending";
 
 export type SessionUser = {
   user_id: string;
@@ -22,7 +26,10 @@ export type SessionUser = {
 export type SessionResponse = {
   authenticated: boolean;
   user?: SessionUser | null;
+  beta_access: BetaAccessState;
 };
+
+export type UploadSessionResponse = ContributionUploadSession;
 
 export type AuthSessionRecord = {
   session_id: string;
@@ -48,10 +55,15 @@ type ProfileCreatePayload = Omit<UserProfile, "profile_id" | "created_at" | "upd
 
 async function parseResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: { message?: string } }
+    const body = (await response.json().catch(() => null)) as
+      | { error?: { message?: string }; detail?: string | Array<{ msg?: string }> }
       | null;
-    throw new Error(payload?.error?.message ?? "The request could not be completed.");
+    const message =
+      body?.error?.message ??
+      (typeof body?.detail === "string" ? body.detail : undefined) ??
+      (Array.isArray(body?.detail) ? body.detail.map((d) => d.msg).join("; ") : undefined) ??
+      "The request could not be completed.";
+    throw new Error(message);
   }
   return (await response.json()) as T;
 }
@@ -97,6 +109,89 @@ export async function getSession(): Promise<SessionResponse> {
     cache: "no-store",
   });
   return parseResponse<SessionResponse>(response);
+}
+
+export async function startUploadSession(payload: {
+  profile_id?: string | null;
+  upload_format: UploadFormat;
+  consent_record_ids: string[];
+}): Promise<UploadSessionResponse> {
+  const response = await fetch(`${API_BASE_URL}/v1/upload-sessions`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      profile_id: payload.profile_id ?? null,
+      upload_format: payload.upload_format,
+      consent_record_ids: payload.consent_record_ids,
+    }),
+  });
+  return parseResponse<UploadSessionResponse>(response);
+}
+
+export async function processUploadSession(params: {
+  upload_session_id: string;
+  file: File;
+  processing_pipeline_version: string;
+  tile_attribution?: {
+    contributor_name?: string;
+    contributor_location?: string;
+  };
+}): Promise<UploadSessionResponse> {
+  const formData = new FormData();
+  formData.set("processing_pipeline_version", params.processing_pipeline_version);
+  formData.set(
+    "share_first_name",
+    params.tile_attribution?.contributor_name ? "true" : "false",
+  );
+  formData.set(
+    "share_location",
+    params.tile_attribution?.contributor_location ? "true" : "false",
+  );
+  if (params.tile_attribution?.contributor_name) {
+    formData.set("first_name", params.tile_attribution.contributor_name);
+  }
+  if (params.tile_attribution?.contributor_location) {
+    formData.set("location_label", params.tile_attribution.contributor_location);
+  }
+  formData.set("file", params.file);
+
+  const response = await fetch(
+    `${API_BASE_URL}/v1/upload-sessions/${params.upload_session_id}/process`,
+    {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    },
+  );
+  return parseResponse<UploadSessionResponse>(response);
+}
+
+export async function getUploadSession(uploadSessionId: string): Promise<UploadSessionResponse> {
+  const response = await fetch(`${API_BASE_URL}/v1/upload-sessions/${uploadSessionId}`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  return parseResponse<UploadSessionResponse>(response);
+}
+
+export async function listUploadSessions(): Promise<UploadSessionResponse[]> {
+  const response = await fetch(`${API_BASE_URL}/v1/upload-sessions`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  return parseResponse<UploadSessionResponse[]>(response);
+}
+
+export async function deleteUploadSession(uploadSessionId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/v1/upload-sessions/${uploadSessionId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    await parseResponse<never>(response);
+  }
 }
 
 export async function listAuthSessions(): Promise<AuthSessionListResponse> {

@@ -167,6 +167,7 @@ pnpm build
 
 - [Public PRD](docs/prd/README.md)
 - [Architecture overview](docs/architecture/README.md)
+- [Railway + Supabase first deployment](docs/launch/railway-supabase-first-deployment.md)
 - [Privacy policies](docs/privacy/ecg-processing-policy.md)
 - [Evidence policies](docs/evidence/approved-source-policy.md)
 - [Trust readiness checklist](docs/launch/trust-readiness-checklist.md)

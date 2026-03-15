@@ -48,7 +48,7 @@ export function AboutCTA() {
           >
             Crisis Text Line
           </a>{" "}
-          (text HOME to 741741). You are not alone.
+          (text HOME to 741741)
         </p>
 
         <div className="mt-10">

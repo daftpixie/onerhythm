@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { PublicSiteFooter } from "../components/public-site-footer";
-import { PublicSiteHeader } from "../components/public-site-header";
+import { PublicSiteChrome } from "../components/public-site-chrome";
 import { absoluteUrl, getSiteUrl } from "../lib/site";
 
 export const metadata: Metadata = {
@@ -76,16 +75,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-body antialiased">
+      <body className="flex min-h-screen flex-col font-body antialiased">
         <a
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[0.9rem] focus:bg-pulse focus:px-4 focus:py-3 focus:text-text-primary"
           href="#main-content"
         >
           Skip to content
         </a>
-        <PublicSiteHeader />
-        <div id="main-content">{children}</div>
-        <PublicSiteFooter />
+        <PublicSiteChrome>{children}</PublicSiteChrome>
       </body>
     </html>
   );
