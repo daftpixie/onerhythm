@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onerhythm.dev/schemas/user-profile.json",
+  "title": "UserProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "treatment_history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ablation_count",
+        "has_implantable_device",
+        "current_medications",
+        "prior_procedures"
+      ],
+      "properties": {
+        "ablation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "has_implantable_device": {
+          "type": ["boolean", "null"]
+        },
+        "current_medications": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "prior_procedures": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "required": [
+    "profile_id",
+    "preferred_language",
+    "diagnosis_selection",
+    "physical_symptoms",
+    "emotional_context",
+    "treatment_history",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "preferred_language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "diagnosis_selection": {
+      "$ref": "./diagnosis-selection.json"
+    },
+    "physical_symptoms": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "emotional_context": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "treatment_history": {
+      "$ref": "#/$defs/treatment_history"
+    },
+    "personal_narrative": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
