@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from importlib import import_module
 from importlib.metadata import version
 import re
 from pathlib import Path
 from statistics import mean
-from typing import Protocol
+from typing import Any, Protocol
 
 import numpy as np
 from PIL import Image, ImageDraw
-from rapidocr_onnxruntime import RapidOCR
 import pypdfium2 as pdfium
 
 OCR_CONFIDENCE_THRESHOLD = 0.55
@@ -139,7 +139,7 @@ class OCRRedactionService(Protocol):
 
 class RapidOCRTextDetectionProvider:
     def __init__(self) -> None:
-        self._engine: RapidOCR | None = None
+        self._engine: Any | None = None
 
     @property
     def provider_name(self) -> str:
@@ -149,9 +149,17 @@ class RapidOCRTextDetectionProvider:
     def provider_version(self) -> str:
         return version("rapidocr-onnxruntime")
 
-    def _get_engine(self) -> RapidOCR:
+    def _get_engine(self) -> Any:
         if self._engine is None:
-            self._engine = RapidOCR()
+            try:
+                rapidocr_module = import_module("rapidocr_onnxruntime")
+                rapidocr_factory = getattr(rapidocr_module, "RapidOCR")
+                self._engine = rapidocr_factory()
+            except Exception as exc:
+                raise RuntimeError(
+                    "rapidocr-onnxruntime could not be initialized. Verify the API image "
+                    "includes the required OpenCV runtime libraries."
+                ) from exc
         return self._engine
 
     def detect_text(self, *, image: Image.Image) -> list[OCRTextDetection]:
