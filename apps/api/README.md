@@ -7,6 +7,7 @@ Supported Python runtime:
 - production and Railway deploys should use Python `3.12`
 - `apps/api/.python-version` pins that for GitHub-connected Railway builds
 - `pyproject.toml` rejects Python `3.13+` because the pinned OCR dependency stack does not support it yet
+- the checked-in `apps/api/Dockerfile` is now the preferred Railway deployment path because it pins the runtime and avoids builder drift
 
 ## Commands
 

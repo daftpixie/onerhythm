@@ -32,8 +32,9 @@ Why root-level for web:
 ### API service
 
 - Root directory: `apps/api`
-- Build command: `python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -e .`
-- Start command: `./.venv/bin/python -m uvicorn app.main:app --app-dir . --host 0.0.0.0 --port $PORT`
+- Builder: `Dockerfile`
+- Build command: leave blank
+- Start command: leave blank
 - Healthcheck path: `/ready`
 - Liveness path: `/health`
 - Custom domain:
@@ -44,16 +45,17 @@ Why `apps/api` root-level for API:
 - the FastAPI app is self-contained inside `apps/api`
 - it does not need the pnpm workspace to run
 - Railway can keep the Python build isolated from the Node web build
-- the OCR dependency stack is currently supported on Python `3.12`, so the API service includes `apps/api/.python-version` to keep Railway off Python `3.13`
+- the OCR dependency stack is currently supported on Python `3.12`, and the API `Dockerfile` pins that runtime explicitly
+- this avoids Railway/Railpack Python-version drift during GitHub-connected deploys
 
 Important for GitHub-connected Railway services:
 
 - do not leave the API service on Railway autodetect defaults
-- Railway may detect `package.json` and try to run `pnpm dev`
+- Railway may detect `package.json` and try to run `pnpm dev` if the service is misconfigured
 - that fails in this repo because `dev` expects a prebuilt `.venv` at `apps/api/.venv`
-- set the API service `Root Directory`, `Build Command`, and `Start Command` explicitly in Railway
-- use the production `start` path, never `dev` or `--reload`
-- if Railway previously cached a Python `3.13` build, trigger a fresh deploy after this commit so it re-reads `apps/api/.python-version`
+- set the API service `Root Directory` to `apps/api`
+- let Railway use the `Dockerfile` that now lives in `apps/api`
+- if the service currently has custom build/start commands from earlier attempts, clear them so the Docker image is authoritative
 
 ### Why not Dockerfiles right now
 
@@ -183,22 +185,23 @@ Why `AUTH_COOKIE_DOMAIN` matters:
 
 1. Create the Supabase project and obtain the direct Postgres connection string.
 2. Set API env vars in Railway, including `DATABASE_URL`, `DATABASE_MIGRATION_URL`, and `AUTH_COOKIE_DOMAIN`.
-3. Deploy the API service.
-4. Run Alembic against Supabase:
+3. Configure the API service to use `apps/api` as its root directory and the checked-in `Dockerfile`.
+4. Deploy the API service.
+5. Run Alembic against Supabase:
    - `cd apps/api && ./.venv/bin/alembic upgrade head`
-5. Manually seed `beta_allowlist` with the first invited emails.
-6. Set the web env vars in Railway.
-7. Deploy the web service.
-8. Attach domains:
-   - `onerhythm.org` -> web
-   - `www.onerhythm.org` -> web
-   - `api.onerhythm.org` -> API
-9. Smoke test:
-   - `GET /health` on web
-   - `GET /health` and `GET /ready` on API
-   - waitlist submit on `/`
-   - invite-only sign-up with a non-allowlisted email
-   - sign-in with an allowlisted email
+6. Manually seed `beta_allowlist` with the first invited emails.
+7. Set the web env vars in Railway.
+8. Deploy the web service.
+9. Attach domains:
+  - `onerhythm.org` -> web
+  - `www.onerhythm.org` -> web
+  - `api.onerhythm.org` -> API
+10. Smoke test:
+  - `GET /health` on web
+  - `GET /health` and `GET /ready` on API
+  - waitlist submit on `/`
+  - invite-only sign-up with a non-allowlisted email
+  - sign-in with an allowlisted email
 
 ## Manual follow-ups
 
