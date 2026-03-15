@@ -4,6 +4,9 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 
+from sqlalchemy.exc import ArgumentError
+from sqlalchemy.engine.url import make_url
+
 
 class SettingsValidationError(RuntimeError):
     pass
@@ -35,6 +38,19 @@ def _parse_list(name: str, default: str) -> list[str]:
     if not values:
         raise SettingsValidationError(f"{name} must include at least one value.")
     return values
+
+
+def _parse_string(name: str, default: str = "") -> str:
+    raw = os.getenv(name)
+    value = default if raw is None else raw
+    normalized = value.strip()
+    if (
+        len(normalized) >= 2
+        and normalized[0] == normalized[-1]
+        and normalized[0] in {'"', "'"}
+    ):
+        normalized = normalized[1:-1].strip()
+    return normalized
 
 
 @dataclass(frozen=True)
@@ -69,6 +85,20 @@ class AppSettings:
             )
         if not self.database_url:
             raise SettingsValidationError("DATABASE_URL must not be empty.")
+        if "<" in self.database_url or ">" in self.database_url:
+            raise SettingsValidationError(
+                "DATABASE_URL still contains placeholder markers like <region> or <password>. "
+                "Paste the real Supabase connection string value into Railway, with no angle "
+                "brackets and no surrounding quotes."
+            )
+        try:
+            make_url(self.database_url)
+        except ArgumentError as exc:
+            raise SettingsValidationError(
+                "DATABASE_URL is not a valid SQLAlchemy URL. Remove surrounding quotes, "
+                "replace placeholder text like <region>, and URL-encode reserved password "
+                "characters before saving it in Railway."
+            ) from exc
         if self.auth_cookie_samesite not in {"lax", "strict", "none"}:
             raise SettingsValidationError("AUTH_COOKIE_SAMESITE must be lax, strict, or none.")
         if self.auth_cookie_domain and (
@@ -96,9 +126,9 @@ class AppSettings:
 @lru_cache(maxsize=1)
 def get_settings() -> AppSettings:
     settings = AppSettings(
-        env_name=os.getenv("ONERHYTHM_ENV", "local").strip().lower(),
-        log_level=os.getenv("LOG_LEVEL", "INFO").strip().upper(),
-        database_url=os.getenv("DATABASE_URL", "sqlite:///./dev.db").strip(),
+        env_name=_parse_string("ONERHYTHM_ENV", "local").lower(),
+        log_level=_parse_string("LOG_LEVEL", "INFO").upper(),
+        database_url=_parse_string("DATABASE_URL", "sqlite:///./dev.db"),
         allowed_origins=_parse_list(
             "AUTH_ALLOWED_ORIGINS",
             "http://127.0.0.1:3001,http://localhost:3001",
@@ -114,11 +144,11 @@ def get_settings() -> AppSettings:
             minimum=1,
         ),
         auth_cookie_secure=_parse_bool("AUTH_COOKIE_SECURE", False),
-        auth_cookie_domain=(os.getenv("AUTH_COOKIE_DOMAIN") or "").strip() or None,
-        auth_cookie_samesite=os.getenv("AUTH_COOKIE_SAMESITE", "lax").strip().lower(),
-        beta_mode=os.getenv("BETA_MODE", "open").strip().lower(),
-        request_id_header=os.getenv("REQUEST_ID_HEADER", "X-Request-ID").strip() or "X-Request-ID",
-        error_reporting_backend=os.getenv("ERROR_REPORTING_BACKEND", "log").strip().lower(),
+        auth_cookie_domain=_parse_string("AUTH_COOKIE_DOMAIN") or None,
+        auth_cookie_samesite=_parse_string("AUTH_COOKIE_SAMESITE", "lax").lower(),
+        beta_mode=_parse_string("BETA_MODE", "open").lower(),
+        request_id_header=_parse_string("REQUEST_ID_HEADER", "X-Request-ID") or "X-Request-ID",
+        error_reporting_backend=_parse_string("ERROR_REPORTING_BACKEND", "log").lower(),
         public_rate_limit_requests=_parse_int("PUBLIC_RATE_LIMIT_REQUESTS", 120, minimum=1),
         public_rate_limit_window_seconds=_parse_int(
             "PUBLIC_RATE_LIMIT_WINDOW_SECONDS",

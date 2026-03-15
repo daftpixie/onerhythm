@@ -11,7 +11,22 @@ from app.db import models  # noqa: F401
 
 config = context.config
 
-database_url = os.getenv("DATABASE_MIGRATION_URL") or os.getenv("DATABASE_URL")
+def _normalize_database_url(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if (
+        len(normalized) >= 2
+        and normalized[0] == normalized[-1]
+        and normalized[0] in {'"', "'"}
+    ):
+        normalized = normalized[1:-1].strip()
+    return normalized or None
+
+
+database_url = _normalize_database_url(
+    os.getenv("DATABASE_MIGRATION_URL") or os.getenv("DATABASE_URL")
+)
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
 

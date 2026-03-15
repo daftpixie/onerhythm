@@ -40,6 +40,34 @@ class RuntimeSettingsTests(unittest.TestCase):
                 get_settings()
         get_settings.cache_clear()
 
+    def test_database_url_strips_surrounding_quotes(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "DATABASE_URL": '"sqlite:///./apps/api/dev.db"',
+                "AUTH_ALLOWED_ORIGINS": "https://onerhythm.dev",
+            },
+            clear=False,
+        ):
+            get_settings.cache_clear()
+            settings = get_settings()
+            self.assertEqual(settings.database_url, "sqlite:///./apps/api/dev.db")
+        get_settings.cache_clear()
+
+    def test_invalid_database_url_raises_clear_error(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "DATABASE_URL": '"postgresql+psycopg://postgres:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require"',
+                "AUTH_ALLOWED_ORIGINS": "https://onerhythm.dev",
+            },
+            clear=False,
+        ):
+            get_settings.cache_clear()
+            with self.assertRaisesRegex(SettingsValidationError, "DATABASE_URL still contains placeholder markers"):
+                get_settings()
+        get_settings.cache_clear()
+
 
 class RateLimiterTests(unittest.TestCase):
     def test_rate_limiter_blocks_after_limit(self) -> None:

@@ -80,6 +80,9 @@ Connection rules:
 - `DATABASE_URL` must be a Postgres URL with `sslmode=require`
 - `DATABASE_MIGRATION_URL` should point at the same direct Postgres database for now
 - Alembic now reads `DATABASE_MIGRATION_URL` first, then `DATABASE_URL`
+- do not wrap either value in quotes in Railway
+- do not leave placeholder text like `<region>` or `<password>` in the saved value
+- if the database password contains reserved URL characters, URL-encode it before saving the URL
 
 For the first closed beta, keep both URLs on the direct connection unless Supabase connection limits force a change later.
 
