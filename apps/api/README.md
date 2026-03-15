@@ -2,6 +2,12 @@
 
 FastAPI application workspace.
 
+Supported Python runtime:
+
+- production and Railway deploys should use Python `3.12`
+- `apps/api/.python-version` pins that for GitHub-connected Railway builds
+- `pyproject.toml` rejects Python `3.13+` because the pinned OCR dependency stack does not support it yet
+
 ## Commands
 
 ```bash

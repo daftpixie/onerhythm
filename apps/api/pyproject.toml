@@ -7,7 +7,7 @@ name = "onerhythm-api"
 version = "0.1.0"
 description = "Initial FastAPI service for OneRhythm."
 license = { text = "MIT" }
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 dependencies = [
   "alembic==1.14.1",
   "fastapi==0.135.1",

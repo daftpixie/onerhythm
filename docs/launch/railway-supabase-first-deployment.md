@@ -44,6 +44,7 @@ Why `apps/api` root-level for API:
 - the FastAPI app is self-contained inside `apps/api`
 - it does not need the pnpm workspace to run
 - Railway can keep the Python build isolated from the Node web build
+- the OCR dependency stack is currently supported on Python `3.12`, so the API service includes `apps/api/.python-version` to keep Railway off Python `3.13`
 
 Important for GitHub-connected Railway services:
 
@@ -52,6 +53,7 @@ Important for GitHub-connected Railway services:
 - that fails in this repo because `dev` expects a prebuilt `.venv` at `apps/api/.venv`
 - set the API service `Root Directory`, `Build Command`, and `Start Command` explicitly in Railway
 - use the production `start` path, never `dev` or `--reload`
+- if Railway previously cached a Python `3.13` build, trigger a fresh deploy after this commit so it re-reads `apps/api/.python-version`
 
 ### Why not Dockerfiles right now
 
