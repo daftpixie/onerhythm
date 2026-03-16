@@ -36,11 +36,12 @@ export function MedicalDisclaimer({
         </span>
         <p className="max-w-[72ch] font-body text-sm leading-6">
           OneRhythm is an educational resource and community platform. It is not
-          a medical device. It does not diagnose, treat, cure, or prevent any
-          disease. The information provided is for educational purposes only and
-          is not a substitute for professional medical advice, diagnosis, or
-          treatment. Always consult your physician or qualified healthcare
-          provider with any questions regarding a medical condition.
+          a medical device. It does not diagnose, interpret ECGs, treat, cure,
+          or prevent any disease, and it does not recommend treatment. The
+          information provided is for educational purposes only and is not a
+          substitute for professional medical advice, diagnosis, or treatment.
+          Always consult your physician or qualified healthcare provider with
+          any questions regarding a medical condition.
         </p>
       </div>
     </div>

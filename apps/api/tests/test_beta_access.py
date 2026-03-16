@@ -8,9 +8,14 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from app.api.contracts import BetaWaitlistSignupRequest
-from app.api.routes.beta_access import join_waitlist
+from app.api.routes.beta_access import (
+    get_waitlist_referral_status,
+    get_waitlist_stats,
+    join_waitlist,
+)
 from app.db.base import Base
 from app.db.models import BetaAllowlist, BetaWaitlistSignup, utcnow
+from app.rate_limit import rate_limiter
 from app.runtime import AppSettings
 from app.services.beta_access import resolve_beta_access_state
 
@@ -48,6 +53,7 @@ class BetaAccessTests(unittest.TestCase):
         Base.metadata.create_all(self.engine)
         self.SessionLocal = sessionmaker(bind=self.engine, autoflush=False, autocommit=False, future=True)
         self.db = self.SessionLocal()
+        rate_limiter._entries.clear()
 
     def tearDown(self) -> None:
         self.db.close()
@@ -107,7 +113,11 @@ class BetaAccessTests(unittest.TestCase):
         )
 
         self.assertEqual(created.status, "joined")
+        self.assertIsNotNone(created.referral_code)
+        self.assertEqual(created.referral_count, 0)
         self.assertEqual(duplicate.status, "already_joined")
+        self.assertEqual(duplicate.referral_code, created.referral_code)
+        self.assertEqual(duplicate.referral_count, 0)
         self.assertEqual(duplicate_response.status_code, 200)
         self.assertEqual(
             self.db.query(BetaWaitlistSignup)
@@ -140,9 +150,157 @@ class BetaAccessTests(unittest.TestCase):
         )
 
         self.assertEqual(joined.status, "joined")
+        self.assertIsNone(joined.referral_code)
         self.assertEqual(
             self.db.query(BetaWaitlistSignup)
             .filter(BetaWaitlistSignup.email == "robot@example.com")
             .count(),
             0,
         )
+
+    def test_join_waitlist_records_referrals_and_returns_count(self) -> None:
+        request = Request(
+            {
+                "type": "http",
+                "method": "POST",
+                "path": "/v1/beta/waitlist",
+                "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                "query_string": b"",
+                "client": ("127.0.0.1", 12345),
+            }
+        )
+
+        inviter = join_waitlist(
+            payload=BetaWaitlistSignupRequest(email="inviter@example.com", source="landing-page", website=""),
+            request=request,
+            response=Response(),
+            db=self.db,
+        )
+        invited = join_waitlist(
+            payload=BetaWaitlistSignupRequest(
+                email="friend@example.com",
+                source="landing-page",
+                website="",
+                referral_code=inviter.referral_code,
+            ),
+            request=request,
+            response=Response(),
+            db=self.db,
+        )
+        refreshed_inviter = join_waitlist(
+            payload=BetaWaitlistSignupRequest(email="inviter@example.com", source="landing-page", website=""),
+            request=request,
+            response=Response(),
+            db=self.db,
+        )
+
+        self.assertEqual(invited.status, "joined")
+        self.assertEqual(refreshed_inviter.referral_count, 1)
+
+        stored_invited = (
+            self.db.query(BetaWaitlistSignup)
+            .filter(BetaWaitlistSignup.email == "friend@example.com")
+            .one()
+        )
+        stored_inviter = (
+            self.db.query(BetaWaitlistSignup)
+            .filter(BetaWaitlistSignup.email == "inviter@example.com")
+            .one()
+        )
+        self.assertEqual(stored_invited.referred_by_signup_id, stored_inviter.id)
+
+    def test_get_waitlist_stats_returns_aggregate_counts(self) -> None:
+        request = Request(
+            {
+                "type": "http",
+                "method": "GET",
+                "path": "/v1/beta/waitlist/stats",
+                "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                "query_string": b"",
+                "client": ("127.0.0.1", 12345),
+            }
+        )
+
+        join_waitlist(
+            payload=BetaWaitlistSignupRequest(email="one@example.com", source="landing-page", website=""),
+            request=Request(
+                {
+                    "type": "http",
+                    "method": "POST",
+                    "path": "/v1/beta/waitlist",
+                    "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                    "query_string": b"",
+                    "client": ("127.0.0.1", 12345),
+                }
+            ),
+            response=Response(),
+            db=self.db,
+        )
+        join_waitlist(
+            payload=BetaWaitlistSignupRequest(email="two@example.com", source="landing-page", website=""),
+            request=Request(
+                {
+                    "type": "http",
+                    "method": "POST",
+                    "path": "/v1/beta/waitlist",
+                    "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                    "query_string": b"",
+                    "client": ("127.0.0.1", 12345),
+                }
+            ),
+            response=Response(),
+            db=self.db,
+        )
+
+        stats = get_waitlist_stats(request=request, db=self.db)
+
+        self.assertEqual(stats.total_signups, 2)
+        self.assertIsNotNone(stats.last_signup_at)
+
+    def test_get_waitlist_referral_status_returns_confirmed_count(self) -> None:
+        request = Request(
+            {
+                "type": "http",
+                "method": "POST",
+                "path": "/v1/beta/waitlist",
+                "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                "query_string": b"",
+                "client": ("127.0.0.1", 12345),
+            }
+        )
+
+        inviter = join_waitlist(
+            payload=BetaWaitlistSignupRequest(email="inviter@example.com", source="landing-page", website=""),
+            request=request,
+            response=Response(),
+            db=self.db,
+        )
+        join_waitlist(
+            payload=BetaWaitlistSignupRequest(
+                email="friend@example.com",
+                source="landing-page",
+                website="",
+                referral_code=inviter.referral_code,
+            ),
+            request=request,
+            response=Response(),
+            db=self.db,
+        )
+
+        referral_status = get_waitlist_referral_status(
+            referral_code=inviter.referral_code or "",
+            request=Request(
+                {
+                    "type": "http",
+                    "method": "GET",
+                    "path": f"/v1/beta/waitlist/referrals/{inviter.referral_code}",
+                    "headers": [(b"origin", b"http://127.0.0.1:3001")],
+                    "query_string": b"",
+                    "client": ("127.0.0.1", 12345),
+                }
+            ),
+            db=self.db,
+        )
+
+        self.assertEqual(referral_status.referral_code, inviter.referral_code)
+        self.assertEqual(referral_status.referral_count, 1)

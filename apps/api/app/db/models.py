@@ -180,6 +180,11 @@ class BetaWaitlistSignup(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     email: Mapped[str] = mapped_column(case_insensitive_text, unique=True, nullable=False)
+    referral_code: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
+    referred_by_signup_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("beta_waitlist_signups.id", ondelete="SET NULL"),
+    )
     source: Mapped[str] = mapped_column(String(64), nullable=False, default="landing-page")
     status: Mapped[str] = mapped_column(String(24), nullable=False, default="pending")
     created_at: Mapped[datetime] = mapped_column(

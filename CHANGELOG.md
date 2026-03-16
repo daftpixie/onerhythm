@@ -11,6 +11,7 @@ This project follows semantic versioning once versioned releases begin.
 - Initial open-source repository standards
 - AGENTS.md guidance
 - community health files
+- landing-page mission counter plumbing for public waitlist stats plus referral-aware waitlist flows
 
 ### Changed
 - fixed broken repository-local markdown links so docs work on GitHub instead of only on one local filesystem
@@ -20,3 +21,4 @@ This project follows semantic versioning once versioned releases begin.
 - added baseline response-hardening headers in the web and API runtimes, with experimental/no-store designation on authenticated and personalized flows
 - upgraded vulnerable Next.js and Python dependencies to versions that pass the current audit scans
 - aligned package and Python project metadata with the repository MIT license posture
+- rebuilt the landing page around live waitlist, mosaic, and rhythm metrics while keeping the non-diagnostic boundary explicit

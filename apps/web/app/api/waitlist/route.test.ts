@@ -9,6 +9,8 @@ describe("waitlist proxy route", () => {
         JSON.stringify({
           status: "joined",
           message: "Thanks. You're on the beta waitlist.",
+          referral_code: "abc123def456",
+          referral_count: 0,
         }),
         {
           status: 201,
@@ -31,6 +33,7 @@ describe("waitlist proxy route", () => {
           email: "person@example.com",
           source: "landing-page",
           website: "",
+          referral_code: "ref-source",
         }),
       }),
     );
@@ -43,9 +46,18 @@ describe("waitlist proxy route", () => {
           email: "person@example.com",
           source: "landing-page",
           website: "",
+          referral_code: "ref-source",
         }),
       }),
     );
     expect(response.status).toBe(201);
+
+    await expect(response.json()).resolves.toEqual({
+      status: "joined",
+      message: "Thanks. You're on the beta waitlist.",
+      referral_code: "abc123def456",
+      referral_count: 0,
+      referral_url: "https://onerhythm.org/join?ref=abc123def456",
+    });
   });
 });

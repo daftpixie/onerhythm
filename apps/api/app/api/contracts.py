@@ -321,11 +321,24 @@ class BetaWaitlistSignupRequest(StrictModel):
     email: str = Field(min_length=3, max_length=320)
     source: str = Field(default="landing-page", min_length=1, max_length=64)
     website: str | None = Field(default=None, max_length=255)
+    referral_code: str | None = Field(default=None, min_length=6, max_length=32)
 
 
 class BetaWaitlistSignupResponse(StrictModel):
     status: WaitlistJoinStatus
     message: str
+    referral_code: str | None = None
+    referral_count: int = Field(default=0, ge=0)
+
+
+class BetaWaitlistStatsResponse(StrictModel):
+    total_signups: int = Field(ge=0)
+    last_signup_at: datetime | None = None
+
+
+class BetaWaitlistReferralStatusResponse(StrictModel):
+    referral_code: str = Field(min_length=6, max_length=32)
+    referral_count: int = Field(default=0, ge=0)
 
 
 class SessionUserResponse(StrictModel):

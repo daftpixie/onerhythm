@@ -9,6 +9,7 @@ type WaitlistRequestBody = {
   email?: unknown;
   source?: unknown;
   website?: unknown;
+  referral_code?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -16,6 +17,8 @@ export async function POST(request: Request) {
   const email = typeof body?.email === "string" ? body.email : "";
   const source = typeof body?.source === "string" ? body.source : "landing-page";
   const website = typeof body?.website === "string" ? body.website : "";
+  const referral_code =
+    typeof body?.referral_code === "string" ? body.referral_code : undefined;
 
   if (!email.trim()) {
     return NextResponse.json(
@@ -38,14 +41,29 @@ export async function POST(request: Request) {
         "X-Forwarded-For": request.headers.get("x-forwarded-for") ?? "",
       },
       body: JSON.stringify({
-        email,
-        source,
-        website,
-      }),
-    });
+          email,
+          source,
+          website,
+          referral_code,
+        }),
+      });
     const payload = await upstream.json().catch(() => null);
+    const referralCode =
+      payload &&
+      typeof payload === "object" &&
+      "referral_code" in payload &&
+      typeof payload.referral_code === "string"
+        ? payload.referral_code
+        : null;
+    const responsePayload =
+      payload && typeof payload === "object"
+        ? {
+            ...payload,
+            referral_url: referralCode ? `${getSiteUrl()}/join?ref=${referralCode}` : null,
+          }
+        : payload;
 
-    return NextResponse.json(payload, {
+    return NextResponse.json(responsePayload, {
       status: upstream.status,
       headers: { "Cache-Control": "no-store" },
     });

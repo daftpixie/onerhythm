@@ -295,6 +295,31 @@ export interface RhythmDistanceStats {
   last_contribution_at: string | null;
 }
 
+export type WaitlistJoinStatus = "joined" | "already_joined";
+
+export interface WaitlistSignupResponse {
+  status: WaitlistJoinStatus;
+  message: string;
+  referral_code: string | null;
+  referral_count: number;
+  referral_url?: string | null;
+}
+
+export interface WaitlistStats {
+  total_signups: number;
+  last_signup_at: string | null;
+}
+
+export interface WaitlistReferralStatus {
+  referral_code: string;
+  referral_count: number;
+}
+
+export interface LandingMissionMetrics {
+  waitlist: WaitlistStats;
+  rhythm: RhythmDistanceStats;
+}
+
 export interface EducationalGuidanceInput {
   profile_id: string;
   locale: string;

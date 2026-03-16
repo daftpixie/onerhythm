@@ -30,6 +30,8 @@ Auth and sessions:
 - sign out: `POST /v1/auth/sign-out`
 - current session: `GET /v1/auth/session`
 - beta waitlist join: `POST /v1/beta/waitlist`
+- beta waitlist aggregate stats: `GET /v1/beta/waitlist/stats`
+- beta waitlist referral counts: `GET /v1/beta/waitlist/referrals/{referral_code}`
 - list active sessions: `GET /v1/auth/sessions`
 - revoke a specific non-current session: `POST /v1/auth/sessions/{session_id}/revoke`
 - revoke other sessions: `POST /v1/auth/sessions/revoke-others`
@@ -99,6 +101,8 @@ Environment modes:
 - staging: production-like behavior with staging origins
 - production: requires secure cookies
 - `BETA_MODE=invite_only` enables allowlist-gated account creation plus the public waitlist
+- waitlist signups now receive a unique referral code; public aggregate stats expose
+  counts only and never expose subscriber emails
 
 ## Database
 
