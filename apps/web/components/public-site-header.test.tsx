@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { navigationState } from "../test/setup";
@@ -88,5 +89,47 @@ describe("PublicSiteHeader", () => {
     await waitFor(() =>
       expect(screen.getAllByRole("link", { name: "Beta status" })).toHaveLength(2),
     );
+  });
+
+  it("keeps the contrast toggle visible while the mobile menu is collapsed", async () => {
+    authApiMocks.getSession.mockResolvedValue({
+      authenticated: false,
+      user: null,
+      beta_access: "not_required",
+    });
+
+    render(<PublicSiteHeader />);
+
+    expect(screen.getByRole("button", { name: "Contrast" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open menu" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+    expect(screen.queryByRole("region", { name: "Mobile menu" })).not.toBeInTheDocument();
+  });
+
+  it("opens and closes the mobile menu", async () => {
+    const user = userEvent.setup();
+
+    authApiMocks.getSession.mockResolvedValue({
+      authenticated: false,
+      user: null,
+      beta_access: "not_required",
+    });
+
+    render(<PublicSiteHeader />);
+
+    const menuButton = screen.getByRole("button", { name: "Open menu" });
+    await user.click(menuButton);
+
+    const menuRegion = screen.getByRole("region", { name: "Mobile menu" });
+    expect(menuButton).toHaveAttribute("aria-expanded", "true");
+    expect(
+      within(menuRegion).getByRole("link", { name: "Community" }),
+    ).toHaveAttribute("href", "/community");
+
+    await user.click(screen.getByRole("button", { name: "Close menu" }));
+
+    expect(screen.queryByRole("region", { name: "Mobile menu" })).not.toBeInTheDocument();
   });
 });

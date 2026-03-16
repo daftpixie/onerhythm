@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "onerhythm-contrast";
 
-export function ContrastToggle() {
+export function ContrastToggle({ className }: { className?: string }) {
   const [high, setHigh] = useState(false);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export function ContrastToggle() {
     <button
       aria-label={high ? "Switch to standard contrast" : "Switch to high contrast"}
       aria-pressed={high}
-      className="flex h-9 w-9 items-center justify-center rounded-lg border border-token text-text-secondary transition-colors duration-micro ease-out hover:bg-cosmos-nebula/80 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-deep-void"
+      className={`flex h-11 w-11 items-center justify-center rounded-xl border border-token text-text-secondary transition-colors duration-micro ease-out hover:bg-cosmos-nebula/80 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-deep-void sm:h-9 sm:w-9 sm:rounded-lg ${className ?? ""}`.trim()}
       onClick={toggle}
       title={high ? "Standard contrast" : "High contrast"}
       type="button"
