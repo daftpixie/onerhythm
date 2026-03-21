@@ -1,3 +1,10 @@
+"""Legacy v1/v1.5 upload-session routes.
+
+These routes remain mounted during the PRD v3 migration. They are not part of
+the mission v3 synthetic-only truth layer and must not receive new canonical
+product investment.
+"""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -23,11 +30,9 @@ from app.db.models import ProcessingJob, UploadSession
 from app.rate_limit import rate_limiter
 from app.runtime import get_settings
 from app.services.consent_state import require_granted_consent
-from app.services.rhythm_counter import rebuild_rhythm_distance_aggregate
 from app.services.upload_pipeline import (
     build_upload_session_response,
     process_upload_session_file,
-    reconcile_upload_session_contribution_distance,
 )
 
 router = APIRouter(prefix="/upload-sessions", tags=["upload-sessions"])
@@ -230,17 +235,6 @@ def list_upload_sessions(
         .order_by(UploadSession.started_at.desc(), UploadSession.upload_session_id.desc())
         .all()
     )
-    aggregate_changed = False
-    for upload_session in upload_sessions:
-        aggregate_changed = (
-            reconcile_upload_session_contribution_distance(db, session=upload_session)
-            or aggregate_changed
-        )
-    if aggregate_changed:
-        rebuild_rhythm_distance_aggregate(db)
-        db.commit()
-        for upload_session in upload_sessions:
-            db.refresh(upload_session)
     return [
         UploadSessionResponse.model_validate(build_upload_session_response(upload_session))
         for upload_session in upload_sessions
@@ -357,6 +351,7 @@ def delete_upload_session(
     )
     resulting_tile_id = upload_session.resulting_tile_id
     had_derived_tile = upload_session.mosaic_tile is not None
+    had_contribution = upload_session.rhythm_contribution is not None
 
     db.query(ProcessingJob).filter(
         ProcessingJob.upload_session_id == upload_session.upload_session_id
@@ -364,9 +359,11 @@ def delete_upload_session(
     if upload_session.mosaic_tile is not None:
         db.delete(upload_session.mosaic_tile)
         db.flush()
+    if upload_session.rhythm_contribution is not None:
+        db.delete(upload_session.rhythm_contribution)
+        db.flush()
     db.delete(upload_session)
     db.flush()
-    rebuild_rhythm_distance_aggregate(db)
 
     append_audit_event(
         db,
@@ -377,6 +374,7 @@ def delete_upload_session(
         actor_id=auth_session.user_id,
         payload={
             "had_derived_tile": had_derived_tile,
+            "had_contribution": had_contribution,
             "resulting_tile_id": resulting_tile_id,
             "raw_upload_retained": False,
         },
@@ -409,9 +407,4 @@ def get_upload_session(
         db=db,
         auth_session=auth_session,
     )
-    if reconcile_upload_session_contribution_distance(db, session=upload_session):
-        rebuild_rhythm_distance_aggregate(db)
-        db.commit()
-        db.refresh(upload_session)
-
     return UploadSessionResponse.model_validate(build_upload_session_response(upload_session))

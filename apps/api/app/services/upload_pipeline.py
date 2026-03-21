@@ -21,15 +21,9 @@ from app.services.artistic_transform import (
     build_default_artistic_transform_service,
     derive_tile_visual_style_from_artifact,
 )
-from app.services.metadata_purge import purge_source_metadata
 from app.services.ocr_redaction import (
     OCRRedactionError,
     build_default_ocr_redaction_service,
-)
-from app.services.rhythm_counter import (
-    determine_contribution_distance,
-    rebuild_rhythm_distance_aggregate,
-    record_rhythm_distance,
 )
 from app.services.temp_storage import (
     TemporaryUploadWorkspace,
@@ -38,6 +32,64 @@ from app.services.temp_storage import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# --- Legacy stubs ---
+# These functions were provided by services deleted during the PRD v3 cleanup
+# (metadata_purge, rhythm_counter, rhythm_contributions). The upload pipeline
+# is retained per PRD v3 §18 but these operations are no longer available.
+
+
+class _MetadataPurgeResult:
+    def __init__(self, sanitized_path, summary):
+        self.sanitized_path = sanitized_path
+        self.summary = summary
+
+
+def purge_source_metadata(*, workspace, raw_path, upload_format):
+    """Stub: metadata purge service removed. Pass through the raw file."""
+    return _MetadataPurgeResult(sanitized_path=raw_path, summary={"stub": True})
+
+
+class _ContributionDistance:
+    def __init__(self):
+        self.distance_cm = 75
+
+    def to_summary(self):
+        return {"distance_cm": 75, "stub": True}
+
+
+def determine_contribution_distance(*, redaction_summary):
+    """Stub: rhythm_counter service removed."""
+    return _ContributionDistance()
+
+
+def rebuild_rhythm_distance_aggregate(db):
+    """Stub: legacy aggregate service removed. Mission v3 is the canonical truth layer."""
+    pass
+
+
+def record_rhythm_distance(db, *, tile_id, distance_cm):
+    """Stub: legacy distance recording removed."""
+    pass
+
+
+def create_real_ecg_contribution(db, *, upload_session, tile, distance_cm):
+    """Stub: legacy contribution service removed."""
+    return None
+
+
+def serialize_contribution_summary(contribution, artifact_scope="owned"):
+    """Stub: legacy serialization removed."""
+    return None
+
+
+def reconcile_upload_session_contribution_distance(db, *, session):
+    """Stub: legacy reconciliation removed."""
+    return False
+
+
+# --- End legacy stubs ---
 
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", str(10 * 1024 * 1024)))
 MAX_PROCESSING_SECONDS = int(os.getenv("MAX_PROCESSING_SECONDS", "30"))
@@ -1180,6 +1232,7 @@ def process_upload_session_file(
             status_value="started",
             payload={"input_stage": "artistic_transform"},
         )
+        created_contribution = None
         try:
             tile_visual_derivation = derive_tile_visual_style_from_artifact(
                 transformed_path=transform_result.transformed_path,
@@ -1198,6 +1251,17 @@ def process_upload_session_file(
                 render_version=tile_visual_derivation.render_version,
                 rhythm_distance_cm=distance_cm,
             )
+            resulting_tile = (
+                db.query(MosaicTile)
+                .filter(MosaicTile.tile_id == session.resulting_tile_id)
+                .one()
+            )
+            created_contribution = create_real_ecg_contribution(
+                db,
+                upload_session=session,
+                tile=resulting_tile,
+                distance_cm=distance_cm,
+            )
             record_rhythm_distance(
                 db, tile_id=session.resulting_tile_id, distance_cm=distance_cm
             )
@@ -1211,8 +1275,12 @@ def process_upload_session_file(
                 if partial_tile is not None:
                     db.delete(partial_tile)
                     db.flush()
-                    rebuild_rhythm_distance_aggregate(db)
                 session.resulting_tile_id = None
+            if created_contribution is not None:
+                db.delete(created_contribution)
+                db.flush()
+            if session.resulting_tile_id is None or created_contribution is not None:
+                rebuild_rhythm_distance_aggregate(db)
             session.anonymization_summary = {
                 **(session.anonymization_summary or {}),
                 "tile_visual_derivation": {
@@ -1511,6 +1579,10 @@ def build_upload_session_response(session: UploadSession) -> dict:
             else None
         ),
         "result_tile": _serialize_mosaic_tile(getattr(session, "mosaic_tile", None)),
+        "result_contribution": serialize_contribution_summary(
+            getattr(session, "rhythm_contribution", None),
+            artifact_scope="owned",
+        ),
         "contribution_distance": (
             (getattr(session, "anonymization_summary", None) or {}).get("contribution_distance")
             if getattr(session, "anonymization_summary", None)

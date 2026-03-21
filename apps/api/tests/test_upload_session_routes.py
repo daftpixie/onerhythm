@@ -9,8 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from app.api.routes.upload_sessions import delete_upload_session, list_upload_sessions
 from app.auth import AuthSessionContext
 from app.db.base import Base
-from app.db.models import MosaicTile, ProcessingJob, Profile, RhythmDistanceAggregate, UploadSession, User, utcnow
-from app.services.rhythm_counter import SINGLETON_AGGREGATE_ID
+from app.db.models import MosaicTile, ProcessingJob, Profile, UploadSession, User, utcnow
 
 
 class UploadSessionRouteTests(unittest.TestCase):
@@ -213,15 +212,6 @@ class UploadSessionRouteTests(unittest.TestCase):
                 contributed_at=now - timedelta(minutes=5, seconds=-3),
             )
         )
-        self.db.add(
-            RhythmDistanceAggregate(
-                aggregate_id=SINGLETON_AGGREGATE_ID,
-                total_distance_cm=25.0,
-                total_contributions=1,
-                last_contribution_at=now - timedelta(minutes=5, seconds=-3),
-                updated_at=now - timedelta(minutes=5, seconds=-3),
-            )
-        )
         self.db.commit()
 
         response = delete_upload_session(
@@ -245,95 +235,6 @@ class UploadSessionRouteTests(unittest.TestCase):
         self.assertIsNone(
             self.db.query(MosaicTile).filter(MosaicTile.tile_id == "tile-delete").one_or_none()
         )
-
-        aggregate = (
-            self.db.query(RhythmDistanceAggregate)
-            .filter(RhythmDistanceAggregate.aggregate_id == SINGLETON_AGGREGATE_ID)
-            .one()
-        )
-        self.assertAlmostEqual(aggregate.total_distance_cm, 0.0)
-        self.assertEqual(aggregate.total_contributions, 0)
-        self.assertIsNone(aggregate.last_contribution_at)
-
-    def test_list_upload_sessions_reconciles_legacy_distance_metadata(self) -> None:
-        now = utcnow()
-        session = self._upload_session(
-            upload_session_id="upload-legacy",
-            user_id=self.user.user_id,
-            profile_id=self.profile.profile_id,
-            started_at=now - timedelta(minutes=8),
-            completed_at=now - timedelta(minutes=8, seconds=-3),
-            resulting_tile_id="tile-legacy",
-            redaction_summary={
-                "ocr_redaction": {
-                    "document_layout": {
-                        "layout_kind": "standard_12_lead_with_long_strip",
-                        "layout_confidence": "medium",
-                        "paper_speed_mm_per_sec": 25,
-                        "detected_lead_label_count": 1,
-                        "repeated_lead_label_count": 0,
-                        "standard_twelve_lead_detected": True,
-                        "long_rhythm_strip_detected": True,
-                    }
-                }
-            },
-            anonymization_summary={
-                "contribution_distance": {
-                    "distance_cm": 6.25,
-                    "policy_id": "standard_single_segment",
-                    "label": "Standard 2.5-second segment",
-                    "rationale": "Old policy output.",
-                    "provenance": "Old policy output.",
-                    "inferred_layout": "single_lead_segment",
-                    "paper_speed_mm_per_sec": 25,
-                    "fallback_used": False,
-                }
-            },
-        )
-        self.db.add(
-            MosaicTile(
-                tile_id="tile-legacy",
-                source_upload_session_id=session.upload_session_id,
-                condition_category="afib",
-                display_date="2026-03-15",
-                is_public=True,
-                visibility_status="visible",
-                tile_version=1,
-                render_version="artistic-abstract-v1",
-                visual_style={
-                    "color_family": "signal",
-                    "opacity": 0.82,
-                    "texture_kind": "grain",
-                    "glow_level": "bright",
-                },
-                rhythm_distance_cm=6.25,
-                contributed_at=now - timedelta(minutes=8, seconds=-3),
-            )
-        )
-        self.db.add(
-            RhythmDistanceAggregate(
-                aggregate_id=SINGLETON_AGGREGATE_ID,
-                total_distance_cm=6.25,
-                total_contributions=1,
-                last_contribution_at=now - timedelta(minutes=8, seconds=-3),
-                updated_at=now - timedelta(minutes=8, seconds=-3),
-            )
-        )
-        self.db.commit()
-
-        response = list_upload_sessions(auth_session=self.auth_session, db=self.db)
-
-        self.assertEqual(response[0].contribution_distance.distance_cm, 25.0)
-        self.assertEqual(response[0].contribution_distance.policy_id, "standard_12_lead_long_strip")
-        self.assertEqual(response[0].result_tile.rhythm_distance_cm, 25.0)
-
-        aggregate = (
-            self.db.query(RhythmDistanceAggregate)
-            .filter(RhythmDistanceAggregate.aggregate_id == SINGLETON_AGGREGATE_ID)
-            .one()
-        )
-        self.assertAlmostEqual(aggregate.total_distance_cm, 25.0)
-        self.assertEqual(aggregate.total_contributions, 1)
 
 
 if __name__ == "__main__":
