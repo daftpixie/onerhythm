@@ -11,7 +11,7 @@ describe("RootLayout", () => {
       </RootLayout>,
     );
 
-    expect(markup).toContain("Every heartbeat has a story. Every story deserves to be heard.");
-    expect(markup).toContain("Community Hub");
+    expect(markup).toContain("Every rhythm shared. Every bear seen.");
+    expect(markup).toContain("Join the mission");
   });
 });
