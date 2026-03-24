@@ -1,5 +1,8 @@
 import type { ContentEntry } from "@onerhythm/types";
 
+import { livingInsideTheNumbers } from "./articles/living-inside-the-numbers";
+import { openLetterToElectrophysiologyLeaders } from "./articles/open-letter-to-electrophysiology-leaders";
+
 export const contentEntries: ContentEntry[] = [
   {
     content_id: "essay-why-onerhythm-exists",
@@ -42,6 +45,8 @@ export const contentEntries: ContentEntry[] = [
     ],
     source_links: [{ source_id: "founder-origin-public-v1" }],
   },
+  livingInsideTheNumbers,
+  openLetterToElectrophysiologyLeaders,
   {
     content_id: "research-mental-health-burden",
     slug: "arrhythmia-mental-health-burden",

@@ -52,6 +52,22 @@ export function listContentByKind(kind: ContentKind): ContentEntryWithAuthors[] 
     .map(attachAuthors);
 }
 
+export function listPublishedEditorialEssays(): ContentEntryWithAuthors[] {
+  return contentEntries
+    .filter(
+      (entry) =>
+        entry.kind === "essay" &&
+        entry.review_state === "published" &&
+        Boolean(entry.article),
+    )
+    .map(attachAuthors)
+    .sort(
+      (left, right) =>
+        (left.article?.homepage_feature.order ?? Number.MAX_SAFE_INTEGER) -
+        (right.article?.homepage_feature.order ?? Number.MAX_SAFE_INTEGER),
+    );
+}
+
 export function listConditionModules(): ContentEntryWithAuthors[] {
   return sortByPublishDate(contentEntries)
     .filter((entry) => entry.kind === "condition_module" && entry.review_state === "published")

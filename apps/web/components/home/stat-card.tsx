@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 type StatCardProps = {
   value: string;
   description: string;
+  meaning: string;
+  action: string;
   source: string;
   /** "pulse" for alarming stats, "signal" for clinical/comparative */
   accent?: "pulse" | "signal";
@@ -29,6 +31,8 @@ const cardVariants = {
 export function StatCard({
   value,
   description,
+  meaning,
+  action,
   source,
   accent = "pulse",
   index = 0,
@@ -50,9 +54,17 @@ export function StatCard({
       <p className="mt-3 text-base font-medium leading-6 text-text-primary">
         {description}
       </p>
-      <p className="mt-2 font-mono text-xs leading-5 text-text-tertiary">
-        {source}
+      <p className="mt-2 text-sm leading-6 text-text-secondary">
+        {meaning}
       </p>
+      <p className="mt-1.5 text-sm leading-6 text-text-secondary">
+        {action}
+      </p>
+      <div className="mt-3">
+        <p className="font-mono text-xs leading-5 text-text-tertiary">
+          {source}
+        </p>
+      </div>
     </motion.div>
   );
 }

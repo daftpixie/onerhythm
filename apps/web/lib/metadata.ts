@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { siteContent } from "../content/site-copy";
 import type { ContentEntryWithAuthors } from "./content";
 import { absoluteUrl } from "./site";
 
@@ -24,6 +25,9 @@ type PageMetadataInput = {
   keywords?: string[];
   ogImagePath?: string;
   twitterImagePath?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogAlt?: string;
 };
 
 export function buildPageMetadata({
@@ -34,10 +38,16 @@ export function buildPageMetadata({
   keywords,
   ogImagePath,
   twitterImagePath,
+  ogTitle,
+  ogDescription,
+  ogAlt,
 }: PageMetadataInput): Metadata {
   const canonical = absoluteUrl(path);
   const image = absoluteUrl(ogImagePath ?? resolveOgImage(path));
   const twitterImage = absoluteUrl(twitterImagePath ?? DEFAULT_TWITTER_IMAGE);
+  const resolvedOgTitle = ogTitle ?? title;
+  const resolvedOgDescription = ogDescription ?? description;
+  const resolvedOgAlt = ogAlt ?? siteContent.global.ideology;
 
   return {
     title,
@@ -47,8 +57,8 @@ export function buildPageMetadata({
       canonical,
     },
     openGraph: {
-      title,
-      description,
+      title: resolvedOgTitle,
+      description: resolvedOgDescription,
       url: canonical,
       siteName: "OneRhythm",
       type,
@@ -57,14 +67,14 @@ export function buildPageMetadata({
           url: image,
           width: 1200,
           height: 630,
-          alt: "OneRhythm",
+          alt: resolvedOgAlt,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: resolvedOgTitle,
+      description: resolvedOgDescription,
       images: [twitterImage],
     },
   };
@@ -74,9 +84,11 @@ export function buildContentMetadata(
   entry: ContentEntryWithAuthors,
   path: string,
 ): Metadata {
+  const description = entry.article?.share.meta_description ?? entry.seo.description;
+
   return buildPageMetadata({
     title: entry.seo.title,
-    description: entry.seo.description,
+    description,
     path,
     type: "article",
     keywords: [
@@ -87,5 +99,10 @@ export function buildContentMetadata(
         ? ["educational", "non-diagnostic", "arrhythmia education"]
         : ["community", "campaign", "public narrative"]),
     ],
+    ogImagePath: entry.article?.share.og_image_path,
+    twitterImagePath: entry.article?.share.twitter_image_path,
+    ogTitle: entry.article?.share.og_title,
+    ogDescription: entry.article?.share.og_description,
+    ogAlt: entry.article?.share.og_alt,
   });
 }
