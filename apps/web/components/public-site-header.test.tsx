@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { siteContent } from "../content/site-copy";
 import { navigationState } from "../test/setup";
 import { PublicSiteHeader } from "./public-site-header";
 
@@ -46,9 +47,9 @@ describe("PublicSiteHeader", () => {
     render(<PublicSiteHeader />);
 
     await waitFor(() =>
-      expect(screen.getByRole("link", { name: "Account" })).toHaveAttribute(
+      expect(screen.getByRole("link", { name: siteContent.navigation.account })).toHaveAttribute(
         "href",
-        "/account/data",
+        "/about/account/data",
       ),
     );
     expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
@@ -87,7 +88,14 @@ describe("PublicSiteHeader", () => {
     render(<PublicSiteHeader />);
 
     await waitFor(() =>
-      expect(screen.getAllByRole("link", { name: "Beta status" })).toHaveLength(2),
+      expect(screen.getByRole("link", { name: "Beta status" })).toHaveAttribute(
+        "href",
+        "/beta-access-pending",
+      ),
+    );
+    expect(screen.getByRole("link", { name: siteContent.navigation.primaryCta })).toHaveAttribute(
+      "href",
+      "/join",
     );
   });
 
@@ -125,8 +133,9 @@ describe("PublicSiteHeader", () => {
     const menuRegion = screen.getByRole("region", { name: "Mobile menu" });
     expect(menuButton).toHaveAttribute("aria-expanded", "true");
     expect(
-      within(menuRegion).getByRole("link", { name: "Community" }),
-    ).toHaveAttribute("href", "/community");
+      within(menuRegion).getByRole("link", { name: "Mission" }),
+    ).toHaveAttribute("href", "/mission");
+    expect(screen.queryByRole("link", { name: "Community" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Close menu" }));
 

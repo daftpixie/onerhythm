@@ -2,41 +2,78 @@ import type { HTMLAttributes } from "react";
 import Link from "next/link";
 
 import { BrandLogo } from "./brand-logo";
+import { siteContent } from "../content/site-copy";
+import { webProductFlags } from "../lib/product-flags";
 
-const footerGroups = [
-  {
-    title: "Community",
-    links: [
-      { href: "/community", label: "Community Hub" },
-      { href: "/mosaic", label: "Heart Mosaic" },
-      { href: "/community/stories", label: "Community Stories" },
-      { href: "/#waitlist", label: "Join Beta Waitlist" },
-    ],
-  },
-  {
-    title: "Research",
-    links: [
-      { href: "/evidence", label: "Evidence Hub" },
-      { href: "/research/pulse", label: "Research Pulse" },
-      { href: "/research/pulse/for-you", label: "Research Pulse For You" },
-    ],
-  },
-  {
-    title: "Project",
-    links: [
-      { href: "/about", label: "About" },
-      { href: "/mission", label: "Mission" },
-      { href: "https://github.com/daftpixie/onerhythm", label: "Open Source (GitHub)" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { href: "tel:988", label: "988 Crisis Lifeline" },
-      { href: "sms:741741", label: "Crisis Text Line" },
-    ],
-  },
-];
+const footerGroups = webProductFlags.missionV3Enabled
+  ? [
+      {
+        title: "Community",
+        links: [
+          { href: "/mission", label: "Mission" },
+          { href: "/join", label: siteContent.navigation.primaryCta },
+          ...(webProductFlags.legacyMosaicEnabled
+            ? [{ href: "/mosaic", label: "Legacy Mosaic" }]
+            : []),
+        ],
+      },
+      {
+        title: "Research",
+        links: [
+          { href: "/learn", label: "ResearchPulse" },
+          { href: "/learn", label: "ResearchPulse feed" },
+          { href: "/learn", label: "Your ResearchPulse" },
+        ],
+      },
+      {
+        title: "Project",
+        links: [
+          { href: "/about", label: "About" },
+          { href: "/mission", label: "Mission" },
+          { href: "https://github.com/daftpixie/onerhythm", label: "Open Source (GitHub)" },
+        ],
+      },
+      {
+        title: "Support",
+        links: [
+          { href: "tel:988", label: "988 Crisis Lifeline" },
+          { href: "sms:741741", label: "Crisis Text Line" },
+        ],
+      },
+    ]
+  : [
+      {
+        title: "Community",
+        links: [
+          { href: "/mosaic", label: "Heart Mosaic" },
+          { href: "/mission", label: "Mission" },
+          { href: "/#waitlist", label: "Join Beta Waitlist" },
+        ],
+      },
+      {
+        title: "Research",
+        links: [
+          { href: "/learn", label: "ResearchPulse" },
+          { href: "/learn", label: "ResearchPulse feed" },
+          { href: "/learn", label: "Your ResearchPulse" },
+        ],
+      },
+      {
+        title: "Project",
+        links: [
+          { href: "/about", label: "About" },
+          { href: "/mission", label: "Mission" },
+          { href: "https://github.com/daftpixie/onerhythm", label: "Open Source (GitHub)" },
+        ],
+      },
+      {
+        title: "Support",
+        links: [
+          { href: "tel:988", label: "988 Crisis Lifeline" },
+          { href: "sms:741741", label: "Crisis Text Line" },
+        ],
+      },
+    ];
 
 export type PublicSiteFooterProps = HTMLAttributes<HTMLElement>;
 
@@ -59,13 +96,10 @@ export function PublicSiteFooter({
             wordmarkTone="gradient"
           />
           <p className="mt-4 max-w-sm text-sm italic leading-6 text-text-secondary">
-            Every heartbeat has a story. Every story deserves to be heard.
+            {siteContent.footer.tagline}
           </p>
           <p className="mt-3 max-w-md text-sm leading-7 text-text-secondary">
-            OneRhythm exists because the psychological weight of arrhythmia is
-            real, measurable, and too often carried alone. This platform brings
-            that reality into public view - through community, education, and a
-            shared refusal to fight invisible battles in silence.
+            {siteContent.footer.body}
           </p>
         </div>
 
@@ -73,12 +107,12 @@ export function PublicSiteFooter({
         <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {footerGroups.map((group) => (
             <div className="space-y-3 text-center sm:text-left" key={group.title}>
-              <p className="font-display text-sm font-semibold text-text-primary">
+              <p className="font-body text-sm font-semibold text-text-primary">
                 {group.title}
               </p>
               <ul className="space-y-2">
                 {group.links.map((link) => (
-                  <li key={link.href}>
+                  <li key={`${group.title}-${link.label}`}>
                     <Link
                       className="text-sm leading-6 text-text-secondary transition-colors duration-micro ease-out hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                       href={link.href}
@@ -98,6 +132,9 @@ export function PublicSiteFooter({
           <p>&copy; {new Date().getFullYear()} OneRhythm. Open source. Mission-driven.</p>
           <p className="font-mono tracking-wide">#InvisibleBears</p>
         </div>
+        <p className="mt-4 text-center text-xs leading-6 text-text-tertiary sm:text-left">
+          {siteContent.footer.supportNote}
+        </p>
       </div>
     </footer>
   );
