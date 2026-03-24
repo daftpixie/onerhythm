@@ -8,37 +8,49 @@ const stats = [
   {
     value: "88.3%",
     description: "of arrhythmia patients report moderate to severe anxiety",
-    source: "Nature Scientific Reports (2025), N=222",
+    meaning: "The emotional burden is real enough to deserve routine attention.",
+    action: "Screening, conversation, and referral pathways make a difference.",
+    source: "Scientific Reports (2025) · DASS-21 screening, n=222",
     accent: "pulse" as const,
   },
   {
     value: "71.1%",
     description: "report moderate to severe depression",
-    source: "Nature Scientific Reports (2025), N=222",
+    meaning: "Depression often accompanies arrhythmia but is frequently unscreened.",
+    action: "Integrating mental-health assessment into follow-up appointments.",
+    source: "Scientific Reports (2025) · DASS-21 screening, n=222",
     accent: "pulse" as const,
   },
   {
     value: "1 in 5",
     description: "symptomatic AFib patients reported suicidal thoughts",
-    source: "AHA / Royal Melbourne Hospital",
+    meaning: "Suicidal ideation in arrhythmia populations is more common than many realize.",
+    action: "Integrated mental-health pathways and crisis resources save lives.",
+    source: "Europace (2023) · tertiary AF cohort, n=78",
     accent: "pulse" as const,
   },
   {
     value: "3.9\u00d7",
     description: "increased anxiety risk after ICD shocks",
-    source: "EP Europace (2023), N=39,954",
+    meaning: "ICD shocks can be traumatic events that persist long after the shock itself.",
+    action: "Trauma-informed post-shock support and validated screening.",
+    source: "Systematic review · ICD populations, n=39,954",
     accent: "signal" as const,
   },
   {
     value: "3.2\u00d7",
     description: "mortality risk from elevated PTSD in ICD patients",
+    meaning: "PTSD after device implantation has real health consequences.",
+    action: "Routine mood screening at ICD follow-up and referral to support.",
     source: "Circ: Arrhythmia & Electrophysiology",
     accent: "signal" as const,
   },
   {
     value: "22.6%",
     description: "of ICD patients experience clinically relevant anxiety",
-    source: "EP Europace (2023), N=39,954",
+    meaning: "Anxiety is the most common psychological effect after ICD implantation.",
+    action: "Post-implant psychological screening and support pathways.",
+    source: "Systematic review · ICD populations, n=39,954",
     accent: "signal" as const,
   },
 ];
@@ -69,9 +81,11 @@ export function StatsSection() {
         {stats.map((stat, i) => (
           <StatCard
             accent={stat.accent}
+            action={stat.action}
             description={stat.description}
             index={i}
             key={stat.value}
+            meaning={stat.meaning}
             source={stat.source}
             value={stat.value}
           />
