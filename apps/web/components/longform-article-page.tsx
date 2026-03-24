@@ -10,7 +10,6 @@ import { PublicSiteFooter } from "./public-site-footer";
 import { SourceCard } from "./source-card";
 import { StructuredData } from "./structured-data";
 import { ArticleDocumentActions } from "./longform/article-document-actions";
-import { ArticleShareToolkit } from "./longform/article-share-toolkit";
 import { CrisisResourcesCard } from "./longform/crisis-resources-card";
 
 function formatDate(value: string): string {
@@ -37,6 +36,12 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
 
   const article = entry.article;
   const storyUrl = absoluteUrl(`/stories/${entry.slug}`);
+  const headerChips = [entry.kicker, article.reading_time, article.hero_label].filter(
+    (value, index, array) => array.indexOf(value) === index,
+  );
+  const displayByline = entry.authors
+    .map((author) => (author.author_id === "onerhythm-editorial" ? "OneRhythm" : author.name))
+    .join(", ");
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -88,9 +93,11 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
                 />
 
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <span className="signal-chip text-xs">{entry.kicker}</span>
-                  <span className="signal-chip text-xs">{article.reading_time}</span>
-                  <span className="signal-chip text-xs">{article.hero_label}</span>
+                  {headerChips.map((chip) => (
+                    <span className="signal-chip text-xs" key={chip}>
+                      {chip}
+                    </span>
+                  ))}
                 </div>
 
                 <h1 className="mt-6 max-w-4xl font-display text-4xl leading-none tracking-[-0.04em] text-text-primary sm:text-5xl xl:text-6xl">
@@ -109,17 +116,11 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
                       : "No public revisions yet"}
                   </span>
                   <span className="signal-chip">
-                    By {entry.authors.map((author) => author.name).join(", ")}
+                    By {displayByline}
                   </span>
                 </div>
 
                 <div className="article-print-exclude mt-8 flex flex-wrap gap-3">
-                  <Link
-                    className="action-link action-link-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-                    href="#article-share-kit"
-                  >
-                    Open share kit
-                  </Link>
                   <Link
                     className="action-link action-link-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                     href="#article-sources"
@@ -171,7 +172,6 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
           </header>
 
           {entry.disclaimer_required ? <MedicalDisclaimer /> : null}
-          {article.sensitive_topic === "suicidality" ? <CrisisResourcesCard /> : null}
 
           <div className="mx-auto w-full max-w-3xl">
             {entry.sections.map((section, index) => (
@@ -235,48 +235,20 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
             ))}
           </div>
 
-          <section
-            className="surface-panel article-print-exclude rounded-[1.7rem] px-6 py-6 sm:px-8 sm:py-8"
-            id="article-share-kit"
-          >
-            <div className="max-w-3xl">
-              <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal-soft">
-                Shareability
-              </p>
-              <h2 className="mt-3 font-display text-3xl leading-tight text-text-primary">
-                Channel-ready share kit
-              </h2>
-              <p className="mt-4 text-base leading-7 text-text-secondary">
-                Reusable copy, pull quotes, and image-card text for X, Reddit, LinkedIn,
-                Threads, and lightweight visual excerpts.
-              </p>
-            </div>
-            <div className="mt-8">
-              <ArticleShareToolkit share={article.share} title={entry.title} url={storyUrl} />
-            </div>
-          </section>
+          {article.sensitive_topic !== "none" ? <CrisisResourcesCard /> : null}
 
           <section
             className="surface-panel rounded-[1.7rem] px-6 py-6 sm:px-8 sm:py-8"
             id="article-sources"
           >
-            <div className="max-w-3xl">
-              <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal-soft">
-                References
-              </p>
-              <h2 className="mt-3 font-display text-3xl leading-tight text-text-primary">
-                Reviewed source trail
-              </h2>
-              <p className="mt-4 text-base leading-7 text-text-secondary">
-                These references ground the article's evidence-facing claims and preserve the
-                non-diagnostic boundary around how OneRhythm translates them.
-              </p>
-            </div>
-            <div className="mt-8 grid gap-4 xl:grid-cols-2">
+            <h2 className="sr-only">References</h2>
+            <div className="grid gap-4 xl:grid-cols-2">
               {entry.sources.map((source) => (
                 <SourceCard
                   key={source.source_id}
                   relevanceNote={source.relevance_note}
+                  showMetaChips={false}
+                  showReviewDetails={false}
                   source={source}
                 />
               ))}
@@ -311,7 +283,11 @@ export function LongformArticlePage({ entry }: { entry: ContentEntryWithAuthors 
             </div>
           </section>
 
-          <p className="text-sm leading-7 text-text-tertiary">{article.document.footer_note}</p>
+          {article.document.footer_note ? (
+            <p className="text-sm leading-7 text-text-tertiary">
+              {article.document.footer_note}
+            </p>
+          ) : null}
         </article>
       </main>
       <PublicSiteFooter className="mt-10" />

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import StoryDetailPage, { generateMetadata, generateStaticParams } from "./page";
 
 describe("StoryDetailPage", () => {
-  it("renders the evidence essay with disclaimer, crisis support, and share kit", async () => {
+  it("renders the article with disclaimer, crisis support, and streamlined references", async () => {
     render(
       await StoryDetailPage({
         params: Promise.resolve({ slug: "living-inside-the-numbers" }),
@@ -15,18 +15,30 @@ describe("StoryDetailPage", () => {
       screen.getByRole("heading", { name: "Living Inside the Numbers" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("note", { name: "Medical disclaimer" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Channel-ready share kit" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Channel-ready share kit" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Crisis support" })).toBeInTheDocument();
     expect(
       screen.getByText(/I did not live through palpitations\./i),
     ).toBeInTheDocument();
+    expect(screen.getByText("By Matthew Adams, OneRhythm")).toBeInTheDocument();
+    expect(screen.getAllByText("Patient Journey")).toHaveLength(2);
+    expect(screen.queryByText("Review: published")).not.toBeInTheDocument();
+    const closingText = screen.getByRole("heading", {
+      name: "Treat the person, not just the rhythm",
+    });
+    const crisisSupport = screen.getByRole("heading", { name: "Crisis support" });
+    expect(
+      closingText.compareDocumentPosition(crisisSupport) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByRole("link", { name: "Read the open letter" })).toHaveAttribute(
       "href",
       "/stories/open-letter-to-electrophysiology-leaders",
     );
   });
 
-  it("renders the open letter without the crisis support block", async () => {
+  it("renders the open letter with the crisis support block at the bottom of the article", async () => {
     render(
       await StoryDetailPage({
         params: Promise.resolve({ slug: "open-letter-to-electrophysiology-leaders" }),
@@ -37,8 +49,16 @@ describe("StoryDetailPage", () => {
       screen.getByRole("heading", { name: "An Open Letter to Electrophysiology Leaders" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("note", { name: "Medical disclaimer" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Crisis support" })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Reviewed source trail" })).toBeInTheDocument();
+    const closingText = screen.getByRole("heading", {
+      name: "The next innovation must be moral and structural",
+    });
+    const crisisSupport = screen.getByRole("heading", { name: "Crisis support" });
+    expect(
+      closingText.compareDocumentPosition(crisisSupport) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("heading", { name: "Reviewed source trail" }),
+    ).not.toBeInTheDocument();
   });
 
   it("publishes static params and article metadata for the new stories", async () => {

@@ -90,8 +90,6 @@ export const livingInsideTheNumbers: ContentEntry = {
     document: {
       label: "Editorial essay document",
       print_label: "Print or save this essay",
-      footer_note:
-        "OneRhythm publishing surface. Educational, non-diagnostic, and designed to make invisible burden more legible without overstating certainty.",
       wordmark_tone: "gradient",
     },
     next_action: {
@@ -99,12 +97,6 @@ export const livingInsideTheNumbers: ContentEntry = {
       href: "/stories/open-letter-to-electrophysiology-leaders",
       description:
         "See the collaborative institutional ask that follows from the lived and clinical context in this piece.",
-    },
-    secondary_action: {
-      label: "Explore ResearchPulse",
-      href: "/learn",
-      description:
-        "Move from the essay into calmer, source-backed educational context and reviewed evidence translation.",
     },
     cover_image_path: "/brand/og/og-article-invisible-bears-1200x630.png",
     cover_image_alt: "OneRhythm editorial cover art for Living Inside the Numbers.",
@@ -303,11 +295,6 @@ export const livingInsideTheNumbers: ContentEntry = {
       source_id: "study-vt-ablation-meta-2024",
       relevance_note:
         "Keeps the VT discussion grounded in a current procedural evidence context without turning it into a recommendation.",
-    },
-    {
-      source_id: "editorial-content-strategy-v1",
-      relevance_note:
-        "Documents OneRhythm's public evidence-framing, sensitivity rules, and non-diagnostic guardrails for claim-bearing editorial surfaces.",
     },
   ],
 };

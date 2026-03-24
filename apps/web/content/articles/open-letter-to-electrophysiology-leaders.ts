@@ -188,10 +188,5 @@ export const openLetterToElectrophysiologyLeaders: ContentEntry = {
       relevance_note:
         "Keeps the letter's diagnosis range broader than one condition or one patient story.",
     },
-    {
-      source_id: "editorial-content-strategy-v1",
-      relevance_note:
-        "Documents the stat-governance, safety framing, and non-diagnostic posture behind OneRhythm's public evidence use.",
-    },
   ],
 };

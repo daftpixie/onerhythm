@@ -25,19 +25,31 @@ function labelForPublisherKind(value: EvidenceSource["publisher_kind"]): string 
 export function SourceCard({
   source,
   relevanceNote,
+  showMetaChips = true,
+  showReviewDetails = true,
 }: {
   source: EvidenceSource;
   relevanceNote?: string;
+  showMetaChips?: boolean;
+  showReviewDetails?: boolean;
 }) {
   return (
     <article className="rounded-[1.25rem] border border-token p-4">
-      <div className="flex flex-wrap gap-2">
-        <span className="signal-chip text-xs">{labelForClassification(source.classification)}</span>
-        <span className="signal-chip text-xs">{labelForPublisherKind(source.publisher_kind)}</span>
-        <span className="signal-chip text-xs">Review: {source.review_state}</span>
-      </div>
+      {showMetaChips ? (
+        <div className="flex flex-wrap gap-2">
+          <span className="signal-chip text-xs">
+            {labelForClassification(source.classification)}
+          </span>
+          <span className="signal-chip text-xs">
+            {labelForPublisherKind(source.publisher_kind)}
+          </span>
+          <span className="signal-chip text-xs">Review: {source.review_state}</span>
+        </div>
+      ) : null}
 
-      <h3 className="mt-4 text-base text-text-primary">{source.title}</h3>
+      <h3 className={`${showMetaChips ? "mt-4" : "mt-0"} text-base text-text-primary`}>
+        {source.title}
+      </h3>
       <p className="mt-2 text-sm leading-6 text-text-secondary">{source.source_name}</p>
       {source.summary ? (
         <p className="mt-2 text-sm leading-6 text-text-secondary">{source.summary}</p>
@@ -49,7 +61,7 @@ export function SourceCard({
       <div className="mt-3 space-y-1 text-xs leading-5 text-text-tertiary">
         {formatDate(source.publish_date) ? <p>Published {formatDate(source.publish_date)}</p> : null}
         {formatDate(source.updated_date) ? <p>Updated {formatDate(source.updated_date)}</p> : null}
-        {formatDate(source.reviewed_at) ? (
+        {showReviewDetails && formatDate(source.reviewed_at) ? (
           <p>
             Reviewed {formatDate(source.reviewed_at)}
             {source.reviewer_ref ? ` by ${source.reviewer_ref}` : ""}

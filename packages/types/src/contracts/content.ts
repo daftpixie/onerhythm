@@ -105,7 +105,7 @@ export interface EditorialShareAtoms {
 export interface EditorialDocumentSpec {
   label: string;
   print_label: string;
-  footer_note: string;
+  footer_note?: string;
   wordmark_tone: "white" | "gradient";
 }
 
