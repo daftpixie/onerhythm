@@ -673,7 +673,7 @@ export const siteContent = {
   about: {
     heroTitle: "No one should fight an invisible bear alone.",
     heroBody:
-      "Arrhythmia is an invisible bear. It sits on your chest, changes your relationship with time, and the world cannot see it. OneRhythm was built because that invisibility is the problem — and shared visibility is the beginning of a constructive response.",
+      "Arrhythmia is an invisible bear. It sits on your chest, seeks rent with no option to evict, and the world cannot see it. OneRhythm was built because that invisibility is the problem and shared visibility is the beginning of a constructive response.",
     whatItIsTitle: "What OneRhythm is building",
     features: [
       {
@@ -689,7 +689,7 @@ export const siteContent = {
       {
         title: "A community that understands",
         body:
-          "Connect with people who get it — because they've lived it too. Patients, caregivers, and advocates, all in one place.",
+          "Connect with people who get it, because they've lived it too. Patients, caregivers, and advocates, all in one place.",
       },
     ],
     evidenceTitle: "The numbers tell a story",

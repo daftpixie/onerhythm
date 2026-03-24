@@ -5,23 +5,22 @@ import {
   AboutHero,
   EvidenceInterlude,
   OriginSection,
-  PromiseSection,
   ResponseSection,
   WhatItIs,
 } from "../../components/about";
+import { siteContent } from "../../content/site-copy";
 import { buildPageMetadata } from "../../lib/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "About OneRhythm — Why This Platform Exists",
-  description:
-    "OneRhythm was built by an ARVC survivor because the psychological toll of arrhythmia is measurable, documented, and still too often left unaddressed.",
+  title: siteContent.metadata.about.title,
+  description: siteContent.metadata.about.description,
   path: "/about",
   keywords: [
     "OneRhythm",
-    "ARVC",
-    "arrhythmia mental health",
-    "Matthew Adams",
     "founder story",
+    "arrhythmia mental health",
+    "arrhythmia support movement",
+    "integrated arrhythmia care",
   ],
 });
 
@@ -33,7 +32,6 @@ export default function AboutPage() {
       <EvidenceInterlude />
       <ResponseSection />
       <WhatItIs />
-      <PromiseSection />
       <AboutCTA />
     </main>
   );

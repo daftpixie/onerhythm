@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { MedicalDisclaimer } from "@onerhythm/ui";
 
+import { siteContent } from "../../content/site-copy";
+
 const EASE_REVEAL: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export function AboutCTA() {
@@ -20,15 +22,9 @@ export function AboutCTA() {
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link
             className="action-link action-link-primary px-6 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-            href="/onboarding"
+            href="/join"
           >
-            Contribute Your ECG
-          </Link>
-          <Link
-            className="action-link action-link-quiet px-6 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-            href="/research/pulse"
-          >
-            Read the Research
+            {siteContent.about.ctaPrimary}
           </Link>
         </div>
 

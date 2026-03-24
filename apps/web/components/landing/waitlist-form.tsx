@@ -17,6 +17,7 @@ import { Button, FieldWrapper, Input } from "@onerhythm/ui";
 import type { WaitlistReferralStatus, WaitlistSignupResponse } from "@onerhythm/types";
 
 type WaitlistState = "idle" | "submitting" | "success" | "duplicate" | "error";
+type WaitlistFormVariant = "mission" | "researchPulseBeta";
 
 type WaitlistFormProps = {
   buttonLabel?: string;
@@ -24,16 +25,57 @@ type WaitlistFormProps = {
   idPrefix?: string;
   initialReferralCode?: string | null;
   source?: string;
+  variant?: WaitlistFormVariant;
 };
 
 type StoredWaitlistSubmission = WaitlistSignupResponse & {
   updated_at: string;
 };
 
-const STORAGE_KEY = "onerhythm.waitlist-submission.v1";
 const STORAGE_EVENT = "onerhythm:waitlist-submission";
-const DEFAULT_MESSAGE =
-  "No spam. No data extraction. Unsubscribe anytime.";
+
+type WaitlistStorageEventDetail = {
+  key: string;
+  payload: StoredWaitlistSubmission | null;
+};
+
+type WaitlistVariantConfig = {
+  defaultMessage: string;
+  fieldDescription: string;
+  showReferralTools: boolean;
+  storageKey: string;
+  successBody: (submission: StoredWaitlistSubmission) => string;
+  successEyebrow: string;
+  successPanelClassName: string;
+  successTitle: string;
+};
+
+const WAITLIST_VARIANT_CONFIG: Record<WaitlistFormVariant, WaitlistVariantConfig> = {
+  mission: {
+    defaultMessage: "No spam. No data extraction. Unsubscribe anytime.",
+    fieldDescription: "Closed beta updates only.",
+    showReferralTools: true,
+    storageKey: "onerhythm.waitlist-submission.v1",
+    successBody: (submission) =>
+      `${submission.message} Your founding member spot is reserved. Now help us reach the English Channel, one 25 centimeter promise at a time.`,
+    successEyebrow: "Mission confirmed",
+    successPanelClassName:
+      "border-pulse/30 bg-[linear-gradient(180deg,rgba(37,43,72,0.78),rgba(17,24,39,0.9))]",
+    successTitle: "You're in. Welcome to the mission.",
+  },
+  researchPulseBeta: {
+    defaultMessage: "ResearchPulse beta updates only. Unsubscribe anytime.",
+    fieldDescription: "ResearchPulse beta updates only.",
+    showReferralTools: false,
+    storageKey: "onerhythm.waitlist-submission.researchpulse-beta.v1",
+    successBody: (submission) =>
+      `${submission.message} We'll reach out when ResearchPulse preview releases, testing windows, and feedback sessions open.`,
+    successEyebrow: "Beta access requested",
+    successPanelClassName:
+      "border-signal/28 bg-[linear-gradient(180deg,rgba(32,41,69,0.84),rgba(17,24,39,0.92)),radial-gradient(circle_at_top_right,rgba(102,229,255,0.1),transparent_38%)]",
+    successTitle: "You're on the ResearchPulse beta list.",
+  },
+};
 
 function isStoredSubmission(payload: unknown): payload is StoredWaitlistSubmission {
   return Boolean(
@@ -48,12 +90,12 @@ function isStoredSubmission(payload: unknown): payload is StoredWaitlistSubmissi
   );
 }
 
-function readStoredSubmission(): StoredWaitlistSubmission | null {
+function readStoredSubmission(storageKey: string): StoredWaitlistSubmission | null {
   if (typeof window === "undefined") {
     return null;
   }
 
-  const raw = window.localStorage.getItem(STORAGE_KEY);
+  const raw = window.localStorage.getItem(storageKey);
   if (!raw) {
     return null;
   }
@@ -66,20 +108,23 @@ function readStoredSubmission(): StoredWaitlistSubmission | null {
   }
 }
 
-function writeStoredSubmission(payload: StoredWaitlistSubmission | null) {
+function writeStoredSubmission(storageKey: string, payload: StoredWaitlistSubmission | null) {
   if (typeof window === "undefined") {
     return;
   }
 
   if (payload) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    window.localStorage.setItem(storageKey, JSON.stringify(payload));
   } else {
-    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(storageKey);
   }
 
   window.dispatchEvent(
-    new CustomEvent<StoredWaitlistSubmission | null>(STORAGE_EVENT, {
-      detail: payload,
+    new CustomEvent<WaitlistStorageEventDetail>(STORAGE_EVENT, {
+      detail: {
+        key: storageKey,
+        payload,
+      },
     }),
   );
 }
@@ -100,8 +145,8 @@ function buildRedditShareUrl(url: string): string {
 
 function buildXShareUrl(url: string): string {
   const text =
-    "I just joined the @OneRhythm beta - a community platform for arrhythmia patients tracking our collective ECG distance to the Moon. 88.3% of us report severe anxiety. Nobody is screening for it. We're changing that.";
-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${text} ${url} #InvisibleBears`)}`;
+    "I just joined @OneRhythm — a mission to make the invisible burden of arrhythmia visible through shared rhythm distance. 88.3% report severe anxiety. Nobody is screening for it. No one should fight an invisible bear alone.";
+  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${text} ${url} #OneRhythm #InvisibleBears #SharedRhythm`)}`;
 }
 
 function badgeForReferralCount(referralCount: number) {
@@ -138,10 +183,13 @@ export function WaitlistForm({
   idPrefix = "waitlist",
   initialReferralCode = null,
   source = "landing-page",
+  variant = "mission",
 }: WaitlistFormProps) {
+  const variantConfig = WAITLIST_VARIANT_CONFIG[variant];
+  const { defaultMessage, fieldDescription, showReferralTools, storageKey } = variantConfig;
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
-  const [message, setMessage] = useState(DEFAULT_MESSAGE);
+  const [message, setMessage] = useState(defaultMessage);
   const [state, setState] = useState<WaitlistState>("idle");
   const [submission, setSubmission] = useState<StoredWaitlistSubmission | null>(null);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
@@ -149,21 +197,20 @@ export function WaitlistForm({
   const copyFeedbackTimeout = useRef<number | null>(null);
 
   useEffect(() => {
-    setSubmission(readStoredSubmission());
+    setSubmission(readStoredSubmission(storageKey));
 
     function syncSubmission(event: Event) {
-      const customEvent = event as CustomEvent<StoredWaitlistSubmission | null>;
-      if (customEvent.detail !== undefined) {
-        setSubmission(customEvent.detail);
+      const customEvent = event as CustomEvent<WaitlistStorageEventDetail>;
+      if (!customEvent.detail || customEvent.detail.key !== storageKey) {
         return;
       }
 
-      setSubmission(readStoredSubmission());
+      setSubmission(customEvent.detail.payload);
     }
 
     function handleStorage(event: StorageEvent) {
-      if (event.key === STORAGE_KEY) {
-        setSubmission(readStoredSubmission());
+      if (event.key === storageKey) {
+        setSubmission(readStoredSubmission(storageKey));
       }
     }
 
@@ -177,9 +224,13 @@ export function WaitlistForm({
         window.clearTimeout(copyFeedbackTimeout.current);
       }
     };
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
+    if (!showReferralTools) {
+      return;
+    }
+
     const currentSubmission = submission;
     const referralCode = currentSubmission?.referral_code;
     if (!currentSubmission || !referralCode) {
@@ -219,7 +270,7 @@ export function WaitlistForm({
           referral_count: payload.referral_count,
           updated_at: new Date().toISOString(),
         };
-        writeStoredSubmission(nextSubmission);
+        writeStoredSubmission(storageKey, nextSubmission);
         setSubmission(nextSubmission);
       } catch {
         // Keep the last confirmed referral state visible.
@@ -235,20 +286,20 @@ export function WaitlistForm({
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [submission]);
+  }, [showReferralTools, storageKey, submission]);
 
   function resetFeedback() {
     if (state !== "idle") {
       setState("idle");
-      setMessage(DEFAULT_MESSAGE);
+      setMessage(defaultMessage);
     }
   }
 
   function clearSubmission() {
-    writeStoredSubmission(null);
+    writeStoredSubmission(storageKey, null);
     setSubmission(null);
     setState("idle");
-    setMessage(DEFAULT_MESSAGE);
+    setMessage(defaultMessage);
     setCopyState("idle");
   }
 
@@ -333,7 +384,7 @@ export function WaitlistForm({
             updated_at: new Date().toISOString(),
           };
 
-          writeStoredSubmission(nextSubmission);
+          writeStoredSubmission(storageKey, nextSubmission);
           setSubmission(nextSubmission);
           setState(payload.status === "already_joined" ? "duplicate" : "success");
           setMessage(payload.message);
@@ -353,24 +404,28 @@ export function WaitlistForm({
 
   if (submission) {
     const referralUrl = submission.referral_url ?? null;
-    const badge = badgeForReferralCount(submission.referral_count);
+    const badge = showReferralTools ? badgeForReferralCount(submission.referral_count) : null;
 
     return (
       <div className={["space-y-5", className].join(" ")}>
-        <div className="rounded-[1.5rem] border border-pulse/30 bg-[linear-gradient(180deg,rgba(37,43,72,0.78),rgba(17,24,39,0.9))] p-5 shadow-panel">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-pulse-glow">
-            Mission confirmed
+        <div
+          className={[
+            "rounded-[1.5rem] border p-5 shadow-panel",
+            variantConfig.successPanelClassName,
+          ].join(" ")}
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-signal-soft">
+            {variantConfig.successEyebrow}
           </p>
           <h3 className="mt-3 font-display text-2xl leading-tight text-text-primary">
-            You&apos;re in. Welcome to the mission.
+            {variantConfig.successTitle}
           </h3>
           <p className="mt-3 text-sm leading-7 text-text-secondary">
-            {submission.message} Your founding member spot is reserved. Now help us
-            reach the English Channel, one 25 centimeter promise at a time.
+            {variantConfig.successBody(submission)}
           </p>
         </div>
 
-        {referralUrl ? (
+        {showReferralTools && referralUrl ? (
           <div className="space-y-3 rounded-[1.35rem] border border-signal/25 bg-midnight/80 p-4">
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-signal-soft">
               Your referral link
@@ -416,37 +471,39 @@ export function WaitlistForm({
           </div>
         ) : null}
 
-        <div className="rounded-[1.35rem] border border-token bg-midnight/75 p-4">
-          <p className="text-sm leading-7 text-text-secondary">
-            You&apos;ve brought{" "}
-            <span className="font-medium text-text-primary">
-              {submission.referral_count.toLocaleString()}
-            </span>{" "}
-            people aboard. That&apos;s{" "}
-            <span className="font-medium text-text-primary">
-              {(submission.referral_count * 0.25).toLocaleString(undefined, {
-                maximumFractionDigits: submission.referral_count > 0 ? 2 : 0,
-              })}
-              m
-            </span>{" "}
-            added to the mission projection.
-          </p>
-          {badge ? (
-            <div
-              className={[
-                "mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium",
-                badge.className,
-              ].join(" ")}
-            >
-              <badge.icon className="h-4 w-4" />
-              {badge.label}
-            </div>
-          ) : (
-            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-text-tertiary">
-              First badge unlocks at one confirmed referral.
+        {showReferralTools ? (
+          <div className="rounded-[1.35rem] border border-token bg-midnight/75 p-4">
+            <p className="text-sm leading-7 text-text-secondary">
+              You&apos;ve brought{" "}
+              <span className="font-medium text-text-primary">
+                {submission.referral_count.toLocaleString()}
+              </span>{" "}
+              people aboard. That&apos;s{" "}
+              <span className="font-medium text-text-primary">
+                {(submission.referral_count * 0.25).toLocaleString(undefined, {
+                  maximumFractionDigits: submission.referral_count > 0 ? 2 : 0,
+                })}
+                m
+              </span>{" "}
+              added to the mission projection.
             </p>
-          )}
-        </div>
+            {badge ? (
+              <div
+                className={[
+                  "mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium",
+                  badge.className,
+                ].join(" ")}
+              >
+                <badge.icon className="h-4 w-4" />
+                {badge.label}
+              </div>
+            ) : (
+              <p className="mt-3 text-xs uppercase tracking-[0.16em] text-text-tertiary">
+                First badge unlocks at one confirmed referral.
+              </p>
+            )}
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <button
@@ -469,11 +526,7 @@ export function WaitlistForm({
 
   return (
     <form className={["space-y-4", className].join(" ")} onSubmit={handleSubmit}>
-      <FieldWrapper
-        description="Closed beta updates only."
-        htmlFor={`${idPrefix}-email`}
-        label="Email"
-      >
+      <FieldWrapper description={fieldDescription} htmlFor={`${idPrefix}-email`} label="Email">
         <Input
           autoComplete="email"
           disabled={isPending}
@@ -505,7 +558,7 @@ export function WaitlistForm({
         />
       </div>
 
-      {initialReferralCode ? (
+      {showReferralTools && initialReferralCode ? (
         <div className="inline-flex items-center gap-2 rounded-full border border-aurora/30 bg-aurora/10 px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-aurora-glow">
           <Compass className="h-3.5 w-3.5" />
           Referred by a founding member

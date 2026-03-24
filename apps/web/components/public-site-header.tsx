@@ -9,14 +9,23 @@ import { BrandLogo } from "./brand-logo";
 import { ContrastToggle } from "./contrast-toggle";
 import { getSession, type SessionResponse } from "../lib/auth-api";
 import { BETA_PENDING_PATH, hasAppAccess, hasPendingBetaAccess } from "../lib/beta-access";
+import { siteContent } from "../content/site-copy";
+import { webProductFlags } from "../lib/product-flags";
 
-const primaryLinks = [
-  { href: "/community", label: "Community" },
-  { href: "/mosaic", label: "Mosaic" },
-  { href: "/evidence", label: "Research" },
-  { href: "/stories", label: "Stories" },
-  { href: "/about", label: "About" },
-];
+const primaryLinks = webProductFlags.missionV3Enabled
+  ? [
+      { href: "/mission", label: siteContent.navigation.primaryLinks.mission },
+      { href: "/about", label: siteContent.navigation.primaryLinks.about },
+      ...(webProductFlags.legacyMosaicEnabled
+        ? [{ href: "/mosaic", label: siteContent.navigation.primaryLinks.legacyMosaic }]
+        : []),
+    ]
+  : [
+      { href: "/mosaic", label: "Mosaic" },
+      { href: "/evidence", label: "Research" },
+      { href: "/stories", label: "Stories" },
+      { href: "/about", label: "About" },
+    ];
 
 const desktopNavLinkClass =
   "rounded-lg px-2.5 py-1.5 text-[0.8125rem] leading-tight text-text-secondary transition-colors duration-micro ease-out hover:bg-cosmos-nebula/80 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-deep-void";
@@ -115,7 +124,7 @@ export function PublicSiteHeader() {
     if (showPendingLink) {
       return (
         <Link className={className} href={BETA_PENDING_PATH} onClick={onClick}>
-          Beta status
+          {siteContent.navigation.betaStatus}
         </Link>
       );
     }
@@ -124,17 +133,19 @@ export function PublicSiteHeader() {
       return (
         <Link
           className={className}
-          href={session.user.profile_id ? "/account/data" : "/onboarding"}
+          href={session.user.profile_id ? "/about/account/data" : "/onboarding"}
           onClick={onClick}
         >
-          {session.user.profile_id ? "Account" : "Finish setup"}
+          {session.user.profile_id
+            ? siteContent.navigation.account
+            : siteContent.navigation.finishSetup}
         </Link>
       );
     }
 
     return (
       <Link className={className} href="/sign-in" onClick={onClick}>
-        Sign in
+        {siteContent.navigation.signIn}
       </Link>
     );
   }
@@ -160,11 +171,23 @@ export function PublicSiteHeader() {
       <Link
         className={className}
         href={
-          showAppAccess ? "/contribute" : showPendingLink ? BETA_PENDING_PATH : "/#waitlist"
+          webProductFlags.missionV3Enabled
+            ? "/join"
+            : showAppAccess
+              ? "/contribute"
+              : showPendingLink
+                ? BETA_PENDING_PATH
+                : "/#waitlist"
         }
         onClick={onClick}
       >
-        {showAppAccess ? "Contribute" : showPendingLink ? "Beta status" : "Join beta"}
+        {webProductFlags.missionV3Enabled
+          ? siteContent.navigation.primaryCta
+          : showAppAccess
+            ? "Contribute"
+            : showPendingLink
+              ? siteContent.navigation.betaStatus
+              : "Join beta"}
       </Link>
     );
   }

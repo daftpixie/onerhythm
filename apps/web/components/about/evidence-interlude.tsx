@@ -2,32 +2,13 @@
 
 import { motion } from "framer-motion";
 
-import { StatCard } from "../home/stat-card";
+import { siteContent } from "../../content/site-copy";
 
 const EASE_REVEAL: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const stats = [
-  {
-    value: "88.3%",
-    description: "of arrhythmia patients report moderate to severe anxiety",
-    source: "Nature Scientific Reports (2025), N=222",
-    accent: "pulse" as const,
-  },
-  {
-    value: "1 in 5",
-    description: "symptomatic AFib patients reported suicidal thoughts",
-    source: "AHA / Royal Melbourne Hospital",
-    accent: "pulse" as const,
-  },
-  {
-    value: "3.2\u00d7",
-    description: "mortality risk from elevated PTSD in ICD patients",
-    source: "Circ: Arrhythmia & Electrophysiology",
-    accent: "signal" as const,
-  },
-];
-
 export function EvidenceInterlude() {
+  const stat = siteContent.about.evidenceStat;
+
   return (
     <section className="bg-midnight py-12">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
@@ -38,24 +19,21 @@ export function EvidenceInterlude() {
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="font-display text-[1.95rem] font-semibold text-text-primary sm:text-4xl">
-            I Was Inside the Numbers
+            {siteContent.about.evidenceTitle}
           </h2>
           <p className="mt-3 text-base leading-7 text-text-secondary">
-            And I didn&rsquo;t know it. Because nobody told me.
+            Numbers matter only when they become visible enough to change what happens next.
           </p>
         </motion.div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {stats.map((stat, i) => (
-            <StatCard
-              accent={stat.accent}
-              description={stat.description}
-              index={i}
-              key={stat.value}
-              source={stat.source}
-              value={stat.value}
-            />
-          ))}
+        <div className="mt-10 max-w-4xl rounded-[2rem] border border-token bg-cosmos p-6 shadow-subtle sm:p-8">
+          <p className="mt-4 font-display text-[clamp(3.5rem,8vw,5rem)] leading-none text-pulse">
+            {stat.value}
+          </p>
+          <p className="mt-4 text-lg font-medium leading-8 text-text-primary">{stat.description}</p>
+          <p className="mt-4 text-sm leading-7 text-text-secondary">{stat.meaning}</p>
+          <p className="mt-3 text-sm leading-7 text-text-secondary">{stat.action}</p>
+          <p className="mt-5 font-mono text-xs leading-5 text-text-tertiary">{stat.source}</p>
         </div>
 
         <motion.p
@@ -65,8 +43,8 @@ export function EvidenceInterlude() {
           viewport={{ once: true, margin: "-40px" }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          These are not edge cases. They are the norm. And mental health
-          screening is still not standard practice in most EP clinics.
+          OneRhythm exists to turn those numbers into visibility, community, and
+          better support pathways, not into fear.
         </motion.p>
       </div>
     </section>
