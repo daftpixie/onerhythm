@@ -1,4 +1,5 @@
 export * from "./contracts/mvp-domain";
+export * from "./contracts/mission-v3";
 export * from "./contracts/content";
 export * from "./contracts/sources";
 export * from "./contracts/analytics";

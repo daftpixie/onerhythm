@@ -6,11 +6,19 @@ export const analyticsEventNames = [
   "educational_content_returned",
   "research_hub_viewed",
   "research_article_viewed",
+  "story_article_viewed",
   "community_story_submitted",
   "resource_link_clicked",
   "homepage_cta_clicked",
   "heart_mosaic_viewed",
   "heart_mosaic_returned",
+  "mission_control_viewed",
+  "mission_control_returned",
+  "mission_scene_loaded",
+  "mission_scene_fallback_used",
+  "mission_scene_degraded",
+  "mission_scene_interaction",
+  "mission_scene_error",
 ] as const;
 
 export type AnalyticsEventName = (typeof analyticsEventNames)[number];
@@ -33,6 +41,20 @@ export interface AnalyticsEventProperties {
   source_reference_id?: string;
   resource_kind?: string;
   status?: string;
+  fallback_reason?: string;
+  performance_tier?: string;
+  interaction_kind?: string;
+  transport?: string;
+  reduced_motion?: boolean;
+  compact_view?: boolean;
+  coarse_pointer?: boolean;
+  webgl_supported?: boolean;
+  scene_mode?: string;
+  waypoint_key?: string;
+  share_platform?: string;
+  share_slug?: string;
+  referral_source?: string;
+  route_window_mode?: string;
 }
 
 export interface AnalyticsEventInput {

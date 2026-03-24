@@ -37,7 +37,14 @@ export interface ContentSection {
   section_id: string;
   heading: string;
   body: string[];
+  eyebrow?: string;
   bullets?: string[];
+  pull_quote?: string;
+  stat_callout?: {
+    value: string;
+    label: string;
+    source?: string;
+  };
 }
 
 export interface ResearchStatHighlight {
@@ -57,6 +64,70 @@ export interface ResearchTranslationContent {
 export interface ContentSeo {
   title: string;
   description: string;
+}
+
+export interface EditorialHomepageFeature {
+  order: number;
+  type_label: string;
+  reading_time: string;
+  purpose: string;
+  summary: string;
+  cta_label: string;
+  accent_tone: "pulse" | "signal" | "aurora";
+  pull_quote?: string;
+  stat_accent?: {
+    value: string;
+    label: string;
+    source?: string;
+  };
+}
+
+export interface EditorialShareAtoms {
+  meta_description: string;
+  og_title: string;
+  og_description: string;
+  og_alt: string;
+  og_image_path: string;
+  twitter_image_path?: string;
+  x_post_starter: string;
+  x_thread: string[];
+  reddit_post: string;
+  reddit_tldr: string;
+  linkedin_post: string;
+  share_captions: string[];
+  pull_quotes: string[];
+  image_card_snippets: string[];
+  short_version: string;
+  medium_version: string;
+  long_version: string;
+}
+
+export interface EditorialDocumentSpec {
+  label: string;
+  print_label: string;
+  footer_note: string;
+  wordmark_tone: "white" | "gradient";
+}
+
+export interface EditorialNextAction {
+  label: string;
+  href: string;
+  description: string;
+}
+
+export interface EditorialArticle {
+  dek: string;
+  reading_time: string;
+  hero_label: string;
+  audience: string;
+  homepage_feature: EditorialHomepageFeature;
+  share: EditorialShareAtoms;
+  document: EditorialDocumentSpec;
+  next_action: EditorialNextAction;
+  secondary_action?: EditorialNextAction;
+  cover_image_path: string;
+  cover_image_alt: string;
+  sensitive_topic: "none" | "mental_health" | "suicidality";
 }
 
 export interface ContentEntry {
@@ -80,4 +151,5 @@ export interface ContentEntry {
   sections: ContentSection[];
   source_links: ContentSourceLink[];
   research_translation?: ResearchTranslationContent;
+  article?: EditorialArticle;
 }

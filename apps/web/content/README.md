@@ -15,6 +15,31 @@ This directory holds the launch content layer for OneRhythm's public editorial s
 
 The content layer is intentionally file-based for launch. It is designed for SSR, SEO, and contributor-friendly review without introducing a CMS.
 
+## Product copy system
+
+Launch-facing product copy is centralized in [site-copy.ts](site-copy.ts).
+
+Use it for:
+
+- route metadata
+- hero headlines and subheads
+- mission and HUD labels
+- CTA language
+- share prompts
+- footer and navigation copy
+- ResearchPulse framing
+
+Messaging authority lives upstream in:
+
+- [docs/content/OneRhythm Content Strategy.md](../../docs/content/OneRhythm%20Content%20Strategy.md)
+- [docs/content/OneRhythm Content Library.md](../../docs/content/OneRhythm%20Content%20Library.md)
+
+When adding or changing public copy:
+
+1. Start from the authority docs above.
+2. Prefer updating `site-copy.ts` rather than scattering new strings across components.
+3. Keep the non-diagnostic, community-first, solution-forward posture intact.
+
 ## Add or update content
 
 1. Add or update author records in [authors.ts](authors.ts) if needed.
