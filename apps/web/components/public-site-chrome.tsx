@@ -16,9 +16,28 @@ function shouldUseInlineFooter(pathname: string): boolean {
   );
 }
 
-export function PublicSiteChrome({ children }: { children: ReactNode }) {
+function shouldHidePublicChrome(pathname: string, isLaunchHost: boolean): boolean {
+  return isLaunchHost || pathname === "/launch";
+}
+
+export function PublicSiteChrome({
+  children,
+  isLaunchHost = false,
+}: {
+  children: ReactNode;
+  isLaunchHost?: boolean;
+}) {
   const pathname = usePathname() ?? "/";
+  const hidePublicChrome = shouldHidePublicChrome(pathname, isLaunchHost);
   const useInlineFooter = shouldUseInlineFooter(pathname);
+
+  if (hidePublicChrome) {
+    return (
+      <div id="main-content" className="flex min-h-0 flex-1 flex-col">
+        {children}
+      </div>
+    );
+  }
 
   return (
     <>

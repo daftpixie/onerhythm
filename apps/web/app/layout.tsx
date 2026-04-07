@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 import { PublicSiteChrome } from "../components/public-site-chrome";
+import { LAUNCH_HOST_HEADER } from "../lib/launch-mode";
 import { absoluteUrl, getSiteUrl } from "../lib/site";
 
 export const metadata: Metadata = {
@@ -68,21 +70,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const isLaunchHost = requestHeaders.get(LAUNCH_HOST_HEADER) === "1";
+
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col font-body antialiased">
+      <body className="flex min-h-screen flex-col bg-void font-body antialiased">
         <a
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[0.9rem] focus:bg-pulse focus:px-4 focus:py-3 focus:text-text-primary"
           href="#main-content"
         >
           Skip to content
         </a>
-        <PublicSiteChrome>{children}</PublicSiteChrome>
+        <PublicSiteChrome isLaunchHost={isLaunchHost}>{children}</PublicSiteChrome>
       </body>
     </html>
   );

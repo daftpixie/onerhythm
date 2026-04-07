@@ -26,6 +26,8 @@ export const navigationMocks = {
   }),
 };
 
+export const requestHeaderState = new Headers();
+
 vi.mock("next/link", () => ({
   default: ({
     children,
@@ -79,10 +81,15 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => navigationState.searchParams,
 }));
 
+vi.mock("next/headers", () => ({
+  headers: () => Promise.resolve(requestHeaderState),
+}));
+
 afterEach(() => {
   cleanup();
   navigationState.pathname = "/";
   navigationState.searchParams = new URLSearchParams();
+  requestHeaderState.forEach((_, key) => requestHeaderState.delete(key));
   vi.clearAllMocks();
   vi.unstubAllGlobals();
 });
