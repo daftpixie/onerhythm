@@ -1,0 +1,16 @@
+[
+  { "from": "assets/brand/site.webmanifest", "to": "public/site.webmanifest" },
+  { "from": "assets/brand/icons/favicon.ico", "to": "public/favicon.ico" },
+  { "from": "assets/brand/icons/favicon.ico", "to": "public/icons/favicon.ico" },
+  { "from": "assets/brand/icons/favicon-16x16.png", "to": "public/icons/favicon-16x16.png" },
+  { "from": "assets/brand/icons/favicon-32x32.png", "to": "public/icons/favicon-32x32.png" },
+  { "from": "assets/brand/icons/favicon-48x48.png", "to": "public/icons/favicon-48x48.png" },
+  { "from": "assets/brand/icons/apple-touch-icon.png", "to": "public/icons/apple-touch-icon.png" },
+  { "from": "assets/brand/icons/android-chrome-192x192.png", "to": "public/icons/android-chrome-192x192.png" },
+  { "from": "assets/brand/icons/android-chrome-512x512.png", "to": "public/icons/android-chrome-512x512.png" },
+  { "from": "assets/brand/icons/maskable-512.png", "to": "public/icons/maskable-512.png" },
+  { "from": "assets/brand/social/og-image-1200x630.png", "to": "public/social/og-image-1200x630.png" },
+  { "from": "assets/brand/social/og-image-dark-1200x630.png", "to": "public/social/og-image-dark-1200x630.png" },
+  { "from": "assets/brand/social/og-square-1200x1200.png", "to": "public/social/og-square-1200x1200.png" },
+  { "from": "assets/brand/social/twitter-card-1200x600.png", "to": "public/social/twitter-card-1200x600.png" }
+]

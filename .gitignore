@@ -1,0 +1,55 @@
+node_modules/
+.expo/
+dist/
+build/
+web-build/
+.next/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+!.env.test.example
+.DS_Store
+*:Zone.Identifier
+CLAUDE.local.md
+docs/.audit.log
+
+# Per-developer Claude Code state. NOT the shared config: .claude/settings.json,
+# rules/, hooks/, skills/, agents/ and plans/ are all committed on purpose —
+# they are how this project is built and reviewed, and publishing them is part
+# of the transparency posture. Only the machine-local bits are excluded.
+#
+# settings.local.json was previously ignored ONLY by the founder's global
+# gitignore, which a contributor cloning this repo would not have.
+# Glob, not an exact match: the editor writes
+# settings.local.json.tmp.<pid>.<hash> alongside it, and `git add -A` would
+# happily stage one of those.
+.claude/settings.local.json*
+.claude/scheduled_tasks.lock
+# Expo / React Native
+expo-env.d.ts
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.metro-health-check*
+*.pem
+*.tsbuildinfo
+/ios
+/android
+
+# Google service-account credentials for the updates-list Sheet mirror
+# (ADR 0011). Referenced by GOOGLE_SERVICE_ACCOUNT_JSON; server/local only,
+# never in the client bundle. The secrets guard blocks these by filename and
+# by content shape as well — belt and braces, because one leak is permanent.
+service-account*.json
+*.service-account.json
+gcp-key*.json
+google-credentials*.json
+
+# never let local backups get tracked
+onerhythm-backups/

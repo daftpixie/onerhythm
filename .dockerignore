@@ -1,0 +1,26 @@
+# Keep the Docker build context to what the landing export needs, and keep
+# every secret-shaped file out of it.
+.git
+node_modules
+dist
+coverage
+.expo
+.env
+.env.*
+**/.env
+**/.env.*
+*.pem
+*.key
+*.p8
+*.p12
+*.jks
+
+# Not part of the web export.
+supabase
+tests
+docs
+transparency
+.claude
+.github
+.githooks
+scripts

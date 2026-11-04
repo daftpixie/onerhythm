@@ -1,0 +1,28 @@
+OneRhythm
+Copyright 2026 VT Infinite, Inc.
+
+This product includes software developed by VT Infinite, Inc. and the
+OneRhythm contributors. It is licensed under the Apache License, Version 2.0
+(see LICENSE).
+
+The OneRhythm name and the 1R mark
+----------------------------------
+
+The OneRhythm name and the 1R mark (assets/brand/) are trademarks of
+VT Infinite, Inc. The Apache License covers the code, including the code that
+draws the mark. Section 6 of that license grants no permission to use the
+name or the mark. So it is not permission to present a fork as OneRhythm, or
+to suggest that VT Infinite, Inc. endorses it. Fork the software freely;
+please use your own name and mark.
+
+Things the license above does not cover
+---------------------------------------
+
+* Atkinson Hyperlegible is licensed under the SIL Open Font License 1.1 by
+  the Braille Institute of America. No font files are kept in this
+  repository; the typeface comes in at build time through the
+  @expo-google-fonts/atkinson-hyperlegible package, which carries its own
+  license. It is an accessibility choice, not decoration (see docs/brand/).
+
+* Dependencies carry their own licenses. See package.json and
+  package-lock.json.

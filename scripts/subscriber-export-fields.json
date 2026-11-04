@@ -1,0 +1,13 @@
+{
+  "comment": [
+    "The ONLY fields that may leave the database for the Google Sheet mirror.",
+    "ADR 0011: the no-correlation rule extends to the mirror, so this list may",
+    "never gain a member or profile field. tests/unit/sheet-export-fields.test.ts",
+    "asserts that, and asserts the sync script selects exactly these columns.",
+    "The two tokens are deliberately absent: an unsubscribe token in a",
+    "spreadsheet is a live capability sitting in a document, and the sheet does",
+    "not need it to show who is on the list."
+  ],
+  "select": ["email", "created_at", "confirmed_at", "unsubscribed_at"],
+  "headers": ["Email", "Signed up", "Confirmed", "Unsubscribed"]
+}

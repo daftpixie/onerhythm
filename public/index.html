@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>OneRhythm — you are not alone with your heart</title>
+
+    <!--
+      This file is the web HTML shell, and it is NOT app/+html.tsx on purpose.
+
+      The project uses Expo's default web output ("single"). On that path
+      @expo/cli builds index.html from createTemplateHtmlFromExpoConfigAsync,
+      which reads THIS file if it exists and otherwise falls back to the stock
+      template (start/server/webTemplate.js). app/+html.tsx is consumed only by
+      exportStaticAsync — i.e. web.output "static" or "server" — and expo-router
+      merely excludes +html from the route tree. Tags placed there today would
+      ship in precisely nothing.
+
+      Per-route Open Graph tags (a shared shell can only carry one set) would
+      need web.output: "static" plus expo-router/head. That is a routing change,
+      not a landing-page change. See ADR 0011 decision (d).
+
+      Asset paths are root-absolute because Expo copies public/ to the export
+      root. Keep them in sync with scripts/brand-public-assets.json.
+    -->
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#FFFFFF" />
+
+    <meta
+      name="description"
+      content="A peer-support community for people living with cardiac arrhythmia, and the people who care for them."
+    />
+
+    <!--
+      Open Graph. ABSOLUTE urls are required: a relative og:image is ignored by
+      most scrapers, so a path that works in the browser would still produce a
+      blank social card.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OneRhythm" />
+    <meta property="og:title" content="OneRhythm — you are not alone with your heart" />
+    <meta
+      property="og:description"
+      content="A peer-support community for people living with cardiac arrhythmia, and the people who care for them."
+    />
+    <meta property="og:url" content="https://onerhythm.org/" />
+    <meta property="og:image" content="https://onerhythm.org/social/og-image-1200x630.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The OneRhythm 1R mark: a numeral one and the letter R, with a red heart inside the R."
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OneRhythm — you are not alone with your heart" />
+    <meta
+      name="twitter:description"
+      content="A peer-support community for people living with cardiac arrhythmia, and the people who care for them."
+    />
+    <meta name="twitter:image" content="https://onerhythm.org/social/twitter-card-1200x600.png" />
+
+    <!--
+      No analytics, no ad pixel, no third-party font, no embedded frame — not
+      here and not on any other page. Disclosing health data to a third party
+      is itself a reportable FTC HBNR breach, and the landing page is where
+      "just add the pixel" pressure lands first. tests/unit/meta-tags.test.ts
+      fails the build if anything external appears in this file.
+    -->
+
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- The root element for the Expo app -->
+    <div id="root"></div>
+  </body>
+</html>

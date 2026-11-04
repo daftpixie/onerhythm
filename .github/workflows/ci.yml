@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-typecheck-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The guard step diffs against the base branch, so it needs history.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint -- --max-warnings 5
+      - run: npm run typecheck
+
+      # Only the projects that can actually run here.
+      #
+      # `npm run test:ci` runs all THREE jest projects, and the "db" project
+      # talks to a live Supabase stack using credentials from .env.test — which
+      # is gitignored and therefore never reaches CI. So that command could not
+      # have passed on this runner, and this workflow has not been green since
+      # the db project was added.
+      #
+      # Scoping to rn+web is a deliberate reduction, not a fix: it makes CI mean
+      # something again rather than leaving a red badge everyone learns to
+      # ignore. The db suite and pgTAP remain LOCAL pre-merge gates (they run in
+      # .githooks/pre-commit, which runs all three projects against the local
+      # stack). Restoring full coverage here means standing up Supabase in CI —
+      # recorded as a gap in docs/PRODUCTION_READINESS.md rather than pretended.
+      - run: npx jest --selectProjects rn web --ci --coverage
+
+      # The seven non-negotiable guards, over the commits this change adds.
+      #
+      # They normally read `git diff --cached`, which is right for the
+      # pre-commit hook and useless here: a fresh checkout has an empty index,
+      # so all seven would exit 0 without reading a line and CI would show seven
+      # green checkmarks that prove nothing. run-guards.sh works out the real
+      # range (PR base...HEAD, or the pushed commits) and hands it to the guards
+      # via GUARD_DIFF. Verified to fail against a deliberately committed
+      # violation, not just to pass on a clean tree.
+      - name: Guards (no-downvote, health-privacy, secrets, ledger, ...)
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+        run: ./scripts/run-guards.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+
+  # The db jest project and pgTAP, against a real local Supabase stack (G11).
+  #
+  # Until this job existed, both ran only in .githooks/pre-commit, which is
+  # opt-in. They had not run anywhere since 2026-08-09. When they first ran
+  # here, two existing assertions were red (an ops function callable by client
+  # roles), which is exactly why this job exists.
+  #
+  # No secrets. `supabase start` generates local-stack keys inside the job, and
+  # they are only valid against this throwaway stack on this runner.
+  db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+
+      # Pinned: the action by commit (v3.0.1), the CLI by exact version.
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359
+        with:
+          version: 2.122.0
+
+      # Only what the db project needs: Postgres, Auth (GoTrue), PostgREST and
+      # the API gateway. Everything else is excluded to keep the pull small.
+      # `start` applies every migration and supabase/seed.sql.
+      - name: Start local Supabase (db, auth, rest, gateway)
+        run: >-
+          supabase start
+          -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta,realtime,storage-api,mailpit
+
+      - name: Export local-stack test keys
+        run: |
+          supabase status -o env \
+            | sed -n -e 's/^API_URL=/SUPABASE_TEST_URL=/p' \
+                     -e 's/^PUBLISHABLE_KEY=/SUPABASE_TEST_ANON_KEY=/p' \
+                     -e 's/^SECRET_KEY=/SUPABASE_TEST_SERVICE_KEY=/p' \
+            | tr -d '"' >> "$GITHUB_ENV"
+
+      - name: pgTAP
+        run: ./scripts/run-pgtap.sh supabase_db_onerhythm
+
+      - name: jest db project
+        run: npx jest --selectProjects db --ci
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  # The landing-only public build (ADR 0023): the suite in landing mode, the
+  # web export with NO Supabase variables, and the Railway image, smoke-tested.
+  landing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      EXPO_PUBLIC_SITE_MODE: landing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+
+      # Every rn + web test, in landing mode — crisis, shell, landing, meta
+      # tags, entity wording. The only two left out assert that the updates
+      # FORM renders, which landing mode deliberately removes; tests in
+      # tests/web/landing-mode.test.tsx pin its absence instead.
+      - name: Tests in landing mode
+        run: >-
+          npx jest --selectProjects rn web --ci
+          --testNamePattern '^(?!.*offers the updates form).*$'
+
+      - name: Landing web export, with no Supabase variables
+        run: |
+          test -z "${EXPO_PUBLIC_SUPABASE_URL:-}" && test -z "${EXPO_PUBLIC_SUPABASE_ANON_KEY:-}"
+          npx expo export --platform web --output-dir dist
+          ! grep -rIlE "[a-z0-9]{20}\.supabase\.(co|in)|sb_publishable_[A-Za-z0-9_-]{8,}|sb_secret_[A-Za-z0-9_-]{8,}" dist
+          # The HTML shell loads only its own bundle: no external script.
+          ! grep -oE '<script[^>]+src="https?://' dist/index.html
+
+      - name: Build the Railway image
+        run: docker build -t onerhythm-landing:ci .
+
+      - name: Smoke-test the image (status codes and headers)
+        run: |
+          docker run -d --name landing -p 8080:8080 -e PORT=8080 onerhythm-landing:ci
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8080/healthz >/dev/null && break; sleep 1; done
+          code() { curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$1"; }
+          test "$(code /)" = 200
+          test "$(code /feed)" = 200            # SPA fallback; the app redirects to /
+          test "$(code /posts/abc?x=1)" = 200
+          test "$(code /_expo/static/js/web/missing.js)" = 404
+          test "$(code /healthz)" = 200
+          h=$(curl -sS -D - -o /dev/null http://127.0.0.1:8080/)
+          echo "$h"
+          for want in "content-security-policy: default-src 'self'" "frame-ancestors 'none'" \
+                      "strict-transport-security: max-age=" "x-content-type-options: nosniff" \
+                      "referrer-policy: no-referrer" "permissions-policy: camera=(), microphone=(), geolocation=()" \
+                      "cache-control: no-cache"; do
+            echo "$h" | tr 'A-Z' 'a-z' | grep -qF "$want" || { echo "missing: $want"; exit 1; }
+          done
+          js=$(docker exec landing sh -c 'ls /srv/_expo/static/js/web/ | head -1')
+          curl -sS -D - -o /dev/null "http://127.0.0.1:8080/_expo/static/js/web/$js" \
+            | tr 'A-Z' 'a-z' | grep -qF "cache-control: public, max-age=31536000, immutable"
+          curl -sS -D - -o /dev/null http://127.0.0.1:8080/_expo/static/js/web/missing.js \
+            | tr 'A-Z' 'a-z' | grep -qF "cache-control: no-store"
+      - name: Stop the container
+        if: always()
+        run: docker rm -f landing || true

@@ -1,0 +1,23 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    // Supabase Edge Functions run on Deno, not under this program. Deno.env and
+    // Deno.serve are not in the Expo lib set, so including them would mean
+    // either bogus errors or loosening the config for everything else.
+    // Excluded deliberately, and said out loud in the function's README.
+    "supabase/functions"
+  ]
+}

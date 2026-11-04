@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OneRhythm — web-only base layer.
+ *
+ * COLOUR TOKENS LIVE IN src/theme/tokens.ts and are deliberately not restated
+ * as CSS custom properties here. Nothing read these vars: every component
+ * styles via StyleSheet.create against tokens.ts, so a :root colour block was
+ * duplicated literals that the contrast suite could not see (ADR 0010,
+ * guard #7). CSS cannot import the TS module, so the duplication is removed
+ * rather than mirrored.
+ *
+ * Type, radius, and motion vars below are UNCHANGED by the v3 re-skin — only
+ * the colour block was removed.
+ */
+:root {
+  /* Type */
+  --font-primary: 'Atkinson Hyperlegible', system-ui, sans-serif;
+
+  /* Radii */
+  --radius-input: 8px;
+  --radius-card: 12px;
+
+  /* Motion (respect prefers-reduced-motion) */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

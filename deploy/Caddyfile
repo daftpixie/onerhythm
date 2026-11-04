@@ -1,0 +1,81 @@
+# OneRhythm landing site — static file server (ADR 0023).
+#
+# Railway terminates TLS at its edge and forwards plain HTTP to $PORT, so
+# Caddy's automatic HTTPS is off and it listens on that one port.
+#
+# What this file provides that Cloudflare Pages used to:
+#  - the SPA fallback (public/_redirects): unknown paths get index.html, 200;
+#  - security headers;
+#  - long cache for hashed assets, no cache for the HTML.
+# What it does NOT provide: edge rate limiting. The landing build has no
+# sign-up route, so there is nothing to limit today. Turning sign-up back on
+# needs a rate-limit layer first (docs/DEPLOY_RAILWAY.md).
+#
+# No access log is configured, so Caddy writes no visitor IP addresses.
+# Railway's edge, in front of this server, may still log them; see
+# docs/DEPLOY_RAILWAY.md. No analytics of any kind.
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+(security_headers) {
+	header {
+		# Same-origin only. Fonts are bundled with the app (Atkinson
+		# Hyperlegible .ttf files under /assets), so no font host is allowed.
+		# 'unsafe-inline' is for STYLES only: react-native-web writes its
+		# styles into a <style> element at runtime, and index.html carries
+		# Expo's small reset <style>. Scripts are 'self' only — no inline
+		# script, no eval.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+		# One year, this host only. includeSubDomains is left off on purpose
+		# until every onerhythm.org subdomain is known to serve HTTPS.
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+		X-Frame-Options "DENY"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+	}
+}
+
+:{$PORT:8080} {
+	root * /srv
+	encode zstd gzip
+
+	import security_headers
+
+	# Railway health check. Not a page; says nothing about anyone.
+	handle /healthz {
+		header Cache-Control "no-store"
+		respond "ok" 200
+	}
+
+	# Hashed build output: cache for a year. A missing file here is a real
+	# 404, never index.html — HTML served as a script would be refused anyway
+	# (nosniff), and a 404 says what actually happened.
+	@hashed path /_expo/static/* /assets/*
+	handle @hashed {
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Everything else: the file if it exists, otherwise the app shell (the SPA
+	# fallback; the router then shows the page or sends the reader home).
+	# Never cached, so a new deploy is seen at once.
+	handle {
+		header Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Errors (a missing hashed asset is the usual one) keep the same security
+	# headers, and are never cached: a 404 must not be pinned for a year.
+	handle_errors {
+		import security_headers
+		header Cache-Control "no-store"
+		respond "{err.status_code} {err.status_text}" {err.status_code}
+	}
+}

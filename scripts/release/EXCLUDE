@@ -1,0 +1,27 @@
+# Paths left out of the public release (ADR 0024).
+#
+# One path per line, relative to the repository root, then "#" and the
+# reason. A path ending in "/" is a directory. Blank lines and lines that
+# start with "#" are ignored. scripts/release/export.sh reads this file from
+# the source ref it exports, so the list that applies is the one committed
+# at that ref.
+#
+# Anything not listed here goes public: the code, tests, guards, migrations,
+# ADRs, PRD, brand guide, vision and .claude/ (agents, hooks, rules, skills,
+# plans). Propose an addition in a pull request with its reason; don't add
+# one quietly.
+
+docs/SESSION_LOG.md            # The internal working log of each session. The release writes a fresh docs/SESSION_LOG.md whose first entry is the release.
+docs/OPEN_SOURCE_CHECKLIST.md  # The founder's private flip checklist. It lists, item by item, what going public reveals about the founder, so publishing it would defeat it.
+transparency/                  # TODO(founder): excluded by default. Open books are "intended, not yet public" (CLAUDE.md); costs.yml holds founder-contributed personal costs and still lists Cloudflare; and its README says git history is the audit trail, which a fresh-history release resets. If included, its README must first say the public audit trail starts at the release commit.
+
+# Local and generated files. git archive exports tracked files only, so
+# these cannot normally reach the release; they are listed so the export's
+# "no excluded path exists" check also proves they are absent.
+docs/.audit.log                # Local audit output (gitignored).
+CLAUDE.local.md                # Per-developer Claude Code notes (gitignored).
+.claude/settings.local.json    # Per-developer Claude Code settings (gitignored).
+.claude/scheduled_tasks.lock   # Per-machine lock file (gitignored).
+.env                           # Local secrets (gitignored). Only .env.example and .env.test.example are public.
+.env.local                     # Local secrets (gitignored).
+.env.test                      # Local test keys (gitignored).

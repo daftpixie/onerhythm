@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+.claude/hooks/no-downvote-guard.sh
+.claude/hooks/no-thirdparty-on-health.sh
+.claude/hooks/no-anon-policy-on-sensitive.sh
+.claude/hooks/ledger-append-only.sh
+.claude/hooks/secrets-pii-scan.sh
+.claude/hooks/no-raw-color-literals.sh
+.claude/hooks/no-marketing-member-join.sh
+command -v npm >/dev/null && npm run lint -- --max-warnings 5
+command -v npm >/dev/null && npm run typecheck
+command -v npm >/dev/null && npm test
+echo "pre-commit guards passed."

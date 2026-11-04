@@ -1,0 +1,12 @@
+# Issues on this repository are for the code. They are public, and nobody
+# watches them around the clock, so they are never the place for help in a
+# crisis. The two links below appear on GitHub's "New issue" page before any
+# form.
+blank_issues_enabled: false
+contact_links:
+  - name: "Need help right now? In the US, call or text 988. In an emergency, call your local emergency number."
+    url: https://988lifeline.org
+    about: "The 988 Suicide & Crisis Lifeline is free and open all day, every day, in the US. Outside the US, findahelpline.com lists free crisis lines by country."
+  - name: "This is a code repository, not a support space."
+    url: https://github.com/daftpixie/onerhythm/blob/main/README.md
+    about: "Nobody here can give medical advice or read an ECG. Please don't post personal health details in an issue: issues are public."

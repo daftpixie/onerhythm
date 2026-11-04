@@ -1,0 +1,113 @@
+import { StyleSheet } from "react-native";
+import { focus, tokens } from "../../theme/tokens";
+
+// Shared styles for the moderation surfaces (ADR 0022). Every control is at
+// least 44px in both directions and wears the v3 focus ring. Nothing animates.
+export const mod = StyleSheet.create({
+  focusRing: {
+    outlineWidth: focus.width,
+    outlineColor: tokens.ink,
+    outlineStyle: "solid",
+    outlineOffset: focus.offset,
+  },
+  pressed: { opacity: 0.85 },
+  button: {
+    minHeight: 44,
+    minWidth: 44,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    // Ink, not a hairline: a control's edge needs 3:1 against Paper (SC 1.4.11).
+    borderWidth: 1,
+    borderColor: tokens.ink,
+    backgroundColor: tokens.paper,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-start",
+  },
+  buttonPrimary: {
+    backgroundColor: tokens.ink,
+    borderColor: tokens.ink,
+  },
+  buttonText: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "600",
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_700Bold",
+  },
+  buttonTextPrimary: { color: tokens.paper },
+  link: {
+    minHeight: 44,
+    minWidth: 44,
+    paddingVertical: 10,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "600",
+    color: tokens.ink,
+    textDecorationLine: "underline",
+    fontFamily: "AtkinsonHyperlegible_700Bold",
+    alignSelf: "flex-start",
+  },
+  panel: {
+    borderWidth: 1,
+    borderColor: tokens.line,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+    backgroundColor: tokens.paper,
+  },
+  heading: {
+    fontSize: 20,
+    lineHeight: 30,
+    fontWeight: "700",
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_700Bold",
+    marginBottom: 8,
+  },
+  body: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_400Regular",
+    marginBottom: 8,
+  },
+  /** A field's visible label: Ink, bold, above the field. */
+  label: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "700",
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_700Bold",
+    marginBottom: 4,
+  },
+  hint: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: tokens.inkSecondary,
+    fontFamily: "AtkinsonHyperlegible_400Regular",
+    marginBottom: 8,
+  },
+  error: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "700",
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_700Bold",
+    marginBottom: 8,
+  },
+  input: {
+    minHeight: 96,
+    borderWidth: 1,
+    borderColor: tokens.ink,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    lineHeight: 24,
+    color: tokens.ink,
+    fontFamily: "AtkinsonHyperlegible_400Regular",
+    textAlignVertical: "top",
+  },
+  row: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 8 },
+  block: { marginTop: 8, marginBottom: 8 },
+});

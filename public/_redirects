@@ -1,0 +1,10 @@
+# Cloudflare Pages SPA fallback.
+#
+# The web build is a single-page app (Expo web output "single"), so every route
+# is served by index.html and resolved client-side. Without this, a deep link
+# pasted from an email — /updates/confirm?token=… or /updates/unsubscribe?token=…
+# — would 404 at the edge before the app ever loaded, which would break the
+# double opt-in and, worse, the unsubscribe link that CAN-SPAM requires to work.
+#
+# NOT DEPLOYED by this commit. This session ships code, not a deploy.
+/*    /index.html   200

@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in the code doesn't work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report this.
+
+        **If you are in crisis or thinking about harming yourself:** in the US, call or text **988** (the Suicide & Crisis Lifeline). In an emergency, call your local emergency number. Outside the US, [findahelpline.com](https://findahelpline.com) lists free crisis lines. This page is not watched around the clock.
+
+        **Please don't post personal health details.** Issues are public and can't be fully taken back. Leave out diagnoses, medicines, test results, ECGs, screenshots of medical records, and anything that could identify you or someone else. Describe the bug with made-up data instead.
+
+        **Security problems** go privately, not here. See [SECURITY.md](https://github.com/daftpixie/onerhythm/blob/main/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, step by step, and what you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did you see it?
+      options:
+        - The landing page (web)
+        - Running the app locally
+        - The tests or CI
+        - Somewhere else
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Device, browser or setup
+      description: For example, "iPhone 12, Safari, text size large" or "Ubuntu, Node 22". Assistive technology, if any, helps too.
+  - type: checkboxes
+    id: no-health-details
+    attributes:
+      label: Before you send
+      options:
+        - label: I have left out personal health details and anything that identifies a real person.
+          required: true
