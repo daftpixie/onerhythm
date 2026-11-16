@@ -23,6 +23,32 @@ repository. Earlier working history is kept privately by VT Infinite, Inc.
 
 **Next:** work continues in this repository, by pull request.
 
+## 2026-11-07 — Links to the founder's papers
+
+The founder asked for his two papers to be linked from the landing page.
+
+- **What changed:** "Who built it" now ends with one plain paragraph and two
+  links to the papers on Zenodo. The founder's own two paragraphs above it
+  are unchanged. Plan: `.claude/plans/landing-founder-papers.md`.
+- **Key decisions:** the case report is linked by a plain description, not
+  by its title. The title names his diagnosis and procedure, and
+  [ADR 0016](adr/0016-landing-copy-and-transparency-removal.md) §3 keeps
+  those off the landing page. Using the title would mean changing ADR 0016,
+  and that is the founder's call. The paragraph says the papers talk about
+  suicide, so 988 is in the same paragraph.
+- **After the accessibility review** (pass, with notes): the case report's
+  link says "by Matthew J Adams" rather than "he", so it makes sense on its
+  own in a screen reader's list of links. The paragraph also points to the
+  help button, as the crisis paragraph above it does.
+- **Tests:** `tests/web/landing-founder-papers.test.tsx`, 8 tests. They
+  failed first (5 of 7 failed before the change; after the review, 3 of 8
+  failed before the copy changed), then all passed. The rn and web suites
+  pass in both site modes. The db suite needs a local Supabase
+  stack and was not run in this session; CI runs it.
+
+**Next:** the founder reviews the pull request. Making the repository public
+is step 10 of `docs/RELEASE_FRESH_HISTORY.md`, and only he takes it.
+
 ## 2026-11-16 — Public-source readiness review and compatible dependency repair
 
 Reviewed baseline `0caa32b`, the release tag and both other branch tips.
@@ -72,3 +98,13 @@ gates; then #3, close superseded #1, #2 if included. Configure repository
 controls/visibility and publish the reviewed 0.1.1 prerelease. The shared
 browser cannot reach the local preview; no keyboard/reader pass is claimed.
 Member launch remains gated.
+
+## 2026-11-16 — Founder-paper branch prepared against SDK 58
+
+Applied the research-link change to the exact PR #3 candidate, retaining the
+7 November and both 16 November entries in chronological order. Clarified
+working-paper status without claiming no researcher has read the work.
+The two updated copy assertions failed before the wording changed. The
+founder's original paragraphs, both Zenodo record URLs and the safety
+affordances are unchanged. Recheck CI, DCO and manual accessibility before
+merging after #3.

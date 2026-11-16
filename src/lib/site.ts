@@ -47,6 +47,35 @@ export const SOURCE_URL = "https://github.com/daftpixie/onerhythm";
 /** The vision document, on GitHub. */
 export const VISION_URL = `${SOURCE_URL}/blob/main/docs/vision/OneRhythm_Vision.md`;
 
+/** A paper by the founder, linked from "Who built it" on the landing page. */
+export type FounderPaper = {
+  /** The visible link text. */
+  text: string;
+  /** The accessible name. It starts with `text` (SC 2.5.3) and says where it goes. */
+  label: string;
+  url: string;
+};
+
+/**
+ * The founder's papers (founder request, 7 Nov 2026): working papers on
+ * Zenodo, not peer reviewed. The case report's own title names his diagnosis
+ * and procedure, which the landing page does not (ADR 0016 §3), so it is
+ * linked by a plain description. Pinned by
+ * tests/web/landing-founder-papers.test.tsx.
+ */
+export const FOUNDER_PAPERS: readonly FounderPaper[] = [
+  {
+    text: "The Mind Was Never Outside the Cardiac Story",
+    label: "The Mind Was Never Outside the Cardiac Story, a paper on Zenodo",
+    url: "https://zenodo.org/records/23481586",
+  },
+  {
+    text: "A case report by Matthew J Adams about his own care",
+    label: "A case report by Matthew J Adams about his own care, on Zenodo",
+    url: "https://zenodo.org/records/23512374",
+  },
+];
+
 // The public contact address (founder decision, 4 Nov 2026). Hosted by Google
 // Workspace, which is recorded as the contact-mailbox processor in
 // docs/privacy/subprocessor-inventory.md. Pinned by
