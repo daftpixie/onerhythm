@@ -108,3 +108,25 @@ The two updated copy assertions failed before the wording changed. The
 founder's original paragraphs, both Zenodo record URLs and the safety
 affordances are unchanged. Recheck CI, DCO and manual accessibility before
 merging after #3.
+
+## 2026-11-16 — Founder acceptance and source-release merges
+
+Matthew confirmed accessibility working and explicitly directed source
+publication. This is recorded as founder verification; browser/reader versions
+were not supplied and no independent Codex manual pass is claimed.
+
+DCO was confirmed and applied. Both signed candidates passed DCO and all three
+CI jobs. #3 merged as `324909d`; #1 closed as superseded. #2 was rebased onto
+that main, passed all checks again in run 43979866170, and merged as
+`7641bd2`. Its merged tree matches the tested combined candidate. The old
+v0.1.0 tag remains unchanged. This follow-up changes release documentation only.
+
+The repository was last verified private. Active main rules are saved but
+GitHub warns they are unenforced on the private plan. Visibility,
+public-control verification and the v0.1.1 prerelease remain pending because
+the connection exposes no administration/release writes and the browser
+computer is unavailable. Prepared notes and exact steps are in
+`docs/releases/0.1.1.md`; the dated readiness file now reflects completed work.
+
+The member service remains closed. Source publication does not clear its
+legal, privacy, staffing, hosted-data or operational launch gates.
