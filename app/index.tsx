@@ -187,45 +187,29 @@ export default function HomeScreen() {
           >
             Why this exists
           </Text>
-          {/* SOURCES for the figures below (ADR 0016). These are POOLED,
-              meta-analytic numbers, chosen deliberately over the single
-              222-person study the page used to cite. Please do not "improve"
-              them back into single-study figures.
-                - >50 million living with atrial fibrillation: GBD 2021 reports
-                  52.55M AF/atrial-flutter cases (an earlier GBD cycle reported
-                  59.7M). AF is ~a third of arrhythmia-related hospitalisations.
-                - Anxiety 25.2% and depression 20.1% in AF: pooled prevalence.
-                  Broader reviews span 13–30% anxiety and 22–40% depression,
-                  which is why the copy says the studies disagree.
-                - PTSD 12.4% in ICD recipients: meta-analysis, ~40,000 patients
-                  (anxiety 22.6%, depression 15.4% in the same analysis — both
-                  LOWER than the AF pooled figures, so no "higher still among
-                  ICD patients" claim can be made; PTSD is the one that runs
-                  several times general-population rates, so it is the only one
-                  quoted).
-              DELIBERATELY NOT ON THIS PAGE: the 3.2x five-year mortality
-              finding for elevated PTSD in ICD patients. True, and our strongest
-              line for investors and grant reviewers — but the reader here may
-              have been diagnosed this week. Different duty of care. It lives in
-              the one-pager, not on the front door. */}
+          {/* Evidence: docs/vision/OneRhythm_Vision.md refs 35, 38 and 39; ADR 0025.
+              Wang et al. (2025): 52.55M AF/atrial-flutter cases in 2021.
+              Zhang et al. (2024): pooled AF anxiety 13%, depression 22%.
+              Ghezzi et al. (2023): pooled ICD PTSD 12.43%.
+              These estimates describe studied populations, not this reader.
+              Different measures and substantial heterogeneity limit precision. */}
           {/* Short sentences, one clinical term each. The a11y review flagged
               the first draft of this paragraph as running above the ~8th-grade
               bar in .claude/rules/a11y.md — three long words in one compound
               sentence, for a reader who may have been diagnosed this week. */}
           <Text style={styles.body}>
-            More than 50 million people around the world live with atrial
-            fibrillation. It is the most common heart-rhythm problem, and it is
-            behind about a third of all hospital stays for one. Whatever else is
-            true, this is not a rare thing to be living with.
+            In 2021, more than 50 million people around the world were estimated
+            to be living with atrial fibrillation or atrial flutter. These are
+            two common heart-rhythm conditions.
           </Text>
           <Text style={styles.body}>
-            Hearts get monitored. Minds usually don’t. Across many studies,
-            about one in four people with atrial fibrillation lives with anxiety
-            that is more than everyday worry. About one in five lives with
-            depression. Among people with an implanted defibrillator, about one
-            in eight lives with post-traumatic stress — several times the rate
-            in people without one. Studies don’t all land on the same numbers,
-            and we won’t pretend they do.
+            Living with a heart-rhythm problem can also affect your peace of
+            mind. One review of many studies found
+            anxiety in about one in eight people with atrial fibrillation,
+            and depression in about one in five. Another review found
+            post-traumatic stress in about one in eight people with an implanted
+            defibrillator. The studies used different measures, and their
+            estimates varied widely.
           </Text>
           <Text style={styles.body}>
             Those numbers are about a population, not about you — nobody here

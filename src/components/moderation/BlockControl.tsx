@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useId, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { type PressState } from "../../lib/pressable";
 import { useAnnounce } from "../StatusRegion";
@@ -36,8 +36,8 @@ export function BlockControl({ memberName, fallbackFocusId, onBlock }: BlockCont
   const [open, setOpen] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [failed, setFailed] = useState(false);
-  const openerRef = useRef<View>(null);
-  const headingRef = useRef<Text>(null);
+  const openerRef = useRef<ComponentRef<typeof View>>(null);
+  const headingRef = useRef<ComponentRef<typeof Text>>(null);
   const wasOpen = useRef(false);
   const blockedRef = useRef(false);
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ComponentRef, useCallback, useEffect, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   ActivityIndicator,
@@ -35,7 +35,7 @@ export default function DeleteAccountScreen() {
   // the one moment they most need a clear answer. A ref mutates synchronously,
   // so the guard is already true before any listener can fire.
   const leaving = useRef(false);
-  const doneHeadingRef = useRef<View>(null);
+  const doneHeadingRef = useRef<ComponentRef<typeof View>>(null);
 
   // When deletion succeeds the whole subtree is replaced, so the element that
   // held focus is unmounted and focus silently falls back to the document body.

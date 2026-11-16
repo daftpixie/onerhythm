@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type Ref } from "react";
+import { type ComponentRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type Ref } from "react";
 import {
   Linking,
   Platform,
@@ -246,11 +246,11 @@ export function ModeratorConsole({
 
   const [warn, setWarn] = useState(false);
 
-  const paneHeadingRef = useRef<Text>(null);
-  const firstChoiceRef = useRef<View>(null);
-  const firstRuleRef = useRef<View>(null);
-  const firstBanRef = useRef<View>(null);
-  const reasonRef = useRef<TextInput>(null);
+  const paneHeadingRef = useRef<ComponentRef<typeof Text>>(null);
+  const firstChoiceRef = useRef<ComponentRef<typeof View>>(null);
+  const firstRuleRef = useRef<ComponentRef<typeof View>>(null);
+  const firstBanRef = useRef<ComponentRef<typeof View>>(null);
+  const reasonRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   const ids = {
     pane: `${prefix}-pane`,
@@ -423,7 +423,7 @@ export function ModeratorConsole({
     label: string,
     checked: boolean,
     onPress: () => void,
-    ref?: Ref<View>,
+    ref?: Ref<ComponentRef<typeof View>>,
   ) => (
     <Pressable
       key={key}

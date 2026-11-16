@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useId, useRef, useState } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { type PressState } from "../../lib/pressable";
 import { useAnnounce } from "../StatusRegion";
@@ -64,9 +64,9 @@ export function ReportControl({
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const openerRef = useRef<View>(null);
-  const headingRef = useRef<Text>(null);
-  const firstRadioRef = useRef<View>(null);
+  const openerRef = useRef<ComponentRef<typeof View>>(null);
+  const headingRef = useRef<ComponentRef<typeof Text>>(null);
+  const firstRadioRef = useRef<ComponentRef<typeof View>>(null);
   const wasOpen = useRef(false);
 
   // Focus in on open; focus back to the opener on close.

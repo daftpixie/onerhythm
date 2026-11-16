@@ -8,8 +8,10 @@
 //  - "db": Node integration tests against the LOCAL Supabase stack. These need a
 //    REAL fetch, so they run in a plain node environment WITHOUT the jest-expo
 //    preset (which mocks fetch). They require the local stack + .env.test.
+// Expo Router imports standard-navigation's ESM build. Transform it for
+// both renderers, just like the Expo modules; do not mock away the router.
 const rnTransformIgnore =
-  "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|nativewind|react-native-css-interop|lucide-react-native|react-native-svg|react-native-reanimated)";
+  "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|standard-navigation|nativewind|react-native-css-interop|lucide-react-native|react-native-svg|react-native-reanimated)";
 
 module.exports = {
   projects: [

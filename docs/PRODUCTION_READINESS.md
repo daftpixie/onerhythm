@@ -1,5 +1,14 @@
 # Production readiness — the go-live checklist
 
+> **16 November 2026 review:** see
+> [PUBLIC_SOURCE_READINESS.md](PUBLIC_SOURCE_READINESS.md) for the current
+> repository, dependency, CI and live-landing observations. The detailed rows
+> below preserve the 3 November working checklist and refer to PR numbers in
+> the private development archive; they are not current deployment evidence.
+> The new release repository and `v0.1.0` exist, and the public landing responds,
+> but the repository is still private. Member launch remains blocked. No live
+> hosted database or processor contract was inspected in this review.
+
 Two tiers, because they carry very different risk.
 
 **Tier 1 — the landing page.** A marketing site. No member accounts, no health

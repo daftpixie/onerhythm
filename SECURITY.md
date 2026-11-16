@@ -5,8 +5,10 @@
 Please report privately first, before any public disclosure.
 
 **First choice: GitHub's private vulnerability reporting.** On this
-repository, open the **Security** tab and choose **Report a vulnerability**.
-It keeps the whole exchange private and in one place.
+repository, open the **Security** tab and choose **Report a vulnerability**
+if that option is available. It keeps the whole exchange private and in one
+place. If no reporting button appears, use the email channel below; enabling
+private reporting is a repository setting, not something this file turns on.
 
 **If you can't use GitHub:** email **matthew@vt-infinite.com**. Please put
 "Security" in the subject line, and don't send the details of an unfixed

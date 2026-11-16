@@ -138,7 +138,7 @@ describe("landing mode (EXPO_PUBLIC_SITE_MODE=landing)", () => {
   });
 
   it.each(MEMBER_URLS)("redirects %s to / without ever rendering it", async (url) => {
-    const view = renderRouter(routeMap(), { initialUrl: url });
+    const view = await renderRouter(routeMap(), { initialUrl: url });
     await screen.findByText("route /");
     expect(view.getPathname()).toBe("/");
     expect(rendered).not.toContain(url);
@@ -147,13 +147,13 @@ describe("landing mode (EXPO_PUBLIC_SITE_MODE=landing)", () => {
   });
 
   it("redirects a path that matches no route at all", async () => {
-    const view = renderRouter(routeMap(), { initialUrl: "/no-such-page" });
+    const view = await renderRouter(routeMap(), { initialUrl: "/no-such-page" });
     await screen.findByText("route /");
     expect(view.getPathname()).toBe("/");
   });
 
   it.each(LANDING_URLS)("renders %s, with crisis help", async (url) => {
-    const view = renderRouter(routeMap(), { initialUrl: url });
+    const view = await renderRouter(routeMap(), { initialUrl: url });
     await screen.findByText(`route ${url}`);
     expect(view.getPathname()).toBe(url);
     expect(screen.getByRole("button", { name: C.trigger.accessibleName })).toBeTruthy();
@@ -161,7 +161,7 @@ describe("landing mode (EXPO_PUBLIC_SITE_MODE=landing)", () => {
 
   it("never constructs a Supabase client while routing", async () => {
     for (const url of [...LANDING_URLS, "/feed", "/sign-in"]) {
-      const view = renderRouter(routeMap(), { initialUrl: url });
+      const view = await renderRouter(routeMap(), { initialUrl: url });
       await screen.findByText(/^route \//);
       view.unmount();
     }
@@ -182,7 +182,7 @@ describe("the member build (flag unset) — the control", () => {
   });
 
   it("does not redirect member routes, which proves the test above can fail", async () => {
-    const view = renderRouter(routeMap(), { initialUrl: "/feed" });
+    const view = await renderRouter(routeMap(), { initialUrl: "/feed" });
     await screen.findByText("route /feed");
     expect(view.getPathname()).toBe("/feed");
     expect(rendered).toContain("/feed");
@@ -191,7 +191,7 @@ describe("the member build (flag unset) — the control", () => {
   it("draws an unknown path inside the shell, with crisis help", async () => {
     // Without app/+not-found.tsx, expo-router draws its own "Unmatched Route"
     // page outside the root layout: no header, so no crisis help.
-    renderRouter(routeMap(), { initialUrl: "/no-such-page" });
+    await renderRouter(routeMap(), { initialUrl: "/no-such-page" });
     await screen.findByText("We can't find that page");
     expect(screen.getByRole("button", { name: C.trigger.accessibleName })).toBeTruthy();
   });

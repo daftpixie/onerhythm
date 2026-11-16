@@ -33,12 +33,9 @@ jobs:
       # have passed on this runner, and this workflow has not been green since
       # the db project was added.
       #
-      # Scoping to rn+web is a deliberate reduction, not a fix: it makes CI mean
-      # something again rather than leaving a red badge everyone learns to
-      # ignore. The db suite and pgTAP remain LOCAL pre-merge gates (they run in
-      # .githooks/pre-commit, which runs all three projects against the local
-      # stack). Restoring full coverage here means standing up Supabase in CI —
-      # recorded as a gap in docs/PRODUCTION_READINESS.md rather than pretended.
+      # This job runs rn+web. The db job below starts a throwaway Supabase
+      # stack and runs both pgTAP and the db project. Keep the two scopes
+      # explicit: this first command alone does not establish database safety.
       - run: npx jest --selectProjects rn web --ci --coverage
 
       # The seven non-negotiable guards, over the commits this change adds.

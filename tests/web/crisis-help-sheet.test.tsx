@@ -159,7 +159,7 @@ function accessibleNameOf(el: HTMLElement): string {
 describe("crisis sheet — tap-to-act actions", () => {
   let openURL: jest.SpyInstance;
   beforeEach(() => {
-    openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
   afterEach(() => openURL.mockRestore());
 

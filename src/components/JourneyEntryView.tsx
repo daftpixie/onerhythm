@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { JourneyEntry } from "../lib/social";
 import { timeAgo } from "../lib/social";
@@ -36,8 +36,8 @@ export function JourneyEntryView({
   // deletes); when it closes, focus returns to the trigger. RNW exposes
   // .focus() on focusable hosts; on native it's a guarded no-op and the
   // live region below carries the announcement.
-  const keepItRef = useRef<View>(null);
-  const deleteTriggerRef = useRef<View>(null);
+  const keepItRef = useRef<ComponentRef<typeof View>>(null);
+  const deleteTriggerRef = useRef<ComponentRef<typeof View>>(null);
   const wasConfirming = useRef(false);
   useEffect(() => {
     const focusable = (

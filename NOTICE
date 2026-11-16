@@ -23,6 +23,8 @@ Things the license above does not cover
   repository; the typeface comes in at build time through the
   @expo-google-fonts/atkinson-hyperlegible package, which carries its own
   license. It is an accessibility choice, not decoration (see docs/brand/).
+  The web distribution also includes its copyright and full license at
+  /licenses/Atkinson-Hyperlegible-OFL.txt (public/licenses/ in the source).
 
 * Dependencies carry their own licenses. See package.json and
   package-lock.json.

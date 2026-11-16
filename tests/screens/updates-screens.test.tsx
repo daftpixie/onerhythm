@@ -116,11 +116,14 @@ describe("marketing privacy notice", () => {
     expect(text(toJSON())).toMatch(/email address/i);
   });
 
-  it("promises no sale and no sharing", () => {
+  it("promises no sale and explains the planned processors", () => {
     const { toJSON } = render(<PrivacyNoticeScreen />);
     const body = text(toJSON());
     expect(body).toMatch(/never sell/i);
-    expect(body).toMatch(/never share|not share/i);
+    expect(body).toMatch(/Supabase/i);
+    expect(body).toMatch(/private Google Sheet/i);
+    expect(body).toMatch(/under written contracts/i);
+    expect(body).not.toMatch(/Nobody\. We never sell your address and we never share/i);
   });
 
   it("states that it covers the updates list ONLY", () => {

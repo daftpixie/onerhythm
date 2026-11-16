@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useId, useRef, useState } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { type PressState } from "../../lib/pressable";
 import { useAnnounce } from "../StatusRegion";
@@ -47,8 +47,8 @@ export function AppealForm({ actionId, gates, onSubmit, tier = 1 }: AppealFormPr
   const [empty, setEmpty] = useState(false);
   const [failed, setFailed] = useState(false);
   const [sent, setSent] = useState(false);
-  const fieldRef = useRef<TextInput>(null);
-  const savedRef = useRef<Text>(null);
+  const fieldRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const savedRef = useRef<ComponentRef<typeof Text>>(null);
   const warned = useRef<number | null>(null);
 
   useEffect(() => {

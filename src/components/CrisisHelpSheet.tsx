@@ -1,4 +1,4 @@
-import { Component, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { type ComponentRef, Component, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import {
   AccessibilityInfo,
   Modal,
@@ -79,8 +79,8 @@ export function CrisisHelpSheet() {
   const [visible, setVisible] = useState(false);
   const reduceMotion = useReducedMotion();
   const titleId = `crisis-help-title-${useId()}`;
-  const triggerRef = useRef<View>(null);
-  const titleRef = useRef<Text>(null);
+  const triggerRef = useRef<ComponentRef<typeof View>>(null);
+  const titleRef = useRef<ComponentRef<typeof Text>>(null);
   const wasVisible = useRef(false);
   const [openFailed, setOpenFailed] = useState(false);
   const onFailed = () => setOpenFailed(true);

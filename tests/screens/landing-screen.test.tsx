@@ -138,7 +138,7 @@ describe("landing — honest framing", () => {
     const body = text(toJSON());
     expect(body).not.toMatch(/88\s*%|71\s*%/);
     expect(body).toMatch(/50 million/);
-    expect(body).toMatch(/one in four/i);
+    expect(body).toMatch(/anxiety in about one in eight people with atrial fibrillation/i);
     expect(body).toMatch(/one in five/i);
   });
 
