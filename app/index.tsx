@@ -8,7 +8,13 @@ import { UpdatesSignupForm } from "../src/components/UpdatesSignupForm";
 import { Wordmark } from "../src/components/Wordmark";
 import { useAuth } from "../src/lib/auth";
 import { type PressState } from "../src/lib/pressable";
-import { CONTACT_EMAIL, isLandingMode, SOURCE_URL, VISION_URL } from "../src/lib/site";
+import {
+  CONTACT_EMAIL,
+  FOUNDER_PAPERS,
+  isLandingMode,
+  SOURCE_URL,
+  VISION_URL,
+} from "../src/lib/site";
 import { tokens, focus, space } from "../src/theme/tokens";
 
 // The public front door (wireframe B1, Brand v3). Signed-out only — a member
@@ -270,6 +276,27 @@ export default function HomeScreen() {
             it feels like when nobody around you understands. When this page
             says “we”, it means them. They are the reason this exists.
           </Text>
+          {/* The founder's papers (founder request, 7 Nov 2026). Third
+              person, because the two paragraphs above are his own words,
+              pinned verbatim. The papers talk about suicide, so 988 is in the
+              same <Text> (ADR 0016). The case report is linked by a
+              description, not its title: the title names his diagnosis and
+              procedure, which this page does not (ADR 0016 §3). */}
+          <Text style={styles.body}>
+            OneRhythm’s founder, Matthew J Adams, has written about his own
+            life with arrhythmia in two papers. They are long and personal.
+            These are working papers, not peer-reviewed articles, and they are
+            not medical advice. They talk about hard things, including suicide.
+            If you’re struggling, in the US you can call or text 988, any time.
+            The help button at the top of every page has crisis resources.
+          </Text>
+          <View style={styles.paperLinks}>
+            {FOUNDER_PAPERS.map((paper) => (
+              <ExternalLink key={paper.url} href={paper.url} label={paper.label}>
+                <Text style={styles.quietLinkText}>{paper.text}</Text>
+              </ExternalLink>
+            ))}
+          </View>
         </View>
 
         <View style={styles.rule} />
@@ -542,6 +569,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 16,
     marginTop: 12,
+  },
+  // The founder's papers, one link per line under "Who built it".
+  paperLinks: {
+    gap: 4,
   },
   quietLink: {
     minHeight: 24,
