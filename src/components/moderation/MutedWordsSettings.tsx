@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useId, useRef, useState } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { type PressState } from "../../lib/pressable";
 import { addMutedWord, listMutedWords, removeMutedWord } from "../../lib/moderation/mutedWords";
@@ -19,7 +19,7 @@ export function MutedWordsSettings({ headingLevel = 2 }: { headingLevel?: 1 | 2 
   const [words, setWords] = useState<string[]>([]);
   const [draft, setDraft] = useState("");
   const [emptyAdd, setEmptyAdd] = useState(false);
-  const fieldRef = useRef<TextInput>(null);
+  const fieldRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   useEffect(() => {
     let live = true;

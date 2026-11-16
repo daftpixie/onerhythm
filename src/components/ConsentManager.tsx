@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { type PressState } from "../lib/pressable";
 import { tokens, focus } from "../theme/tokens";
@@ -63,8 +63,8 @@ export function ConsentManager({
   onFocusForTest,
 }: ConsentManagerProps) {
   const [confirming, setConfirming] = useState(false);
-  const keepRef = useRef<View>(null);
-  const triggerRef = useRef<View>(null);
+  const keepRef = useRef<ComponentRef<typeof View>>(null);
+  const triggerRef = useRef<ComponentRef<typeof View>>(null);
   const wasConfirming = useRef(false);
 
   useEffect(() => {

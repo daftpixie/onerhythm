@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { type ComponentRef, useCallback, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { supabase } from "../../src/lib/supabase";
@@ -47,7 +47,7 @@ export default function ModerationScreen() {
   const router = useRouter();
   const { session, loading } = useAuth();
   const [state, setState] = useState<State>({ kind: "loading" });
-  const tryAgainRef = useRef<View>(null);
+  const tryAgainRef = useRef<ComponentRef<typeof View>>(null);
 
   const load = useCallback(async () => {
     try {

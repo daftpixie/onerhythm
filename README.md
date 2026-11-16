@@ -21,7 +21,7 @@ Nobody should fight an invisible bear alone.
   full members;
 - positive-only: you can give a post an "upbeat", and there is no downvote of
   any kind;
-- run by its members within two floors that are never put to a vote: a
+- designed to be run by its members within two floors that are never put to a vote: a
   safety floor and a privacy floor;
 - open source, under the Apache License 2.0.
 
@@ -35,9 +35,14 @@ Nobody should fight an invisible bear alone.
 
 Medical judgment stays with you and your clinician.
 
-## Where it stands (3 November 2026)
+## Where it stands (16 November 2026)
 
 Built carefully, and not open yet.
+
+The [public-source readiness review](docs/PUBLIC_SOURCE_READINESS.md) records
+the release blockers, the checks performed, and the limits of that review.
+Publishing this source does not open the member platform or establish clinical
+effectiveness.
 
 - **Built, in this repository:** sign-in by email link, onboarding, optional
   health self-ID with a consent record, communities, posts, comments,
@@ -83,7 +88,8 @@ and labels every claim as Built, Planned, For partners, or Hypothesis.
 
 ## Running it
 
-You'll need Node 22 or later and Docker. Docker runs the local Supabase stack.
+Use Node 22.13+ on the 22.x line, or Node 24.3+ on the 24.x line.
+Docker runs the local Supabase stack; the landing preview needs no database.
 
 ```bash
 npm ci --legacy-peer-deps

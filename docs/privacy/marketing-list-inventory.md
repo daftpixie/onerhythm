@@ -15,15 +15,16 @@ Migration: `supabase/migrations/20260806134500_updates_subscribers.sql`.
 ## What this data is, and what it is not
 
 An address on this list belongs to someone who asked to hear about a project.
-It is an **ordinary marketing contact**. It is not consumer health data, because
-nothing about the person's health is collected, asked for, or inferrable from
-it.
+The form asks for no health information, and subscribing does not establish
+that someone has a diagnosis. Interest in an arrhythmia project can nevertheless
+support sensitive inferences. We do not infer health status from it, sell it,
+or use it to build an audience profile. Counsel must confirm its legal
+classification and the applicable safeguards before the list opens.
 
-A **member's** email is different: it is bound to opt-in health self-ID through
-the consent ledger, which makes it consumer health data under Washington MHMDA
-and special-category data under GDPR. Joining the two lists would take an
-ordinary marketing contact and turn it into a health-adjacent record that
-neither person consented to.
+A **member's** email can be linked to opt-in health self-ID through the consent
+ledger, so we treat that linked record as health data. Joining the lists would
+create a relationship the person did not consent to. Nothing in this inventory
+settles a legal classification or substitutes for counsel's review.
 
 So the two are separate systems of record, permanently. The same address
 appearing in both is a coincidence this system must never resolve. Enforcement
@@ -61,15 +62,20 @@ confirms their own subscription leaves no trace linking the two identities.
   we have not built. Adding one is an ADR 0011 follow-up.
 - **Access.** By request. The list holds one field about the person, so the
   answer is their own address plus the dates above.
-- **No sale, no sharing.** There is no sharing surface to consent to, and that
-  absence is itself the record.
+- **No sale or independent reuse.** Only providers working for us under
+  reviewed written contracts may process the list, for the stated purposes.
+  No ad targeting or matching to member or health data is permitted.
 
 ---
 
 ## Subprocessors
 
-No new subprocessor was added by this work. The list lives in the same Postgres
-database as everything else.
+**Current public build:** the updates list is closed (ADR 0023). No form is
+rendered and the landing build does not connect to Supabase. The table below
+records the designed list path, not a claim that it is operating today.
+Before reopening, reconcile it with `subprocessor-inventory.md`, record the
+executed processor terms and retention, and publish the reviewed notice.
+The contact mailbox is already in use and is a separate processing path.
 
 | Subprocessor | What it touches | Purpose | Review status |
 |---|---|---|---|

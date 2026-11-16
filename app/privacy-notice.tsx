@@ -26,8 +26,8 @@ export default function PrivacyNoticeScreen() {
           <Text style={styles.calloutText}>
             This covers the updates list only. OneRhythm is not open yet. The
             fuller policies that will cover being a member — including how we
-            handle anything you tell us about your health — are still with a
-            lawyer, and we won’t open until that review is done. This page is
+            handle anything you tell us about your health — are still being
+            prepared for legal review, and we won’t open until that review is done. This page is
             not that review and does not stand in for it.
           </Text>
           {isLandingMode() ? (
@@ -83,8 +83,15 @@ export default function PrivacyNoticeScreen() {
           Who else sees it
         </Text>
         <Text style={styles.body}>
-          Nobody. We never sell your address and we never share it. It sits in
-          our own database, alongside nothing else about you.
+          We never sell your address. If the list opens, we plan to store it in
+          a Supabase database and copy the list to a private Google Sheet in
+          Google Workspace. We have not chosen an email delivery provider yet.
+        </Text>
+        <Text style={styles.body}>
+          Before the list opens, we will publish who handles it and why. Those
+          providers must work only for us, under written contracts, with no use
+          of the list for their own purposes. We will not open the list until
+          those checks are done.
         </Text>
         <Text style={styles.body}>
           This list is kept completely separate from member accounts. If you

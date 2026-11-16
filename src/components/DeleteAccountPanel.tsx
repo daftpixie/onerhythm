@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -76,9 +76,9 @@ export function DeleteAccountPanel({
     ? "Ready. This deletes your account and cannot be undone."
     : "Type the word DELETE in the box above to turn this button on.";
 
-  const cancelRef = useRef<View>(null);
-  const triggerRef = useRef<View>(null);
-  const fieldRef = useRef<TextInput>(null);
+  const cancelRef = useRef<ComponentRef<typeof View>>(null);
+  const triggerRef = useRef<ComponentRef<typeof View>>(null);
+  const fieldRef = useRef<ComponentRef<typeof TextInput>>(null);
   const wasConfirming = useRef(false);
   useEffect(() => {
     // Focus lands on the SAFE control when the region opens, and returns to the

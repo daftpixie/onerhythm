@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { type ComponentRef, useCallback, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../src/lib/supabase";
@@ -29,7 +29,7 @@ export default function AppealScreen() {
   const [gates, setGates] = useState<Gates | null>(null);
   const [tier, setTier] = useState<1 | 3>(3);
   const [failed, setFailed] = useState(false);
-  const backRef = useRef<View>(null);
+  const backRef = useRef<ComponentRef<typeof View>>(null);
 
   const load = useCallback(async () => {
     // "Try again" is about to disappear: keep focus on the page, never on body.

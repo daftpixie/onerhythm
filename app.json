@@ -2,15 +2,10 @@
   "expo": {
     "name": "OneRhythm",
     "slug": "onerhythm",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "icon": "./assets/brand/icons/icon-1024.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/brand/icons/splash-icon-1024.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -18,7 +13,7 @@
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/brand/icons/adaptive-icon-foreground-1024.png",
-        "monochromeImage": "./assets/brand/png/1r-mark-mono-black-1024.png"
+        "monochromeImage": "./assets/brand/icons/adaptive-icon-foreground-1024.png"
       }
     },
     "web": {
@@ -28,8 +23,16 @@
     "scheme": "onerhythm",
     "plugins": [
       "expo-router",
-      "expo-splash-screen",
-      "expo-font"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/icons/splash-icon-1024.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FFFFFF"
+        }
+      ],
+      "expo-font",
+      "expo-status-bar"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { type ComponentRef, useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { type PressState } from "../../lib/pressable";
 import { CrisisLinks } from "./CrisisLinks";
@@ -17,7 +17,7 @@ import { mod } from "./styles";
 // Crisis triage does not run on member content until G6 (ADR 0019 §8). This
 // panel is built and tested now, and shown only once triage runs.
 export function PostSubmitCrisisPanel({ gates }: { gates: { G1: "met" | "unmet" } }) {
-  const headingRef = useRef<Text>(null);
+  const headingRef = useRef<ComponentRef<typeof Text>>(null);
   useEffect(() => {
     focusNode(headingRef.current);
   }, []);
