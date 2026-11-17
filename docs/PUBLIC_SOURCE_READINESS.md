@@ -1,9 +1,12 @@
 # Public-source readiness — 16 November 2026
 
-**Engineering review and founder acceptance are complete. Source publication
-still needs the GitHub visibility change and v0.1.1 prerelease.** The repository
-was last verified private. This is a pre-launch Apache-2.0 prototype for public
-scrutiny; the member service remains closed.
+**Published for public source review.** The repository is public, and
+[v0.1.1](https://github.com/daftpixie/onerhythm/releases/tag/v0.1.1) was
+published as a prerelease on 16 November 2026 at 7:19 p.m. Eastern.
+The tag resolves to reviewed commit
+`2aa82e7760dd0886ad903af1e258f028592aea04`; all three CI jobs passed on it.
+The active main ruleset is now protecting the public repository. The member
+service remains closed; this is a pre-launch Apache-2.0 prototype.
 
 ## Merged result
 
@@ -73,26 +76,30 @@ After merge, Dependabot attempted glob/minimatch security updates and reported
 paths, not failures of the three project CI jobs. Follow compatible upstream
 fixes; do not force breaking overrides merely to hide the ratings.
 
-## Final GitHub publication steps
+## Publication verification
 
-1. Make only `daftpixie/onerhythm` public. Keep the development archive private.
-2. Verify enforcement of saved Active ruleset `main-public-source-safeguards`
-   (27409052), targeting default main: PRs, DCO, the three CI jobs, up-to-date
-   branches, resolved conversations, blocked force pushes/deletion, no bypass
-   actors. Independent approvals are zero for this sole-maintainer workflow.
-   **GitHub warned that the ruleset is not enforced while private on the
-   current plan.** A saved rule is not evidence of effective protection.
-3. Verify private vulnerability reporting and secret push protection after
-   publication. Dependabot alerts, malware alerts, security updates and
-   web-based commit sign-off were verified on; prototype description saved.
-4. Publish `v0.1.1` as a **prerelease**, targeting the reviewed final main
-   commit, with [the prepared notes](releases/0.1.1.md). Keep old tags unchanged.
-5. Verify public README, license, security-report channel, rules and release
-   files before promoting the repository alongside the surrounding writing.
+- `daftpixie/onerhythm` is **public**; `daftpixie/onerhythm-archive` remains
+  **private**.
+- The published `v0.1.1` release is **not a draft**, is marked **prerelease**,
+  and its tag resolves to `2aa82e7760dd0886ad903af1e258f028592aea04`.
+  The original `v0.1.0` tag remains unchanged.
+- GitHub reports `main.protected: true`. Ruleset
+  [main-public-source-safeguards](https://github.com/daftpixie/onerhythm/rules/27409052)
+  is **Active**, targets the default branch main, and requires:
+  PRs, DCO, `lint-typecheck-test`, `db`, `landing`, up-to-date branches and
+  resolved review conversations. Force pushes and deletion are blocked.
+- The bypass list is empty; GitHub reports the current maintainer can bypass
+  **never**. Required independent approvals are **zero** for this
+  sole-maintainer workflow; this setting does not require a second human.
+- [Final release-commit CI](https://github.com/daftpixie/onerhythm/actions/runs/43981803040)
+  passed all three jobs. Later documentation updates do not move the tag.
 
-The current connection supports merges but does not expose visibility,
-tag/release creation or administration writes; browser access is unavailable.
-Those final controls have not been performed or represented as complete.
+Private vulnerability reporting and secret push protection were **not verified**
+through this connection: the specific read endpoint is not exposed, and the
+public security page could not be fetched. No enabled/disabled state is
+inferred. The email security-report fallback in SECURITY.md remains documented.
+Dependabot alerts/security updates, malware alerts, web-based sign-off and the
+repository description were verified during the earlier administration review.
 
 ## Member launch stays blocked
 
