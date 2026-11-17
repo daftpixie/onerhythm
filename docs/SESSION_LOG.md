@@ -130,3 +130,21 @@ computer is unavailable. Prepared notes and exact steps are in
 
 The member service remains closed. Source publication does not clear its
 legal, privacy, staffing, hosted-data or operational launch gates.
+
+## 2026-11-16 — Public release verified
+
+The founder changed repository visibility and published v0.1.1. GitHub records
+publication at 7:19 p.m. Eastern on 16 November 2026. The release is published,
+not a draft, and marked prerelease. Its tag resolves to the reviewed commit
+`2aa82e7760dd0886ad903af1e258f028592aea04`, whose three CI jobs passed.
+The archive remains private and v0.1.0 remains unchanged.
+
+GitHub now reports main protected. Active ruleset 27409052 applies to default
+main and requires PRs, DCO and all three CI checks, up-to-date branches and
+resolved conversations; it blocks force pushes/deletion. There are no bypass
+actors, and the current maintainer cannot bypass. Independent approvals remain
+zero. Private vulnerability reporting and push protection could not be
+verified through the available read interfaces; no state is inferred.
+
+This entry and the release/readiness status corrections change documentation
+only. The published tag is preserved. Member launch remains gated.
